@@ -29,9 +29,11 @@ const createProduct = (name, description, price, quantity, callback) => {
 };
 
 // Update product by ID
-const updateProductById = (id, updateProductData, callback) => {
-    const query = `UPDATE Product SET ? WHERE id = ?;`;
-    db.query(query, [updateProductData, id], (error, results) => {
+const updateProductById = (id, name, description, price, quantity, callback) => {
+    const query = `UPDATE Product
+    SET name = ?, description = ?, price = ?, quantity = ?
+    WHERE id = ?;`;
+    db.query(query, [name, description, price, quantity, id], (error, results) => {
         if (error) {
             return callback(error, null);
         }
