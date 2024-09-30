@@ -1,7 +1,7 @@
 const db = require('../config/db');
 
-// Get role by ID
-const getRoleById = (id, callback) => {
+// Get koi growth record by ID
+const getKoiGrowthById = (id, callback) => {
     const query = 'SELECT * FROM Role WHERE id = ?';
     db.query(query, [id], (error, results) => {
         if (error) {
@@ -15,10 +15,10 @@ const getRoleById = (id, callback) => {
     });
 };
 
-// Update role by ID
-const updateRoleById = (id, updatedRoleData, callback) => {
+// Update koi growth record by ID
+const updateKoiGrowthById = (id, updateKoiGrowthData, callback) => {
     const query = 'UPDATE Role SET ? WHERE id = ?';
-    db.query(query, [updatedRoleData, id], (error, results) => {
+    db.query(query, [updateKoiGrowthData, id], (error, results) => {
         if (error) {
             return callback(error, null);
         }
@@ -27,6 +27,6 @@ const updateRoleById = (id, updatedRoleData, callback) => {
 };
 
 module.exports = {
-    getRoleById,
-    updateRoleById
+    getKoiGrowthById,
+    updateKoiGrowthById
 };
