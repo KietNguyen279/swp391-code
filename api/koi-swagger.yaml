@@ -1,0 +1,164 @@
+openapi: 3.0.3
+info:
+  title: Koi Care API
+  description: API documentation for your web application
+  version: 1.0.0
+servers:
+  - url: http://localhost:3000
+    description: Local development server
+
+paths:
+  /auth/login:
+    post:
+      summary: Login an existing user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+                  format: password
+      responses:
+        "200":
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  token:
+                    type: string
+                  user:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                      name:
+                        type: string
+                      email:
+                        type: string
+        "400":
+          description: Bad Request (e.g., missing fields)
+        "401":
+          description: Unauthorized (invalid credentials)
+        "500":
+          description: Internal Server Error
+
+  /auth/register:
+    post:
+      summary: Register a new user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+                  format: password
+                password_confirm:
+                  type: string
+                  format: password
+      responses:
+        "201":
+          description: User registered successfully
+        "400":
+          description: Bad Request (e.g., missing fields, passwords don't match)
+        "500":
+          description: Internal Server Error
+
+  /auth/profile/{userId}:
+    get:
+      summary: View user profile
+      parameters:
+        - in: path
+          name: userId
+          schema:
+            type: integer
+          required: true
+          description: ID of the user
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: User profile retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  user:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                      name:
+                        type: string
+                      email:
+                        type: string                                                                                                     
+        '401':
+          description: Unauthorized (missing or invalid token)
+        '403':
+          description: Forbidden (user not authorized to view this profile)
+        '404':
+          description: User not found
+        '500':
+          description: Internal Server Error  
+
+    put:
+      summary: Update user profile
+      parameters:
+        - in: path
+          name: userId
+          schema:
+            type: integer
+          required: true
+          description: ID of the user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:  
+              type: object
+              properties:
+                name:
+                  type: string
+                email:
+                  type: string
+                  format: email
+                # Add other updatable profile fields as needed
+      security:
+        - bearerAuth: [] 
+      responses:
+        '200':
+          description: Profile updated successfully
+        '401':
+          description: Unauthorized (missing or invalid token)
+        '403':
+          description: Forbidden (user not authorized to update this profile)
+        '404':
+          description: User not found
+        '500':
+          description: Internal Server Error
+
+components:
+  securitySchemes:
+    bearerAuth:           
+      type: http
+      scheme: bearer
+      bearerFormat: JWT 
+                    
