@@ -1,0 +1,42 @@
+/* Menu CSS */
+.menu_item {
+  text-decoration: none;
+  color: #fff !important;
+}
+
+/* Header Button CSS */
+.auth-buttons {
+  display: flex;
+  align-items: center;
+}
+
+.sign-in-btn,
+.register-btn {
+  border: none;
+  border-radius: 15px;
+  width: 75px;
+}
+
+.sign-in-btn {
+  background-color: white;
+}
+
+.register-btn {
+  background-color: #000;
+  color: white;
+}
+
+/* Carousel CSS */
+.carousel_content_1,
+.carousel_content_2,
+.carousel_content_3 {
+  position: absolute;
+  margin: 0;
+  height: 450px;
+  width: 400px;
+  color: #fff;
+  inset: 0;
+  top: 30%;
+  left: 3%;
+  font-size: large;
+}
