@@ -7,13 +7,14 @@ import {
   UserOutlined,
 } from "@ant-design/icons";
 import { Breadcrumb, Layout, Menu, theme } from "antd";
+import { Link, Outlet } from "react-router-dom";
 const { Header, Content, Footer, Sider } = Layout;
 function getItem(label, key, icon, children) {
   return {
     key,
     icon,
     children,
-    label,
+    label: <Link to={`/dashboard/${key}`}>{label}</Link>,
   };
 }
 const items = [getItem("User Manager", "usermanager", <PieChartOutlined />)];
@@ -69,7 +70,7 @@ const App = () => {
               borderRadius: borderRadiusLG,
             }}
           >
-            Bill is a cat.
+            <Outlet />
           </div>
         </Content>
         <Footer
@@ -77,7 +78,7 @@ const App = () => {
             textAlign: "center",
           }}
         >
-          Ant Design ©{new Date().getFullYear()} Created by Ant UED
+          Koi And Health ©{new Date().getFullYear()} Created by Koi Team
         </Footer>
       </Layout>
     </Layout>

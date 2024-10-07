@@ -3,6 +3,8 @@ import AuthenTemplate from "../../components/authen-template/authenTemplate";
 import { Button, Form, Input } from "antd";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import axios from "axios";
+import api from "../../config/axios";
 
 function LoginPage() {
   const navigate = useNavigate();
@@ -10,21 +12,34 @@ function LoginPage() {
     navigate("/register");
   };
 
-  // const handleLogin = () => {
-  //   try {
-  //     const response = await;
-  //   } catch (error) {
-  //     toast.error("");
-  //   }
-  // };
+  const handleLogin = async (values) => {
+    try {
+      // setSubmitting(true);
+      const response = await api.post("login", values);
+      console.log(response.data);
+      // dispatch(login(response.data));
+      toast.success("Login successfully!");
+      const { role, token } = response.data;
+      localStorage.setItem("token", token);
+      navigate("/");
+      if (role === "ADMIN") {
+        navigate("/dashboard");
+      }
+    } catch (error) {
+      toast.error(error.response.data);
+    }
+    // finally {
+    //   setSubmitting(false);
+    // }
+  };
   return (
     <AuthenTemplate>
-      <Form labelCol={{ span: 24 }}>
+      <Form labelCol={{ span: 24 }} onFinish={handleLogin}>
         <h1>Login</h1>
         <Form.Item
-          label="Username"
-          name="username"
-          rules={[{ required: true, message: "Please input username!" }]}
+          label="Phone"
+          name="phone"
+          rules={[{ required: true, message: "Please input phone!" }]}
         >
           <Input />
         </Form.Item>

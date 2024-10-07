@@ -1,42 +1,58 @@
-/* Menu CSS */
-.menu_item {
-  text-decoration: none;
-  color: #fff !important;
-}
-
-/* Header Button CSS */
-.auth-buttons {
-  display: flex;
-  align-items: center;
-}
-
-.sign-in-btn,
-.register-btn {
-  border: none;
-  border-radius: 15px;
-  width: 75px;
-}
-
-.sign-in-btn {
-  background-color: white;
-}
-
-.register-btn {
-  background-color: #000;
-  color: white;
-}
-
 /* Carousel CSS */
 .carousel_content_1,
 .carousel_content_2,
 .carousel_content_3 {
   position: absolute;
   margin: 0;
-  height: 450px;
+  height: 620px;
   width: 400px;
   color: #fff;
   inset: 0;
   top: 30%;
   left: 3%;
   font-size: large;
+}
+
+h1 {
+  margin-bottom: 50px !important;
+  color: #ff6900 !important;
+  text-align: center !important;
+  font-size: 4rem !important;
+}
+
+/* About Us CSS */
+.about {
+  text-align: center;
+  margin: 5% 10%;
+  p {
+    font-size: 20px;
+  }
+}
+/* Blogs CSS */
+.blogs {
+  .blogChild {
+    background-color: #d9d9d9;
+    border-radius: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  h4 {
+    margin: 5%;
+    font-size: 25px;
+  }
+  p,
+  Button {
+    margin: 5%;
+    font-size: 18px;
+  }
+  h6 {
+    margin-left: 5%;
+    font-style: oblique;
+  }
+  Button {
+    background-color: #ff6900;
+    color: #fff;
+  }
 }
