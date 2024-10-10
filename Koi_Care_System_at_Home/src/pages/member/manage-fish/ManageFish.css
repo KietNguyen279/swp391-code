@@ -1,0 +1,5 @@
+.CRUD_button {
+  display: flex;
+  justify-content: end;
+  padding: 5%;
+}

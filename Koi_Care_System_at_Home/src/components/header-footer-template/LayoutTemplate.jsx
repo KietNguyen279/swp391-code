@@ -33,6 +33,7 @@ function LayoutTemplate({ children }) {
             display: "flex",
             justifyContent: "end",
           }}
+          // theme="dark"
         >
           <Menu.Item key="home">
             <a className="menu_item" href="/">
@@ -44,6 +45,23 @@ function LayoutTemplate({ children }) {
               About Us
             </a>
           </Menu.Item>
+          <Menu.SubMenu
+            style={{ color: "#fff" }}
+            className="menu_item"
+            key="service"
+            title="Sevice"
+          >
+            <Menu.Item key="fish-manage">
+              <a className="subMenu_item" href="/fishmanage">
+                Fish Manage
+              </a>
+            </Menu.Item>
+            <Menu.Item key="pond-manage">
+              <a className="subMenu_item" href="/pondmanage">
+                Pond Manage
+              </a>
+            </Menu.Item>
+          </Menu.SubMenu>
           <Menu.Item key="product">
             <a className="menu_item" href="/">
               Product

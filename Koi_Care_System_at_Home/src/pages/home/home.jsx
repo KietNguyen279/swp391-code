@@ -1,11 +1,42 @@
 import { Button, Carousel } from "antd";
 import "./home.css";
-import { Link } from "react-router-dom";
+import { Link, Outlet } from "react-router-dom";
 import LayoutTemplate from "../../components/header-footer-template/LayoutTemplate";
 
 function HomePage() {
   const handleNavigation = () => {};
   // const limitedArticles = products.slice(0, 4);
+
+  const blogs = [
+    {
+      title: "The Koi Perspective",
+      description:
+        "A digital magazine featuring monthly updates, tips, and Koi hobbyist stories. Each issue is free and made for enthusiasts.",
+      author: "Joe Mitchell",
+      date: "November 1, 2024",
+      imgSrc:
+        "https://cdn.pixabay.com/photo/2019/10/12/04/59/koi-4543131_1280.jpg",
+    },
+    {
+      title: "Doitsu Variety: The Scaleless Koi",
+      description:
+        "A detailed guide on choosing Doitsu Koi, a unique scaleless variety.",
+      author: "Next Day Koi",
+      date: "March 20, 2024",
+      imgSrc:
+        "https://cdn.pixabay.com/photo/2019/10/12/04/59/koi-4543131_1280.jpg",
+    },
+    {
+      title: "The Many Kinds of Koi Fish Behavior",
+      description:
+        "Explores different Koi behaviors and tips to identify stress and illness.",
+      author: "Paige Braaten",
+      date: "December 16, 2023",
+      imgSrc:
+        "https://cdn.pixabay.com/photo/2019/10/12/04/59/koi-4543131_1280.jpg",
+    },
+  ];
+
   return (
     <div>
       <LayoutTemplate>
@@ -66,154 +97,37 @@ function HomePage() {
             className="row justify-content-center"
             style={{ gap: "6%", "--bs-gutter-x": "0" }}
           >
-            <div className="col-md-3 mb-5 blogChild">
-              <Link to={"/blogDetail"}>
-                <img
-                  src="https://cdn.pixabay.com/photo/2019/10/12/04/59/koi-4543131_1280.jpg"
-                  alt="Koi Fish"
-                  style={{
-                    width: "100%",
-                    height: "auto",
-                    borderTopRightRadius: "15px",
-                    borderTopLeftRadius: "15px",
-                    objectFit: "cover",
-                  }}
-                />
-              </Link>
-              <h4>The Koi Perspective</h4>
-              <p>
-                A digital magazine featuring monthly updates, tips, and Koi
-                hobbyist stories. Each issue is free and made for enthusiasts.
-              </p>
-              <h6>Joe Mitchell - November 1, 2024</h6>
-              <Button onClick={() => handleNavigation("/blogDetail")}>
-                View more
-              </Button>
-            </div>
-            <div className="col-md-3 mb-5 blogChild">
-              <Link to={"/blogDetail"}>
-                <img
-                  src="https://cdn.pixabay.com/photo/2019/10/12/04/59/koi-4543131_1280.jpg"
-                  alt="Koi Fish"
-                  style={{
-                    width: "100%",
-                    height: "auto",
-                    borderTopRightRadius: "15px",
-                    borderTopLeftRadius: "15px",
-                    objectFit: "cover",
-                  }}
-                />
-              </Link>
-              <h4>Doitsu Variety: The Scaleless Koi</h4>
-              <p>
-                A detailed guide on choosing Doitsu Koi, a unique scaleless
-                variety.
-              </p>
-              <h6>Next Day Koi - March 20, 2024</h6>
-              <Button onClick={() => handleNavigation("/blogDetail")}>
-                View more
-              </Button>
-            </div>
-            <div className="col-md-3 mb-5 blogChild">
-              <Link to={"/blogDetail"}>
-                <img
-                  src="https://cdn.pixabay.com/photo/2019/10/12/04/59/koi-4543131_1280.jpg"
-                  alt="Koi Fish"
-                  style={{
-                    width: "100%",
-                    height: "auto",
-                    borderTopRightRadius: "15px",
-                    borderTopLeftRadius: "15px",
-                    objectFit: "cover",
-                  }}
-                />
-              </Link>
-              <h4>The Many Kinds of Koi Fish Behavior</h4>
-              <p>
-                Explores different Koi behaviors and tips to identify stress and
-                illness.
-              </p>
-              <h6>Paige Braaten - December 16, 2023</h6>
-              <Button onClick={() => handleNavigation("/blogDetail")}>
-                View more
-              </Button>
-            </div>
+            {blogs.map((blog, index) => (
+              <div key={index} className="col-md-3 mb-5 blogChild">
+                <Link to={"/blogDetail"}>
+                  <img
+                    src={blog.imgSrc}
+                    alt={blog.title}
+                    style={{
+                      width: "100%",
+                      height: "auto",
+                      borderTopRightRadius: "15px",
+                      borderTopLeftRadius: "15px",
+                      objectFit: "cover",
+                    }}
+                  />
+                </Link>
+                <h4>{blog.title}</h4>
+                <p>{blog.description}</p>
+                <h6>
+                  {blog.author} - {blog.date}
+                </h6>
+                <center>
+                  <Button onClick={() => handleNavigation("/blogDetail")}>
+                    View more
+                  </Button>
+                </center>
+              </div>
+            ))}
           </div>
         </div>
         <div className="products">
           <h1>Our Products</h1>
-          {/* <div className="col-md-3 mb-5 blogChild">
-              <Link to={"/blogDetail"}>
-                <img
-                  src="https://cdn.pixabay.com/photo/2019/10/12/04/59/koi-4543131_1280.jpg"
-                  alt="Koi Fish"
-                  style={{
-                    width: "100%",
-                    height: "auto",
-                    borderTopRightRadius: "15px",
-                    borderTopLeftRadius: "15px",
-                    objectFit: "cover",
-                  }}
-                />
-              </Link>
-              <h4>5 Benefits of Hand Feeding Your Koi Fish & Petting Tips</h4>
-              <p>
-                Offers insights into hand-feeding Koi and building bonds with
-                them.
-              </p>
-              <h6>Kodama Koi Farm - July 24, 2023</h6>
-              <Button onClick={() => handleNavigation("/blogDetail")}>
-                View more
-              </Button>
-            </div>
-            <div className="col-md-3 mb-5 blogChild">
-              <Link to={"/blogDetail"}>
-                <img
-                  src="https://cdn.pixabay.com/photo/2019/10/12/04/59/koi-4543131_1280.jpg"
-                  alt="Koi Fish"
-                  style={{
-                    width: "100%",
-                    height: "auto",
-                    borderTopRightRadius: "15px",
-                    borderTopLeftRadius: "15px",
-                    objectFit: "cover",
-                  }}
-                />
-              </Link>
-              <h4>Best Koi Fish For Your First Pond</h4>
-              <p>
-                Discusses beginner-friendly Koi varieties ideal for new pond
-                owners.
-              </p>
-              <h6>Paige Braaten - February 6, 2024</h6>
-              <Button onClick={() => handleNavigation("/blogDetail")}>
-                View more
-              </Button>
-            </div>
-            <div className="col-md-3 mb-5 blogChild">
-              <Link to={"/blogDetail"}>
-                <img
-                  src="https://cdn.pixabay.com/photo/2019/10/12/04/59/koi-4543131_1280.jpg"
-                  alt="Koi Fish"
-                  style={{
-                    width: "100%",
-                    height: "auto",
-                    borderTopRightRadius: "15px",
-                    borderTopLeftRadius: "15px",
-                    objectFit: "cover",
-                  }}
-                />
-              </Link>
-              <h4>Preparing for Koi Competition for Winning Koi Shows</h4>
-              <p>
-                Tips for grooming Koi for competitions and achieving top
-                results.
-              </p>
-              <h6>Kodama Koi Farm - May 24, 2023</h6>
-              <Button onClick={() => handleNavigation("/blogDetail")}>
-                View more
-              </Button>
-            </div> */}
         </div>
       </LayoutTemplate>
     </div>

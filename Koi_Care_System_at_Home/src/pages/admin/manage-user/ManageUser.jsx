@@ -38,7 +38,7 @@ function ManageUser() {
       <CRUDTemplate
         columns={columns}
         formItems={formItems}
-        path="service-group"
+        path="usermanager"
       />
     </div>
   );

@@ -1,11 +1,17 @@
 /* Menu CSS */
+
 .menu_item,
+.ant-menu-submenu-title,
 .logo {
   text-decoration: none;
   color: #fff !important;
   font-size: large;
 }
 
+.subMenu_item {
+  text-decoration: none;
+  font-size: large;
+}
 /* Header Button CSS */
 .auth-buttons {
   display: flex;

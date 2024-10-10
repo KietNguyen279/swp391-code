@@ -5,12 +5,22 @@ import LoginPage from "./pages/login/login";
 import RegisterPage from "./pages/register/register";
 import Dashboard from "./dashboard/dashboard";
 import ManageUser from "./pages/admin/manage-user/ManageUser";
+import ManageFish from "./pages/member/manage-fish/ManageFish";
+import ManagePond from "./pages/member/manage-pond/ManagePond";
 
 function App() {
   const router = createBrowserRouter([
     {
       path: "/",
       element: <HomePage />,
+    },
+    {
+      path: "/fishmanage",
+      element: <ManageFish />,
+    },
+    {
+      path: "/pondmanage",
+      element: <ManagePond />,
     },
     {
       path: "/login",
