@@ -7,6 +7,7 @@ import Dashboard from "./dashboard/dashboard";
 import ManageUser from "./pages/admin/manage-user/ManageUser";
 import ManageFish from "./pages/member/manage-fish/ManageFish";
 import ManagePond from "./pages/member/manage-pond/ManagePond";
+import CartPage from "./pages/cart/CartPage";
 
 function App() {
   const router = createBrowserRouter([
@@ -29,6 +30,10 @@ function App() {
     {
       path: "/register",
       element: <RegisterPage />,
+    },
+    {
+      path: "/cart",
+      element: <CartPage />,
     },
     {
       path: "/dashboard",

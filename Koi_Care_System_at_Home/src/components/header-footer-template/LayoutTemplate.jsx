@@ -1,11 +1,14 @@
-import { Menu } from "antd";
+import { Badge, Button, Menu } from "antd";
 import { Footer, Header } from "antd/es/layout/layout";
 import React from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import "./LayoutTemplate.css";
+import { ShoppingCartOutlined } from "@ant-design/icons";
+import { useSelector } from "react-redux";
 
 function LayoutTemplate({ children }) {
   const navigate = useNavigate();
+  const cart = useSelector((store) => store.cart);
 
   const handleNavigation = (router) => {
     navigate(router);
@@ -21,8 +24,10 @@ function LayoutTemplate({ children }) {
           height: "90px",
         }}
       >
-        <div className="logo">
-          <span className="icon">KOI AND HEALTH</span>
+        <div>
+          <Link to={"/"} className="icon">
+            KOI AND HEALTH
+          </Link>
         </div>
         <Menu
           mode="horizontal"
@@ -41,7 +46,7 @@ function LayoutTemplate({ children }) {
             </a>
           </Menu.Item>
           <Menu.Item key="about">
-            <a className="menu_item" href="/">
+            <a className="menu_item" href="#about">
               About Us
             </a>
           </Menu.Item>
@@ -63,17 +68,17 @@ function LayoutTemplate({ children }) {
             </Menu.Item>
           </Menu.SubMenu>
           <Menu.Item key="product">
-            <a className="menu_item" href="/">
+            <a className="menu_item" href="#products">
               Product
             </a>
           </Menu.Item>
           <Menu.Item key="blogs">
-            <a className="menu_item" href="/">
+            <a className="menu_item" href="#blogs">
               Blogs
             </a>
           </Menu.Item>
           <Menu.Item key="contact">
-            <a className="menu_item" href="/">
+            <a className="menu_item" href="#contact">
               Contact Us
             </a>
           </Menu.Item>
@@ -82,18 +87,30 @@ function LayoutTemplate({ children }) {
           className="auth-buttons"
           style={{ marginLeft: "40px", display: "flex", gap: "20px" }}
         >
-          <button
+          <Button
             onClick={() => handleNavigation("/login")}
             className="sign-in-btn"
           >
             Sign In
-          </button>
-          <button
+          </Button>
+          <Button
             onClick={() => handleNavigation("/register")}
             className="register-btn"
           >
             Register
-          </button>
+          </Button>
+          <Button
+            onClick={() => {
+              navigate("/cart");
+            }}
+          >
+            <Badge count={cart.length}>
+              <ShoppingCartOutlined
+                size={100}
+                style={{ fontSize: 23, color: "#000" }}
+              />
+            </Badge>
+          </Button>
         </div>
       </Header>
       {children}

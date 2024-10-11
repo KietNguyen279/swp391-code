@@ -1,8 +1,12 @@
+html {
+  scroll-behavior: smooth;
+}
+
 /* Menu CSS */
 
 .menu_item,
 .ant-menu-submenu-title,
-.logo {
+.icon {
   text-decoration: none;
   color: #fff !important;
   font-size: large;

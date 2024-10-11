@@ -21,7 +21,8 @@ h1 {
 }
 
 /* About Us CSS */
-.about {
+.about,
+.contact {
   text-align: center;
   margin: 5% 10%;
   p {
@@ -29,8 +30,10 @@ h1 {
   }
 }
 /* Blogs CSS */
-.blogs {
-  .blogChild {
+.blogs,
+.products {
+  .blogChild,
+  .productChild {
     background-color: #d9d9d9;
     border-radius: 20px;
     display: flex;

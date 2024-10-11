@@ -37,10 +37,37 @@ function HomePage() {
     },
   ];
 
+  const products = [
+    {
+      title: "Koi Calm - Stress Relief Formula",
+      description:
+        "A natural, gentle formula to reduce stress in Koi fish during water changes and transportation. Safe for all pond life.",
+      imgSrc:
+        "https://www.midlandwaterlife.com/wp-content/uploads/2022/06/Koi-Calm.jpg",
+      price: "$29.99",
+    },
+    {
+      title: "Premium Koi Growth Pellets",
+      description:
+        "High-protein pellets designed to promote healthy growth in Koi fish. Formulated with essential nutrients and vitamins.",
+      imgSrc:
+        "https://www.midlandwaterlife.com/wp-content/uploads/2022/06/Koi-Calm.jpg",
+      price: "$19.99",
+    },
+    {
+      title: "Koi Pond Water Conditioner",
+      description:
+        "An all-in-one solution for maintaining balanced water chemistry, ensuring a healthy environment for your Koi fish.",
+      imgSrc:
+        "https://www.midlandwaterlife.com/wp-content/uploads/2022/06/Koi-Calm.jpg",
+      price: "$24.99",
+    },
+  ];
+
   return (
     <div>
       <LayoutTemplate>
-        <Carousel arrows infinite={false}>
+        <Carousel autoplay arrows infinite={true}>
           <div style={{ position: "relative" }}>
             <img
               src="https://cdn.pixabay.com/photo/2015/05/04/20/23/japanese-garden-752918_1280.jpg"
@@ -48,6 +75,7 @@ function HomePage() {
               style={{
                 height: "620px",
                 width: "100%",
+                objectFit: "cover",
               }}
             />
             <h3 className="carousel_content_1"></h3>
@@ -59,6 +87,7 @@ function HomePage() {
               style={{
                 height: "620px",
                 width: "100%",
+                objectFit: "cover",
               }}
             />
             <h3 className="carousel_content_2"></h3>
@@ -70,13 +99,14 @@ function HomePage() {
               style={{
                 height: "620px",
                 width: "100%",
+                objectFit: "cover",
               }}
             />
             <h3 className="carousel_content_3"></h3>
           </div>
         </Carousel>
 
-        <div className="about">
+        <div id="about" className="about">
           <h1>About Us</h1>
           <p>
             Welcome to Koi Health and Pond Care, your trusted source for expert
@@ -91,7 +121,7 @@ function HomePage() {
             success.
           </p>
         </div>
-        <div className="blogs">
+        <div id="blogs" className="blogs">
           <h1>Check out our News</h1>
           <div
             className="row justify-content-center"
@@ -126,8 +156,45 @@ function HomePage() {
             ))}
           </div>
         </div>
-        <div className="products">
+        <div id="products" className="products">
           <h1>Our Products</h1>
+          <div
+            className="row justify-content-center"
+            style={{ gap: "6%", "--bs-gutter-x": "0" }}
+          >
+            {products.map((product, index) => (
+              <div key={index} className="col-md-3 mb-5 productChild">
+                <Link to={"/productDetail"}>
+                  <img
+                    src={product.imgSrc}
+                    alt={product.title}
+                    style={{
+                      width: "100%",
+                      height: "auto",
+                      borderTopRightRadius: "15px",
+                      borderTopLeftRadius: "15px",
+                      objectFit: "cover",
+                    }}
+                  />
+                </Link>
+                <h4>{product.title}</h4>
+                <p>{product.description}</p>
+                <h6>{product.price}</h6>
+                <center>
+                  <Button>Add To Cart</Button>
+                </center>
+              </div>
+            ))}
+          </div>
+        </div>
+        <div id="contact" className="contact">
+          <h1>Contact Us</h1>
+          <p>Phone: 0915533944</p>
+          <p>Email: koihehe@gmail.com</p>
+          <p>
+            Address: D1 - Long Thanh My - Thu Duc City - Ho Chi Minh City -
+            VietNam
+          </p>
         </div>
       </LayoutTemplate>
     </div>

@@ -264,14 +264,7 @@ function ManageFish() {
                 padding: "30px 0",
               }}
             >
-              <div
-                className="col-md-4"
-                style={{
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                }}
-              >
+              <div className="col-md-4 justify-content-center align-items-center">
                 <img
                   src={fish.imgSrc}
                   alt={fish.name}

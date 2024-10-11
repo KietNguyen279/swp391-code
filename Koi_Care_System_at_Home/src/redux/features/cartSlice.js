@@ -6,7 +6,7 @@ const cartSlice = createSlice({
   reducers: {
     addProduct: (state, action) => {
       const product = action.payload;
-      // check coi con cá có trong mảng redux của mình chưa
+      // check coi product có trong mảng redux của mình chưa
       const existProduct = state.find((koi) => koi.id === product.id);
       // nếu có thì tăng quantity
       if (existProduct) {
