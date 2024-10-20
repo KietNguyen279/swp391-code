@@ -2,10 +2,29 @@ import { Button, Carousel } from "antd";
 import "./home.css";
 import { Link, Outlet } from "react-router-dom";
 import LayoutTemplate from "../../components/header-footer-template/LayoutTemplate";
+import { useState } from "react";
+import { useEffect } from "react";
+import { useDispatch } from "react-redux";
+import { addProduct } from "../../redux/features/cartSlice";
 
 function HomePage() {
   const handleNavigation = () => {};
   // const limitedArticles = products.slice(0, 4);
+
+  const [product, setProduct] = useState([]);
+  const fetchProduct = async () => {
+    try {
+      const response = await api.get("/koi");
+      console.log(response.data);
+      setProduct(response.data);
+      console.log(response.data);
+    } catch (err) {
+      console.log("ERROR", err);
+    }
+  };
+  useEffect(() => {
+    fetchProduct();
+  }, []);
 
   const blogs = [
     {
@@ -34,33 +53,6 @@ function HomePage() {
       date: "December 16, 2023",
       imgSrc:
         "https://cdn.pixabay.com/photo/2019/10/12/04/59/koi-4543131_1280.jpg",
-    },
-  ];
-
-  const products = [
-    {
-      title: "Koi Calm - Stress Relief Formula",
-      description:
-        "A natural, gentle formula to reduce stress in Koi fish during water changes and transportation. Safe for all pond life.",
-      imgSrc:
-        "https://www.midlandwaterlife.com/wp-content/uploads/2022/06/Koi-Calm.jpg",
-      price: "$29.99",
-    },
-    {
-      title: "Premium Koi Growth Pellets",
-      description:
-        "High-protein pellets designed to promote healthy growth in Koi fish. Formulated with essential nutrients and vitamins.",
-      imgSrc:
-        "https://www.midlandwaterlife.com/wp-content/uploads/2022/06/Koi-Calm.jpg",
-      price: "$19.99",
-    },
-    {
-      title: "Koi Pond Water Conditioner",
-      description:
-        "An all-in-one solution for maintaining balanced water chemistry, ensuring a healthy environment for your Koi fish.",
-      imgSrc:
-        "https://www.midlandwaterlife.com/wp-content/uploads/2022/06/Koi-Calm.jpg",
-      price: "$24.99",
     },
   ];
 
@@ -162,28 +154,8 @@ function HomePage() {
             className="row justify-content-center"
             style={{ gap: "6%", "--bs-gutter-x": "0" }}
           >
-            {products.map((product, index) => (
-              <div key={index} className="col-md-3 mb-5 productChild">
-                <Link to={"/productDetail"}>
-                  <img
-                    src={product.imgSrc}
-                    alt={product.title}
-                    style={{
-                      width: "100%",
-                      height: "auto",
-                      borderTopRightRadius: "15px",
-                      borderTopLeftRadius: "15px",
-                      objectFit: "cover",
-                    }}
-                  />
-                </Link>
-                <h4>{product.title}</h4>
-                <p>{product.description}</p>
-                <h6>{product.price}</h6>
-                <center>
-                  <Button>Add To Cart</Button>
-                </center>
-              </div>
+            {product.map((product) => (
+              <Product key={product.id} product={product} />
             ))}
           </div>
         </div>
@@ -200,5 +172,24 @@ function HomePage() {
     </div>
   );
 }
+const Product = ({ product }) => {
+  const dispatch = useDispatch();
+  const handleAddToCart = () => {
+    dispatch(addProduct(product));
+  };
+  return (
+    <div className="product">
+      {/* <img src={product.image} alt="" />
+      <h3>{product.name}</h3>
+      <p>{product.description}</p>
+      <span>{product.price}</span> */}
+      <h1>hehe</h1>
+
+      <center>
+        <button onClick={handleAddToCart}>Add to cart</button>
+      </center>
+    </div>
+  );
+};
 
 export default HomePage;

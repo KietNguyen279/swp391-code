@@ -122,6 +122,13 @@ function LayoutTemplate({ children }) {
           fontSize: "large",
         }}
       >
+        <div className="row">
+          <div className="col-md-4">
+            <Link to={"/"} className="icon">
+              KOI AND HEALTH
+            </Link>
+          </div>
+        </div>
         Koi And Health ©{new Date().getFullYear()} Created by Koi Team
       </Footer>
     </div>

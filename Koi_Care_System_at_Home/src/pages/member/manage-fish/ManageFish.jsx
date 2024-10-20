@@ -2,55 +2,93 @@ import { Button, Form, Input, InputNumber, Select, Upload } from "antd";
 import MemberCRUDTemplate from "../../../components/CRUD-template/member/MemberCRUDTemplate";
 import LayoutTemplate from "../../../components/header-footer-template/LayoutTemplate";
 import "./ManageFish.css";
+import { PlusOutlined } from "@ant-design/icons";
+import { useEffect, useState } from "react";
+import api from "../../../config/axios";
 function ManageFish() {
-  const columns = [
-    {
-      title: "Name",
-      dataIndex: "name",
-      key: "name",
-    },
-    {
-      title: "Image",
-      dataIndex: "image",
-      key: "image",
-      render: (text) => <img src={text} alt="Koi" style={{ width: "100px" }} />,
-    },
-    {
-      title: "Body Shape",
-      dataIndex: "bodyShape",
-      key: "bodyShape",
-    },
-    {
-      title: "Age",
-      dataIndex: "age",
-      key: "age",
-    },
-    {
-      title: "Size",
-      dataIndex: "size",
-      key: "size",
-    },
-    {
-      title: "Weight",
-      dataIndex: "weight",
-      key: "weight",
-    },
-    {
-      title: "Breed",
-      dataIndex: "breed",
-      key: "breed",
-    },
-    {
-      title: "Origin",
-      dataIndex: "origin",
-      key: "origin",
-    },
-    {
-      title: "Pond",
-      dataIndex: "pond",
-      key: "pond",
-    },
-  ];
+  const [fish, setFish] = useState([]);
+  const [previewOpen, setPreviewOpen] = useState(false);
+  const [previewImage, setPreviewImage] = useState("");
+  const [fileList, setFileList] = useState([]);
+  const [editingIndex, setEditingIndex] = useState(null);
+
+  const fetchFish = async () => {
+    try {
+      const response = await api.get("koi");
+      setFish(response.data);
+    } catch (error) {
+      console.log("Error loading fish: ", error);
+    }
+  };
+  useEffect(() => {
+    fetchFish();
+  }, []);
+
+  const getBase64 = (file) =>
+    new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = (error) => reject(error);
+    });
+
+  const handlePreview = async (file) => {
+    if (!file.url && !file.preview) {
+      file.preview = await getBase64(file.originFileObj);
+    }
+    setPreviewImage(file.url || file.preview);
+    setPreviewOpen(true);
+  };
+
+  const handleChange = ({ fileList: newFileList }) => setFileList(newFileList);
+  const uploadButton = (
+    <button
+      style={{
+        border: 0,
+        background: "none",
+      }}
+      type="button"
+    >
+      <PlusOutlined />
+      <div
+        style={{
+          marginTop: 8,
+        }}
+      >
+        Upload
+      </div>
+    </button>
+  );
+
+  const handleUpdateClick = (fish) => {
+    setEditingIndex(fish); // Set the index of the fish to be edited
+  };
+
+  const handleFormSubmit = async (values) => {
+    try {
+      const updatedFishData = {
+        ...fish[editingIndex],
+        age: `${values.age} years`,
+        size: `${values.size} inches`,
+        weight: `${values.weight} lbs`,
+        pond: values.pond,
+      };
+
+      // Send updated fish data to the backend
+      await api.put(`koi/${fish[editingIndex].id}`, updatedFishData);
+
+      // Update local state to reflect the changes
+      const updatedKoiFish = [...fish];
+      updatedKoiFish[editingIndex] = updatedFishData;
+      setFish(updatedKoiFish);
+
+      console.log("Updated Fish Data:", updatedFishData);
+      setEditingIndex(null); // Exit edit mode after submitting
+    } catch (error) {
+      console.error("Error updating fish:", error);
+    }
+  };
+
   const formItems = (
     <>
       <Form.Item
@@ -64,6 +102,17 @@ function ManageFish() {
         ]}
       >
         <Input />
+      </Form.Item>
+      <Form.Item label="image" name="image">
+        <Upload
+          action="https://660d2bd96ddfa2943b33731c.mockapi.io/api/upload"
+          listType="picture-card"
+          fileList={fileList}
+          onPreview={handlePreview}
+          onChange={handleChange}
+        >
+          {fileList.length >= 8 ? null : uploadButton}
+        </Upload>
       </Form.Item>
       <Form.Item
         label="Body Shape"
@@ -182,69 +231,6 @@ function ManageFish() {
     </>
   );
 
-  const koiFish = [
-    {
-      name: "Sakura",
-      imgSrc:
-        "https://images.unsplash.com/photo-1640529837996-b81a91eaf7a5?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-      bodyShape: "Long and slender",
-      age: "3 years",
-      size: "15 inches",
-      weight: "2.5 lbs",
-      breed: "Kohaku",
-      origin: "Japan",
-      pond: "Main Pond",
-    },
-    {
-      name: "Ryuu",
-      imgSrc:
-        "https://images.unsplash.com/photo-1640529837996-b81a91eaf7a5?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-      bodyShape: "Rounded",
-      age: "4 years",
-      size: "18 inches",
-      weight: "3.2 lbs",
-      breed: "Showa",
-      origin: "Japan",
-      pond: "Upper Pond",
-    },
-    {
-      name: "Mizu",
-      imgSrc:
-        "https://images.unsplash.com/photo-1640529837996-b81a91eaf7a5?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-      bodyShape: "Compact",
-      age: "2 years",
-      size: "12 inches",
-      weight: "1.8 lbs",
-      breed: "Asagi",
-      origin: "China",
-      pond: "Lower Pond",
-    },
-    {
-      name: "Hoshi",
-      imgSrc:
-        "https://images.unsplash.com/photo-1640529837996-b81a91eaf7a5?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-      bodyShape: "Streamlined",
-      age: "5 years",
-      size: "20 inches",
-      weight: "4.0 lbs",
-      breed: "Sanke",
-      origin: "Japan",
-      pond: "Main Pond",
-    },
-    {
-      name: "Kumo",
-      imgSrc:
-        "https://images.unsplash.com/photo-1640529837996-b81a91eaf7a5?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-      bodyShape: "Oval",
-      age: "1 year",
-      size: "8 inches",
-      weight: "1.2 lbs",
-      breed: "Tancho",
-      origin: "Korea",
-      pond: "Nursery Pond",
-    },
-  ];
-
   return (
     <div>
       <LayoutTemplate>
@@ -253,9 +239,9 @@ function ManageFish() {
           style={{ padding: "120px", "--bs-gutter-x": "0" }}
         >
           <MemberCRUDTemplate formItems={formItems} />
-          {koiFish.map((fish, index) => (
+          {fish.map((currentFish) => (
             <div
-              key={index}
+              key={currentFish.id}
               className="row"
               style={{
                 marginBottom: "20px",
@@ -266,8 +252,8 @@ function ManageFish() {
             >
               <div className="col-md-4 justify-content-center align-items-center">
                 <img
-                  src={fish.imgSrc}
-                  alt={fish.name}
+                  src={currentFish.imgSrc}
+                  alt={currentFish.name}
                   style={{
                     width: "320px",
                     height: "320px",
@@ -278,52 +264,148 @@ function ManageFish() {
               </div>
               {/* Fish contents */}
               <div className=" fish_contents col-md-8 row ">
-                <h2 style={{ color: "#FF6900" }}>{fish.name}</h2>
+                <h2 style={{ color: "#FF6900" }}>{currentFish.name}</h2>
                 <div className="row mt-5">
                   <div className="col-md-4">
                     <p>
                       <strong>Body Shape: </strong>
-                      {fish.bodyShape}
+                      {currentFish.bodyShape}
                     </p>
                     <p>
                       <strong>Age: </strong>
-                      {fish.age}
+                      {editingIndex === currentFish.id ? (
+                        <Form.Item
+                          name="age"
+                          initialValue={parseInt(currentFish.age)}
+                          rules={[
+                            {
+                              required: true,
+                              message: "Please enter Koi Fish Age!",
+                            },
+                            {
+                              type: "number",
+                              min: 0,
+                              message: "Invalid Age!",
+                            },
+                          ]}
+                        >
+                          <InputNumber />
+                        </Form.Item>
+                      ) : (
+                        currentFish.age
+                      )}
                     </p>
                   </div>
-
                   <div className="col-md-4">
                     <p>
                       <strong>Size: </strong>
-                      {fish.size}
+                      {editingIndex === currentFish.id ? (
+                        <Form.Item
+                          name="size"
+                          initialValue={parseFloat(currentFish.size)}
+                          rules={[
+                            {
+                              required: true,
+                              message: "Please enter Koi Fish Size!",
+                            },
+                            {
+                              type: "number",
+                              min: 0,
+                              message: "Invalid size!",
+                            },
+                          ]}
+                        >
+                          <InputNumber step={0.1} />
+                        </Form.Item>
+                      ) : (
+                        currentFish.size
+                      )}
                     </p>
                     <p>
                       <strong>Weight: </strong>
-                      {fish.weight}
+                      {editingIndex === currentFish.id ? (
+                        <Form.Item
+                          name="weight"
+                          initialValue={parseFloat(currentFish.weight)}
+                          rules={[
+                            {
+                              required: true,
+                              message: "Please enter Koi Fish Weight!",
+                            },
+                            {
+                              type: "number",
+                              min: 0,
+                              message: "Invalid weight!",
+                            },
+                          ]}
+                        >
+                          <InputNumber step={0.1} />
+                        </Form.Item>
+                      ) : (
+                        currentFish.weight
+                      )}
                     </p>
                   </div>
-
                   <div className="col-md-4">
                     <p>
                       <strong>Breed: </strong>
-                      {fish.breed}
+                      {currentFish.breed}
                     </p>
                     <p>
                       <strong>Origin: </strong>
-                      {fish.origin}
+                      {currentFish.origin}
                     </p>
                     <p>
                       <strong>Pond: </strong>
-                      {fish.pond}
+                      {editingIndex === currentFish.id ? (
+                        <Form.Item
+                          name="pond"
+                          initialValue={currentFish.pond}
+                          rules={[
+                            {
+                              required: true,
+                              message: "Please enter Koi Fish Pond!",
+                            },
+                          ]}
+                        >
+                          <Input />
+                        </Form.Item>
+                      ) : (
+                        currentFish.pond
+                      )}
                     </p>
                   </div>
                 </div>
                 <div className="CRUD_button ">
-                  <Button style={{ backgroundColor: "#FF6900", color: "#fff" }}>
-                    Update
-                  </Button>
-                  <Button style={{ backgroundColor: "#000", color: "#fff" }}>
-                    Delete
-                  </Button>
+                  {editingIndex === currentFish.id ? (
+                    <Button
+                      type="primary"
+                      onClick={() =>
+                        handleFormSubmit({
+                          age: currentFish.age,
+                          size: currentFish.size,
+                          weight: currentFish.weight,
+                          pond: currentFish.pond,
+                        })
+                      }
+                    >
+                      Save
+                    </Button>
+                  ) : (
+                    <>
+                      <Button
+                        style={{ backgroundColor: "#FF6900", color: "#fff" }}
+                        onClick={() => handleUpdateClick(currentFish.id)}
+                      >
+                        Update
+                      </Button>
+                      <Button
+                        style={{ backgroundColor: "#000", color: "#fff" }}
+                      >
+                        Delete
+                      </Button>
+                    </>
+                  )}
                 </div>
               </div>
               {/* End fish contents */}

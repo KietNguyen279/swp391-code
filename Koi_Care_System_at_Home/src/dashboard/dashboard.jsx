@@ -1,11 +1,5 @@
 import React, { useState } from "react";
-import {
-  DesktopOutlined,
-  FileOutlined,
-  PieChartOutlined,
-  TeamOutlined,
-  UserOutlined,
-} from "@ant-design/icons";
+import { ShopOutlined, UserOutlined } from "@ant-design/icons";
 import { Breadcrumb, Layout, Menu, theme } from "antd";
 import { Link, Outlet } from "react-router-dom";
 const { Header, Content, Footer, Sider } = Layout;
@@ -17,8 +11,11 @@ function getItem(label, key, icon, children) {
     label: <Link to={`/dashboard/${key}`}>{label}</Link>,
   };
 }
-const items = [getItem("User Manager", "usermanager", <PieChartOutlined />)];
-const App = () => {
+const items = [
+  getItem("User Management", "usermanagement", <UserOutlined />),
+  getItem("Product Management", "productmanagement", <ShopOutlined />),
+];
+const Dashboard = () => {
   const [collapsed, setCollapsed] = useState(false);
   const {
     token: { colorBgContainer, borderRadiusLG },
@@ -84,4 +81,4 @@ const App = () => {
     </Layout>
   );
 };
-export default App;
+export default Dashboard;

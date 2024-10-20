@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "http://103.90.227.68:8080/api/",
+  baseURL: "https://koicare.onrender.com/",
 });
 // làm 1 hành động gì đó trước khi call api
 const handleBefore = (config) => {

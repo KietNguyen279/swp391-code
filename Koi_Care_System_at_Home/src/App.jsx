@@ -8,6 +8,7 @@ import ManageUser from "./pages/admin/manage-user/ManageUser";
 import ManageFish from "./pages/member/manage-fish/ManageFish";
 import ManagePond from "./pages/member/manage-pond/ManagePond";
 import CartPage from "./pages/cart/CartPage";
+import ManageProduct from "./pages/staff/manage-product/ManageProduct";
 
 function App() {
   const router = createBrowserRouter([
@@ -40,8 +41,12 @@ function App() {
       element: <Dashboard />,
       children: [
         {
-          path: "usermanager",
+          path: "usermanagement",
           element: <ManageUser />,
+        },
+        {
+          path: "productmanagement",
+          element: <ManageProduct />,
         },
       ],
     },

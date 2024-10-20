@@ -3,7 +3,6 @@ import AuthenTemplate from "../../components/authen-template/authenTemplate";
 import { Button, Form, Input } from "antd";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import axios from "axios";
 import api from "../../config/axios";
 
 function LoginPage() {
@@ -15,7 +14,7 @@ function LoginPage() {
   const handleLogin = async (values) => {
     try {
       // setSubmitting(true);
-      const response = await api.post("login", values);
+      const response = await api.post("/auth/login", values);
       console.log(response.data);
       // dispatch(login(response.data));
       toast.success("Login successfully!");
@@ -37,9 +36,9 @@ function LoginPage() {
       <Form labelCol={{ span: 24 }} onFinish={handleLogin}>
         <h1>Login</h1>
         <Form.Item
-          label="Phone"
-          name="phone"
-          rules={[{ required: true, message: "Please input phone!" }]}
+          label="Email"
+          name="email"
+          rules={[{ required: true, message: "Please input email!" }]}
         >
           <Input />
         </Form.Item>
