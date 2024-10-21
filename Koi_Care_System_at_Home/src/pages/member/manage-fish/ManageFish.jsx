@@ -61,18 +61,29 @@ function ManageFish() {
   );
 
   const handleUpdateClick = (fish) => {
-    setEditingIndex(fish); // Set the index of the fish to be edited
+    setEditingIndex(fish);
+    setFileList([{ uid: "-1", url: fish[fish].imgSrc }]);
   };
 
   const handleFormSubmit = async (values) => {
     try {
       const updatedFishData = {
         ...fish[editingIndex],
+
         age: `${values.age} years`,
         size: `${values.size} inches`,
         weight: `${values.weight} lbs`,
         pond: values.pond,
       };
+      if (fileList.length > 0) {
+        const formData = new FormData();
+        formData.append("file", fileList[0].originFileObj);
+        const uploadResponse = await api.post("/upload", formData, {
+          headers: { "Content-Type": "multipart/form-data" },
+        });
+
+        updatedFishData.imgSrc = uploadResponse.data.url;
+      }
 
       // Send updated fish data to the backend
       await api.put(`koi/${fish[editingIndex].id}`, updatedFishData);
