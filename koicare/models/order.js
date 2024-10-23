@@ -212,9 +212,21 @@ const processOrderItems = (items) => {
     return order;
 };
 
+// Get all orders
+const getAllOrders = (callback) => {
+    const query = `SELECT * FROM \`Order\``;
+    db.query(query, (error, results) => {
+      if (error) {
+        return callback(error, null);
+      }
+      return callback(null, results);
+    });
+  };
+
 module.exports = {
     createOrder,
     getOrderById,
     updateOrderById,
-    deleteOrderById
+    deleteOrderById,
+    getAllOrders
 };

@@ -52,8 +52,20 @@ const updateKoiGrowthById = (id, updateKoiGrowthData, callback) => {
     });
 };
 
+// Get all koi growth records
+const getAllKoiGrowthRecords = (callback) => {
+  const query = `SELECT * FROM Koi_growth_record;`;
+  db.query(query, (error, results) => {
+      if (error) {
+          return callback(error, null);
+      }
+      return callback(null, results); 
+  });
+};
+
 module.exports = {
     getKoiGrowthById,
     updateKoiGrowthById,
-    createKoiGrowthRecord
+    createKoiGrowthRecord,
+    getAllKoiGrowthRecords
 };

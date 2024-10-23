@@ -267,7 +267,7 @@ paths:
         "201":
           description: Koi created successfully
         "400":
-          description: Bad Request 
+          description: Bad Request
         "500":
           description: Internal server error
 
@@ -340,6 +340,37 @@ paths:
           description: Internal server error
 
   /koiGrowth:
+    get:
+      summary: Get all koi growth records
+      tags:
+        - Koi Growth
+      responses:
+        "200":
+          description: A list of all koi growth records
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                    growth_date:
+                      type: string
+                      format: date
+                    age:
+                      type: integer
+                    size:
+                      type: number
+                      format: float
+                    weight:
+                      type: number
+                      format: float
+                    koi_id:
+                      type: integer
+        "500":
+          description: Internal server error
     post:
       summary: Create a new koi growth record
       tags:
@@ -524,7 +555,7 @@ paths:
         "201":
           description: Pond created successfully
         "400":
-          description: Bad Request 
+          description: Bad Request
         "500":
           description: Internal server error
 
@@ -589,13 +620,13 @@ paths:
                   type: number
                   format: float
       responses:
-        '200':
+        "200":
           description: Pond updated successfully
-        '400':
-          description: Bad Request 
-        '404':
+        "400":
+          description: Bad Request
+        "404":
           description: Pond not found
-        '500':
+        "500":
           description: Internal server error
 
     delete:
@@ -692,7 +723,7 @@ paths:
         "201":
           description: Product created successfully
         "400":
-          description: Bad Request 
+          description: Bad Request
         "500":
           description: Internal server error
 
@@ -813,7 +844,7 @@ paths:
         "201":
           description: Water parameter value created successfully
         "400":
-          description: Bad Request 
+          description: Bad Request
         "500":
           description: Internal server error
 
@@ -912,6 +943,37 @@ paths:
           description: Internal server error
 
   /order:
+    get:
+      summary: Get all orders
+      tags:
+        - Order
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: A list of all orders
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                    order_date:
+                      type: string
+                      format: date-time
+                    total_amount:
+                      type: number
+                      format: float
+                    user_id:
+                      type: integer
+                    status:
+                      type: string
+                      enum: [pending, processing, shipped, delivered, cancelled]
+        "500":
+          description: Internal server error
     post:
       summary: Create a new order
       tags:
@@ -1067,15 +1129,15 @@ paths:
       tags:
         - News Blog
       responses:
-        '200':
+        "200":
           description: A list of all news blogs
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/NewsBlog'
-        '500':
+                  $ref: "#/components/schemas/NewsBlog"
+        "500":
           description: Internal server error
     post:
       summary: Create a new news_blog
@@ -1100,11 +1162,11 @@ paths:
                 user_id:
                   type: integer
       responses:
-        '201':
+        "201":
           description: News blog created successfully
-        '400':
-          description: Bad Request 
-        '500':
+        "400":
+          description: Bad Request
+        "500":
           description: Internal server error
 
   /newsBlog/{id}:
@@ -1120,15 +1182,15 @@ paths:
           required: true
           description: ID of the news blog
       responses:
-        '200':
+        "200":
           description: News blog retrieved successfully
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/NewsBlog'
-        '404':
+                $ref: "#/components/schemas/NewsBlog"
+        "404":
           description: News blog not found
-        '500':
+        "500":
           description: Internal server error
 
     put:
@@ -1159,11 +1221,11 @@ paths:
                   type: string
                   format: date-time
       responses:
-        '200':
+        "200":
           description: News blog updated successfully
-        '404':
+        "404":
           description: News blog not found
-        '500':
+        "500":
           description: Internal server error
 
     delete:
@@ -1178,11 +1240,11 @@ paths:
           required: true
           description: ID of the news blog
       responses:
-        '200':
+        "200":
           description: News blog deleted successfully
-        '404':
+        "404":
           description: News blog not found
-        '500':
+        "500":
           description: Internal server error
 
   /cart:
@@ -1353,7 +1415,7 @@ components:
         user_id:
           type: integer
 
-    Product:   
+    Product:
       type: object
       properties:
         id:
@@ -1368,7 +1430,7 @@ components:
         quantity:
           type: integer
 
-    WaterValue:  
+    WaterValue:
       type: object
       properties:
         id:
@@ -1381,7 +1443,7 @@ components:
         water_parameters_id:
           type: integer
 
-    NewsBlog: 
+    NewsBlog:
       type: object
       properties:
         id:

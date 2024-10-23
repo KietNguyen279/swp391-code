@@ -87,4 +87,15 @@ router.delete('/:id', verifyToken, (req, res) => {
   });
 });
 
+// Get all orders
+router.get('/', verifyToken, (req, res) => {
+  Order.getAllOrders((error, orders) => {
+    if (error) {
+      console.error('Error fetching orders:', error);
+      return res.status(500).json({ message: 'Internal server error' });
+    }
+    res.json(orders);
+  });
+});
+
 module.exports = router;

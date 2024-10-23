@@ -56,4 +56,16 @@ router.put('/:id', (req, res) => {
   });
 });
 
+// Get all koi growth records
+router.get('/', (req, res) => {
+  KoiGrowth.getAllKoiGrowthRecords((error, koiGrowthRecords) => {
+    if (error) {
+      console.error('Error fetching koi growth records:', error);
+      return res.status(500).json({ message: 'Internal server error' });
+    } else {
+      res.json(koiGrowthRecords); 
+    }
+  });
+});
+
 module.exports = router;

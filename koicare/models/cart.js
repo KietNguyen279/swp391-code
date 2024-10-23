@@ -46,6 +46,7 @@ const addItemToCart = (userId, productId, quantity, callback) => {
   if (quantity <= 0) {
     return callback(new Error('Quantity must be greater than 0'), null);
   }
+  
   // Check if product exists 
   Product.getProductById(productId, (productError, product) => {
     if (productError) {
