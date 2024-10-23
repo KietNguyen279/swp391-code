@@ -23,6 +23,7 @@ CREATE TABLE `Pond` (
   `num_of_drains` BIGINT,
   `pump_capacity` FLOAT,
   `user_id` BIGINT,
+  `salt_kg_required` FLOAT,
   FOREIGN KEY (`user_id`) REFERENCES `User` (`id`)
 );
 
@@ -38,6 +39,7 @@ CREATE TABLE `Koi` (
   `breed` VARCHAR(255),
   `origin` VARCHAR(255),
   `pond_id` BIGINT,
+  `food_required_kg_per_day` FLOAT,
   FOREIGN KEY (`pond_id`) REFERENCES `Pond` (`id`)
 );
 
