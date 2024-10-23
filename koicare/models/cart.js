@@ -42,10 +42,11 @@ const processCartItems = (items) => {
 
 // Add item to cart
 const addItemToCart = (userId, productId, quantity, callback) => {
-  if (quantity <= 0) {
-    return callback(new Error('Quantity must be a positive integer'), null);
-  }
 
+  if (quantity <= 0) {
+    return callback(new Error('Quantity must be greater than 0'), null);
+  }
+  // Check if product exists 
   Product.getProductById(productId, (productError, product) => {
     if (productError) {
       return callback(productError, null);
@@ -64,44 +65,18 @@ const addItemToCart = (userId, productId, quantity, callback) => {
     db.query(query, [userId, userId, userId, productId, quantity, quantity], (error, results) => {
       if (error) {
         if (error.code === 'ER_NO_REFERENCED_ROW_2') {
-          // Example: Handle foreign key constraint violation (invalid product ID)
-          return callback(new Error('Invalid product ID'), null);
-        } else {
-          return callback(error, null);
-        }
+          if (error.sqlMessage.includes('for key \'cart_id\'')) { 
+            return callback(new Error('Invalid cart ID'), null);
+          } else if (error.sqlMessage.includes('for key \'product_id\'')) {
+            return callback(new Error('Invalid product ID'), null);
+          } 
+        } 
+        return callback(error, null); 
       }
       return callback(null, results.affectedRows);
     });
   });
 };
-
-// Check if product exists 
-Product.getProductById(productId, (productError, product) => {
-  if (productError) {
-    return callback(productError, null);
-  }
-  if (!product) {
-    return callback(new Error('Product not found'), null);
-  }
-
-  const query = `
-    INSERT INTO Cart (user_id) SELECT ? WHERE NOT EXISTS (SELECT 1 FROM Cart WHERE user_id = ?);
-    SELECT id INTO @cart_id FROM Cart WHERE user_id = ?; 
-    INSERT INTO Cart_item (cart_id, product_id, quantity) 
-    VALUES (@cart_id, ?, ?) 
-    ON DUPLICATE KEY UPDATE quantity = quantity + ?;
-  `;
-  db.query(query, [userId, userId, userId, productId, quantity, quantity], (error, results) => {
-    if (error) {
-      if (error.code === 'ER_NO_REFERENCED_ROW_2') {
-        return callback(new Error('Invalid product ID'), null);
-      } else {
-        return callback(error, null);
-      }
-    }
-    return callback(null, results.affectedRows);
-  });
-});
 
 // Update item quantity in cart
 const updateCartItemQuantity = (userId, productId, quantity, callback) => {
