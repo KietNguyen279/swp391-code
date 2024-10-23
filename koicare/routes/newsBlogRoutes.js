@@ -50,14 +50,16 @@ router.put('/:id', (req, res) => {
   const newsBlogId = req.params.id;
   const { image, title, content, date_published, user_id } = req.body;
 
-  if (!image || !title || !content || !date_published || !user_id) {
-    return res.status(400).json({ message: 'Invalid input data. Please check all fields.' });
-  }
-
   NewsBlog.updateNewsBlogById(newsBlogId, image, title, content, date_published, user_id, (error, result) => {
     if (error) {
       console.error('Error updating news blog:', error);
-      return res.status(500).json({ error: error.toString() });;
+      if (error.message === 'No fields to update.') {
+        return res.status(400).json({ message: error.message });
+      } else if (error.message.startsWith('Invalid input data')) {
+        return res.status(400).json({ message: error.message });
+      } else {
+        return res.status(500).json({ error: error.toString() });
+      }
     }
     if (result === 1) {
       res.json({ message: 'News blog updated successfully' });
