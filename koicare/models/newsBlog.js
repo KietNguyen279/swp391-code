@@ -77,8 +77,18 @@ const updateNewsBlogById = (id, image, title, content, date_published, user_id, 
     return callback(new Error('No fields to update.'), null);
   }
 
-  const query = `UPDATE News_blog SET ${updateFields.join(', ')} WHERE id = ?`;
-  db.query(query, [...updateValues, id], (error, results) => {
+  let formattedDate = date_published || null;
+  if (date_published !== undefined) {
+    formattedDate = new Date(date_published).toISOString().slice(0, 19).replace('T', ' ');
+  }
+
+  const query = `
+    UPDATE News_blog 
+    SET image = ?, title = ?, content = ?, date_published = ?, user_id = ?
+    WHERE id = ?;
+  `;
+
+  db.query(query, [image, title, content, formattedDate, user_id, id], (error, results) => {
     if (error) {
       return callback(error, null);
     }

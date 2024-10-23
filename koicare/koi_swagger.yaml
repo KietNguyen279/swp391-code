@@ -1220,12 +1220,16 @@ paths:
                 date_published:
                   type: string
                   format: date-time
+                user_id:
+                  type: integer
       responses:
-        "200":
+        '200':
           description: News blog updated successfully
-        "404":
+        '400': 
+          description: Bad Request
+        '404':
           description: News blog not found
-        "500":
+        '500':
           description: Internal server error
 
     delete:
