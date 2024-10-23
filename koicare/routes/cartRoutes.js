@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const Cart = require('../models/cart')
-const { verifyToken } = require('../middleware/authMiddleware'); 
+const { verifyToken } = require('../middleware/authMiddleware');
 
 // Get cart by user ID
 router.get('/', verifyToken, (req, res) => {
@@ -25,15 +25,22 @@ router.post('/', verifyToken, (req, res) => {
     return res.status(400).json({ message: 'Invalid input data' });
   }
 
-  Cart.addItemToCart(userId, productId, quantity, (error, result) => {
-    if (error) {
-      console.error('Error adding item to cart:', error);
-      if (error.message === 'Product not found') {
-        return res.status(404).json({ message: error.message });
-      }
-      return res.status(500).json({ error: error.toString() });
+  Product.getProductById(productId, (productError, product) => {
+    if (productError) {
+      console.error('Error fetching product:', productError);
+      return res.status(500).json({ error: productError.toString() });
     }
-    res.status(201).json({ message: 'Item added to cart' });
+    if (!product) {
+      return res.status(404).json({ message: 'Product not found' });
+    }
+
+    Cart.addItemToCart(userId, productId, quantity, (error, result) => {
+      if (error) {
+        console.error('Error adding item to cart:', error);
+        return res.status(500).json({ error: error.toString() });
+      }
+      res.status(201).json({ message: 'Item added to cart' });
+    });
   });
 });
 

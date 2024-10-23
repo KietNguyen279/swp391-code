@@ -42,12 +42,10 @@ const processCartItems = (items) => {
 
 // Add item to cart
 const addItemToCart = (userId, productId, quantity, callback) => {
-
   if (quantity <= 0) {
-    return callback(new Error('Quantity must be greater than 0'), null);
+    return callback(new Error('Quantity must be a positive integer'), null);
   }
-  
-  // Check if product exists 
+
   Product.getProductById(productId, (productError, product) => {
     if (productError) {
       return callback(productError, null);
@@ -57,15 +55,16 @@ const addItemToCart = (userId, productId, quantity, callback) => {
     }
 
     const query = `
-    INSERT INTO Cart (user_id) SELECT ? WHERE NOT EXISTS (SELECT 1 FROM Cart WHERE user_id = ?);
-    SELECT id INTO @cart_id FROM Cart WHERE user_id = ?; 
-    INSERT INTO Cart_item (cart_id, product_id, quantity) 
-    VALUES (@cart_id, ?, ?) 
-    ON DUPLICATE KEY UPDATE quantity = quantity + ?;
-  `;
+      INSERT INTO Cart (user_id) SELECT ? WHERE NOT EXISTS (SELECT 1 FROM Cart WHERE user_id = ?);
+      SELECT id INTO @cart_id FROM Cart WHERE user_id = ?; 
+      INSERT INTO Cart_item (cart_id, product_id, quantity) 
+      VALUES (@cart_id, ?, ?) 
+      ON DUPLICATE KEY UPDATE quantity = quantity + ?;
+    `;
     db.query(query, [userId, userId, userId, productId, quantity, quantity], (error, results) => {
       if (error) {
         if (error.code === 'ER_NO_REFERENCED_ROW_2') {
+          // Example: Handle foreign key constraint violation (invalid product ID)
           return callback(new Error('Invalid product ID'), null);
         } else {
           return callback(error, null);
@@ -75,6 +74,34 @@ const addItemToCart = (userId, productId, quantity, callback) => {
     });
   });
 };
+
+// Check if product exists 
+Product.getProductById(productId, (productError, product) => {
+  if (productError) {
+    return callback(productError, null);
+  }
+  if (!product) {
+    return callback(new Error('Product not found'), null);
+  }
+
+  const query = `
+    INSERT INTO Cart (user_id) SELECT ? WHERE NOT EXISTS (SELECT 1 FROM Cart WHERE user_id = ?);
+    SELECT id INTO @cart_id FROM Cart WHERE user_id = ?; 
+    INSERT INTO Cart_item (cart_id, product_id, quantity) 
+    VALUES (@cart_id, ?, ?) 
+    ON DUPLICATE KEY UPDATE quantity = quantity + ?;
+  `;
+  db.query(query, [userId, userId, userId, productId, quantity, quantity], (error, results) => {
+    if (error) {
+      if (error.code === 'ER_NO_REFERENCED_ROW_2') {
+        return callback(new Error('Invalid product ID'), null);
+      } else {
+        return callback(error, null);
+      }
+    }
+    return callback(null, results.affectedRows);
+  });
+});
 
 // Update item quantity in cart
 const updateCartItemQuantity = (userId, productId, quantity, callback) => {

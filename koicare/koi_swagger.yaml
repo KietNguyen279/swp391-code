@@ -1292,7 +1292,7 @@ paths:
       tags:
         - Cart
       security:
-        - bearerAuth: []
+      - bearerAuth: []
       requestBody:
         required: true
         content:
@@ -1305,9 +1305,13 @@ paths:
                 quantity:
                   type: integer
       responses:
-        "201":
+        '201':
           description: Item added to cart
-        "500":
+        '400': 
+          description: Bad Request 
+        '404': 
+          description: Product not found
+        '500':
           description: Internal server error
 
   /cart/{productId}:
