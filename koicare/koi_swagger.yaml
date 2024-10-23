@@ -588,13 +588,14 @@ paths:
                 pump_capacity:
                   type: number
                   format: float
-
       responses:
-        "200":
+        '200':
           description: Pond updated successfully
-        "404":
+        '400':
+          description: Bad Request 
+        '404':
           description: Pond not found
-        "500":
+        '500':
           description: Internal server error
 
     delete:

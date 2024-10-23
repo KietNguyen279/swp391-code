@@ -22,7 +22,7 @@ router.post('/', (req, res) => {
     const { name, image, size, depth, volume, num_of_drains, pump_capacity, user_id } = req.body;
 
     if (!name || !image || !size || !depth || !volume || !num_of_drains || !pump_capacity || !user_id) {
-      return res.status(400).json({ message: 'Missing required fields' });
+        return res.status(400).json({ message: 'Missing required fields' });
     }
 
     Pond.createPond(name, image, size, depth, volume, num_of_drains, pump_capacity, user_id, (error, result) => {
@@ -38,16 +38,18 @@ router.post('/', (req, res) => {
 // Update pond by ID
 router.put('/:id', (req, res) => {
     const pondId = req.params.id;
-    const { name, image, size, depth, volume, num_of_drains, pump_capacity, user_id } = req.body;
+    const { name, image, size, depth, volume, num_of_drains, pump_capacity } = req.body;
 
-    if (!name || !image || !size || !depth || !volume || !num_of_drains || !pump_capacity || !user_id) {
-        return res.status(400).json({ message: 'Missing required fields' });
-    }
-
-    Pond.updatePondById(pondId, name, image, size, depth, volume, num_of_drains, pump_capacity, user_id, (error, result) => {
+    Pond.updatePondById(pondId, name, image, size, depth, volume, num_of_drains, pump_capacity, (error, result) => {
         if (error) {
             console.error('Error updating pond:', error);
-            return res.status(500).json({ message: 'Internal server error' });
+            if (error.message === 'No fields to update.') {
+                return res.status(400).json({ message: error.message });
+            } else if (error.message.startsWith('Invalid input data')) {
+                return res.status(400).json({ message: error.message });
+            } else {
+                return res.status(500).json({ message: 'Internal server error' });
+            }
         } else if (result === 1) {
             res.json({ message: 'Pond updated' });
         } else {
@@ -62,9 +64,9 @@ router.delete('/:id', (req, res) => {
     Pond.deletePondById(pondId, (error, result) => {
         if (error) {
             console.error('Error deleting pond:', error);
-            if (error.message.startsWith('Cannot delete pond.')) { 
-              return res.status(400).json({ message: error.message }); 
-            } 
+            if (error.message.startsWith('Cannot delete pond.')) {
+                return res.status(400).json({ message: error.message });
+            }
             return res.status(500).json({ message: 'Internal server error' });
         } else if (result === 1) {
             res.json({ message: 'Pond deleted' });

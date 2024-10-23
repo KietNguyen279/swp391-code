@@ -37,14 +37,44 @@ const createPond = (name, image, size, depth, volume, num_of_drains, pump_capaci
 // Update pond by ID
 const updatePondById = (id, name, image, size, depth, volume, num_of_drains, pump_capacity, callback) => {
 
-  if (!name || !image || size <= 0 || depth <= 0 || volume <= 0 || num_of_drains <= 0 || pump_capacity <= 0) {
-    return callback(new Error('Invalid input data. Please check all fields.'), null);
+  if (name !== undefined && !name) {
+    return callback(new Error('Invalid input data: Name cannot be empty.'), null);
+  }
+  if (image !== undefined && !image) {
+    return callback(new Error('Invalid input data: Image cannot be empty.'), null);
+  }
+  if (size !== undefined && size <= 0) {
+    return callback(new Error('Invalid input data: Size must be a positive number.'), null);
+  }
+  if (depth !== undefined && depth <= 0) {
+    return callback(new Error('Invalid input data: Depth must be a positive number.'), null);
+  }
+  if (volume !== undefined && volume <= 0) {
+    return callback(new Error('Invalid input data: Volume must be a positive number.'), null);
+  }
+  if (num_of_drains !== undefined && num_of_drains <= 0) {
+    return callback(new Error('Invalid input data: Number of drains must be a positive number.'), null);
+  }
+  if (pump_capacity !== undefined && pump_capacity <= 0) {
+    return callback(new Error('Invalid input data: Pump capacity must be a positive number.'), null);
   }
 
-  const query = `UPDATE Pond  
-  SET name = ?, image = ?, size = ?, depth = ?, volume = ?, num_of_drains = ?, pump_capacity = ? 
-  WHERE id = ?;`;
-  db.query(query, [name, image, size, depth, volume, num_of_drains, pump_capacity, id], (error, results) => {
+  const updateFields = [];
+  const updateValues = [];
+  if (name !== undefined) { updateFields.push('name = ?'); updateValues.push(name); }
+  if (image !== undefined) { updateFields.push('image = ?'); updateValues.push(image); }
+  if (size !== undefined) { updateFields.push('size = ?'); updateValues.push(size); }
+  if (depth !== undefined) { updateFields.push('depth = ?'); updateValues.push(depth); }
+  if (volume !== undefined) { updateFields.push('volume = ?'); updateValues.push(volume); }
+  if (num_of_drains !== undefined) { updateFields.push('num_of_drains = ?'); updateValues.push(num_of_drains); }
+  if (pump_capacity !== undefined) { updateFields.push('pump_capacity = ?'); updateValues.push(pump_capacity); }
+
+  if (updateFields.length === 0) {
+    return callback(new Error('No fields to update.'), null); 
+  }
+
+  const query = `UPDATE Pond SET ${updateFields.join(', ')} WHERE id = ?`;
+  db.query(query, [...updateValues, id], (error, results) => {
     if (error) {
       return callback(error, null);
     }
