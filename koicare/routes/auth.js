@@ -7,7 +7,7 @@ const User = require('../models/user');
 const { verifyToken: verifyTokenMiddleware, verifyTokenAndRole } = require('../middleware/authMiddleware');
 
 // Register
-router.post('/register', verifyTokenAndRole([1]), async (req, res) => {
+router.post('/register', async (req, res) => {
     try {
         const { name, email, password, password_confirm, role_id } = req.body;
 
