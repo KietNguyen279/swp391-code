@@ -46,6 +46,7 @@ const getUserByEmail = (email, callback) => {
     });
 };
 
+// Update User
 const updateUserById = (id, updatedUserData, callback) => {
     if (updatedUserData.name && updatedUserData.name.length === 0) {
       return callback(new Error('Name cannot be empty'), null);
@@ -62,6 +63,7 @@ const updateUserById = (id, updatedUserData, callback) => {
     });
   };
 
+// Check valid email
 function isValidEmail(email) {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);

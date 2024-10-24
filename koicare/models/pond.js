@@ -111,7 +111,7 @@ const getAllPonds = (callback) => {
   });
 };
 
-// Calculate salt amount for a pond
+// Calculate salt amount 
 const getPondDetails = (pondId, callback) => {
   const query = `
       SELECT 

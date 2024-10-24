@@ -1223,13 +1223,13 @@ paths:
                 user_id:
                   type: integer
       responses:
-        '200':
+        "200":
           description: News blog updated successfully
-        '400': 
+        "400":
           description: Bad Request
-        '404':
+        "404":
           description: News blog not found
-        '500':
+        "500":
           description: Internal server error
 
     delete:
@@ -1292,7 +1292,7 @@ paths:
       tags:
         - Cart
       security:
-      - bearerAuth: []
+        - bearerAuth: []
       requestBody:
         required: true
         content:
@@ -1305,13 +1305,13 @@ paths:
                 quantity:
                   type: integer
       responses:
-        '201':
+        "201":
           description: Item added to cart
-        '400': 
-          description: Bad Request 
-        '404': 
+        "400":
+          description: Bad Request
+        "404":
           description: Product not found
-        '500':
+        "500":
           description: Internal server error
 
   /cart/{productId}:
@@ -1359,6 +1359,118 @@ paths:
       responses:
         "200":
           description: Item removed from cart
+        "500":
+          description: Internal server error
+
+  /waterParam:
+    get:
+      summary: Get all water parameters
+      tags:
+        - Water Parameter
+      responses:
+        "200":
+          description: A list of all water parameters
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/WaterParameter"
+        "500":
+          description: Internal server error
+    post:
+      summary: Create a new water parameter
+      tags:
+        - Water Parameter
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                measurement_time:
+                  type: string
+                  format: date-time
+                pond_id:
+                  type: integer
+      responses:
+        "201":
+          description: Water parameter created successfully
+        "400":
+          description: Bad Request (e.g., invalid input)
+        "500":
+          description: Internal server error
+
+  /waterParam/{id}:
+    get:
+      summary: Get water parameter by ID
+      tags:
+        - Water Parameter
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: ID of the water parameter
+      responses:
+        "200":
+          description: Water parameter retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WaterParameter"
+        "404":
+          description: Water parameter not found
+        "500":
+          description: Internal server error
+
+    put:
+      summary: Update water parameter by ID
+      tags:
+        - Water Parameter
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: ID of the water parameter
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                measurement_time:
+                  type: string
+                  format: date-time
+      responses:
+        "200":
+          description: Water parameter updated successfully
+        "404":
+          description: Water parameter not found
+        "500":
+          description: Internal server error
+
+    delete:
+      summary: Delete water parameter by ID
+      tags:
+        - Water Parameter
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: ID of the water parameter
+      responses:
+        "200":
+          description: Water parameter deleted successfully
+        "404":
+          description: Water parameter not found
         "500":
           description: Internal server error
 
@@ -1466,4 +1578,15 @@ components:
           type: string
           format: date-time
         user_id:
+          type: integer
+
+    WaterParameter:  
+      type: object
+      properties:
+        id:
+          type: integer
+        measurement_time:
+          type: string
+          format: date-time
+        pond_id:
           type: integer

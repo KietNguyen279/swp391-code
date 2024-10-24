@@ -86,6 +86,7 @@ const getAllKoi = (callback) => {
     });
 };
 
+// Get Koi With Food
 const getKoiWithFoodById = (id, callback) => {
     const query = `
         SELECT 
