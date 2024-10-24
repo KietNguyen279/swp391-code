@@ -19,7 +19,7 @@ router.get('/:id', (req, res) => {
 });
 
 // Create koi
-router.post('/', verifyTokenAndRole([3, 4]), (req, res) => {
+router.post('/', verifyTokenAndRole([2, 3, 4]), (req, res) => {
     const { name, image, body_shape, age, size, weight, gender, breed, origin, pond_id } = req.body;
     if (!name || !image || !body_shape || !age || !size || !weight || !gender || !breed || !origin || !pond_id) {
         return res.status(400).json({ message: 'Missing required fields' });
@@ -56,7 +56,7 @@ router.put('/:id', verifyTokenAndRole([3, 4]), (req, res) => {
 });
 
 // Delete koi by ID
-router.delete('/:id', verifyTokenAndRole([4]), (req, res) => {
+router.delete('/:id', verifyTokenAndRole([3, 4]), (req, res) => {
     const koiId = req.params.id;
     Koi.deleteKoiById(koiId, (error, result) => {
         if (error) {
@@ -83,7 +83,7 @@ router.get('/', (req, res) => {
 });
 
 // Calculate Koi Food
-router.get('/:id/food', verifyTokenAndRole([2, 3]), (req, res) => {
+router.get('/:id/food', verifyTokenAndRole([2, 3, 4]), (req, res) => {
     const koiId = req.params.id;
     Koi.getKoiWithFoodById(koiId, (error, koi) => {
         if (error) {
