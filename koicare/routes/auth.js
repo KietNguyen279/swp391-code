@@ -37,39 +37,40 @@ router.post('/register', async (req, res) => {
 });
 
 // Login
+// Login
 router.post('/login', (req, res) => {
-    try {
-      const { email, password } = req.body;
-  
-      if (!email || !password) {
-        return res.status(400).json({ message: "Please provide email and password" });
-      }
-  
-      User.getUserByEmail(email, async (error, user) => {
-        if (error) {
-          console.error('Error during login:', error);
-          return res.status(500).json({ error: error.toString() });
-        }
-        if (!user) {
-          return res.status(401).json({ message: "User not found" }); 
-        }
+  try {
+    const { email, password } = req.body;
 
-        const isMatch = await bcrypt.compare(password, user.password);
-        if (isMatch) {
-          const token = generateToken(user.id);
-          return res.json({
-            message: "Login successful",
-            token,
-          });
-        } else {
-          return res.status(401).json({ message: "Password doesn't match" }); 
-        }
-      });
-    } catch (error) {
-      console.error('Error in login:', error);
-      return res.status(500).json({ error: error.toString() });
+    if (!email || !password) {
+      return res.status(400).json({ message: "Please provide email and password" });
     }
-  });
+
+    User.getUserByEmail(email, async (error, user) => {
+      if (error) {
+        console.error('Error during login:', error);
+        return res.status(500).json({ error: error.toString() });
+      }
+      if (!user) {
+        return res.status(401).json({ message: "Invalid credentials" }); 
+      }
+
+      const isMatch = await bcrypt.compare(password, user.password);
+      if (isMatch) {
+        const token = generateToken(user.id, user.role_id); 
+        return res.json({
+          message: "Login successful",
+          token,
+        });
+      } else {
+        return res.status(401).json({ message: "Invalid credentials" }); 
+      }
+    });
+  } catch (error) {
+    console.error('Error in login:', error);
+    return res.status(500).json({ error: error.toString() });
+  }
+});
 
 // View Profile 
 router.get('/profile', verifyTokenMiddleware, (req, res) => {
