@@ -48,7 +48,7 @@ const updateWaterParamByIdAndName = (id, name, updateValue, callback) => {
     });
 };
 
-// Delete water param by id of water and name of value
+// Delete water param by id
 const deleteWaterParam = (id, name, callback) => {
     const query = `DELETE FROM Water_parameter_value WHERE water_parameters_id = ? AND name = ?;`;
     db.query(query, [id, name], (error, results) => {
