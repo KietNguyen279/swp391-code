@@ -13,7 +13,7 @@ module.exports = {
       DATABASE_USER:"avnadmin",
       DATABASE_PASSWORD:"AVNS_V-iOA0oN1FGpjukPixC",
       DATABASE_NAME:"defaultdb",
-      JWT_SECRET: "very_secret_password"
+      JWT_SECRET: "18ab7990722a0892c66b54fc3f65c2b76a885cdac8178e8ddeb3a4f7b9e4b172"
     }
   }]
 };
