@@ -9,10 +9,10 @@ module.exports = {
     },
     env_production: {
       NODE_ENV: "production",
-      DATABASE_HOST:localhost,
-      DATABASE_USER:root,
-      DATABASE_PASSWORD:123456789,
-      DATABASE :koicare,
+      DATABASE_HOST:"koicaredb-koicare.i.aivencloud.com",
+      DATABASE_USER:"avnadmin",
+      DATABASE_PASSWORD:"AVNS_V-iOA0oN1FGpjukPixC",
+      DATABASE_NAME:"defaultdb",
       JWT_SECRET: "very_secret_password"
     }
   }]
