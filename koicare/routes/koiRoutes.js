@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const Koi = require('../models/koi');
+const { verifyToken, verifyTokenAndRole } = require('../middleware/authMiddleware');
 
 // Get koi by id
 router.get('/:id', (req, res) => {
@@ -18,7 +19,7 @@ router.get('/:id', (req, res) => {
 });
 
 // Create koi
-router.post('/', (req, res) => {
+router.post('/', verifyTokenAndRole([3, 4]), (req, res) => {
     const { name, image, body_shape, age, size, weight, gender, breed, origin, pond_id } = req.body;
     if (!name || !image || !body_shape || !age || !size || !weight || !gender || !breed || !origin || !pond_id) {
         return res.status(400).json({ message: 'Missing required fields' });
@@ -35,7 +36,7 @@ router.post('/', (req, res) => {
 });
 
 // Update koi by ID
-router.put('/:id', (req, res) => {
+router.put('/:id', verifyTokenAndRole([3, 4]), (req, res) => {
     const koiId = req.params.id;
     const { name, image, body_shape, age, size, weight, gender, breed, origin, pond_id } = req.body;
     if (!name || !image || !body_shape || !age || !size || !weight || !gender || !breed || !origin || !pond_id) {
@@ -55,7 +56,7 @@ router.put('/:id', (req, res) => {
 });
 
 // Delete koi by ID
-router.delete('/:id', (req, res) => {
+router.delete('/:id', verifyTokenAndRole([4]), (req, res) => {
     const koiId = req.params.id;
     Koi.deleteKoiById(koiId, (error, result) => {
         if (error) {
@@ -82,7 +83,7 @@ router.get('/', (req, res) => {
 });
 
 // Calculate Koi Food
-router.get('/:id/food', (req, res) => {
+router.get('/:id/food', verifyTokenAndRole([2, 3]), (req, res) => {
     const koiId = req.params.id;
     Koi.getKoiWithFoodById(koiId, (error, koi) => {
         if (error) {

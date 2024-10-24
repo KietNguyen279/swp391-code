@@ -1,10 +1,10 @@
 const express = require('express');
 const router = express.Router();
 const Cart = require('../models/cart')
-const { verifyToken } = require('../middleware/authMiddleware');
+const { verifyToken, verifyTokenAndRole } = require('../middleware/authMiddleware'); 
 
 // Get cart by user ID
-router.get('/', verifyToken, (req, res) => {
+router.get('/', verifyTokenAndRole([3, 4]), (req, res) => {
   const userId = req.userId;
 
   Cart.getCartByUserId(userId, (error, cart) => {
@@ -17,7 +17,7 @@ router.get('/', verifyToken, (req, res) => {
 });
 
 // Add item to cart
-router.post('/', verifyToken, (req, res) => {
+router.post('/', verifyTokenAndRole([2]), (req, res) => {
   const userId = req.userId;
   const { productId, quantity } = req.body;
 
@@ -45,7 +45,7 @@ router.post('/', verifyToken, (req, res) => {
 });
 
 // Update item quantity in cart
-router.put('/:productId', verifyToken, (req, res) => {
+router.put('/:productId', verifyTokenAndRole([2]), (req, res) => {
   const userId = req.userId;
   const productId = req.params.productId;
   const { quantity } = req.body;
@@ -67,7 +67,7 @@ router.put('/:productId', verifyToken, (req, res) => {
 });
 
 // Remove item from cart
-router.delete('/:productId', verifyToken, (req, res) => {
+router.delete('/:productId', verifyTokenAndRole([2, 3, 4]), (req, res) => {
   const userId = req.userId;
   const productId = req.params.productId;
 

@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const Product = require('../models/product');
+const { verifyTokenAndRole } = require('../middleware/authMiddleware'); 
 
 // Get all products
 router.get('/', (req, res) => {
@@ -31,7 +32,7 @@ router.get('/:id', (req, res) => {
 });
 
 // Create product
-router.post('/', (req, res) => {
+router.post('/', verifyTokenAndRole([3, 4]), (req, res) => {
     const { name, description, price, quantity } = req.body;
 
     if (!id || !name || !description || !price || !quantity) {
@@ -55,7 +56,7 @@ router.post('/', (req, res) => {
 });
 
 // Update product by ID
-router.put('/:id', (req, res) => {
+router.put('/:id', verifyTokenAndRole([3, 4]), (req, res) => {
     const productId = req.params.id;
     const { name, description, price, quantity } = req.body;
 
@@ -82,7 +83,7 @@ router.put('/:id', (req, res) => {
 });
 
 // Delete product by ID
-router.delete('/:id', (req, res) => {
+router.delete('/:id', verifyTokenAndRole([4]), (req, res) => {
     const productId = req.params.id;
     Product.deleteProductById(productId, (error, result) => {
         if (error) {

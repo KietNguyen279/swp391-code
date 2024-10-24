@@ -4,10 +4,10 @@ const bcrypt = require("bcrypt");
 const { generateToken } = require('../utils/helper');
 
 const User = require('../models/user');
-const { verifyToken: verifyTokenMiddleware } = require('../middleware/authMiddleware');
+const { verifyToken: verifyTokenMiddleware, verifyTokenAndRole } = require('../middleware/authMiddleware');
 
 // Register
-router.post('/register', async (req, res) => {
+router.post('/register', verifyTokenAndRole([1]), async (req, res) => {
     try {
         const { name, email, password, password_confirm, role_id } = req.body;
 

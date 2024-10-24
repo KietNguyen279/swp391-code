@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const NewsBlog = require('../models/newsBlog');
+const { verifyToken, verifyTokenAndRole } = require('../middleware/authMiddleware');
 
 // Get all news blogs
 router.get('/', (req, res) => {
@@ -29,7 +30,7 @@ router.get('/:id', (req, res) => {
 });
 
 // Create news blog
-router.post('/', (req, res) => {
+router.post('/', verifyTokenAndRole([3, 4]), (req, res) => {
   const { image, title, content, date_published, user_id } = req.body;
 
   if (!image || !title || !content || !date_published || !user_id) {
@@ -46,7 +47,7 @@ router.post('/', (req, res) => {
 });
 
 // Update news blog by ID
-router.put('/:id', (req, res) => {
+router.put('/:id', verifyTokenAndRole([3, 4]), (req, res) => {
   const newsBlogId = req.params.id;
   const { image, title, content, date_published, user_id } = req.body;
 
@@ -70,7 +71,7 @@ router.put('/:id', (req, res) => {
 });
 
 // Delete news blog by ID
-router.delete('/:id', (req, res) => {
+router.delete('/:id', verifyTokenAndRole([4]), (req, res) => {
   const newsBlogId = req.params.id;
   NewsBlog.deleteNewsBlogById(newsBlogId, (error, result) => {
     if (error) {

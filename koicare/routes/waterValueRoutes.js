@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const WaterValue = require('../models/waterValue');
+const { verifyToken, verifyTokenAndRole } = require('../middleware/authMiddleware');
 
 // Get all water parameter values
 router.get('/', (req, res) => {
@@ -31,7 +32,7 @@ router.get('/:id/:name', (req, res) => {
 });
 
 // Create water param value
-router.post('/', (req, res) => {
+router.post('/', verifyTokenAndRole([3, 4]), (req, res) => { 
     const { name, param_value, water_parameters_id } = req.body;
 
     if (!name || !param_value || !water_parameters_id) {
@@ -49,7 +50,7 @@ router.post('/', (req, res) => {
 });
 
 // Update water param value by id of water and name of value
-router.put('/:id/:name', (req, res) => {
+router.put('/:id/:name', verifyTokenAndRole([3, 4]), (req, res) => { 
     const waterParamId = req.params.id;
     const waterParamName = req.params.name;
     const updateValue = req.body.param_value;
@@ -71,7 +72,7 @@ router.put('/:id/:name', (req, res) => {
 });
 
 // Delete water param by id of water and name of value
-router.delete('/:id/:name', (req, res) => {
+router.delete('/:id/:name', verifyTokenAndRole([4]), (req, res) => { 
     const waterParamId = req.params.id;
     const waterParamName = req.params.name;
 

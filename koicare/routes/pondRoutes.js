@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const Pond = require('../models/pond');
+const { verifyToken, verifyTokenAndRole } = require('../middleware/authMiddleware');
 
 // Get pond by ID
 router.get('/:id', (req, res) => {
@@ -18,7 +19,7 @@ router.get('/:id', (req, res) => {
 });
 
 // Create pond
-router.post('/', (req, res) => {
+router.post('/', verifyTokenAndRole([2, 3, 4]), (req, res) => {
     const { name, image, size, depth, volume, num_of_drains, pump_capacity, user_id } = req.body;
 
     if (!name || !image || !size || !depth || !volume || !num_of_drains || !pump_capacity || !user_id) {
@@ -36,30 +37,44 @@ router.post('/', (req, res) => {
 });
 
 // Update pond by ID
-router.put('/:id', (req, res) => {
+router.put('/:id', verifyToken, (req, res) => {
     const pondId = req.params.id;
     const { name, image, size, depth, volume, num_of_drains, pump_capacity } = req.body;
-
-    Pond.updatePondById(pondId, name, image, size, depth, volume, num_of_drains, pump_capacity, (error, result) => {
-        if (error) {
+  
+    Pond.getPondById(pondId, (error, pond) => { 
+      if (error) {
+        console.error('Error fetching pond:', error);
+        return res.status(500).json({ message: 'Internal server error' });
+      } else if (pond) {
+        // Check if the user is authorized to update this pond
+        if (req.userId !== pond.user_id && req.userRole !== 4) { 
+          return res.status(403).json({ message: 'You do not have permission to update this pond' });
+        }
+  
+        Pond.updatePondById(pondId, name, image, size, depth, volume, num_of_drains, pump_capacity, (error, result) => {
+          if (error) {
             console.error('Error updating pond:', error);
             if (error.message === 'No fields to update.') {
-                return res.status(400).json({ message: error.message });
+              return res.status(400).json({ message: error.message });
             } else if (error.message.startsWith('Invalid input data')) {
-                return res.status(400).json({ message: error.message });
+              return res.status(400).json({ message: error.message });
             } else {
-                return res.status(500).json({ message: 'Internal server error' });
+              return res.status(500).json({ message: 'Internal server error' });
             }
-        } else if (result === 1) {
+          } else if (result === 1) {
             res.json({ message: 'Pond updated' });
-        } else {
+          } else {
             res.status(404).json({ message: 'Pond not found' });
-        }
+          }
+        });
+      } else {
+        res.status(404).json({ message: 'Pond not found' });
+      }
     });
-});
+  });
 
 // Delete pond by ID
-router.delete('/:id', (req, res) => {
+router.delete('/:id', verifyTokenAndRole([4]), (req, res) => {
     const pondId = req.params.id;
     Pond.deletePondById(pondId, (error, result) => {
         if (error) {
@@ -89,7 +104,7 @@ router.get('/', (req, res) => {
 });
 
 // Calculate salt amount for a pond
-router.get('/:id/details', (req, res) => {
+router.get('/:id/details', verifyTokenAndRole([2, 3, 4]), (req, res) => {
     const pondId = req.params.id;
 
     Pond.getPondDetails(pondId, (error, pondDetails) => {
