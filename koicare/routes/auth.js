@@ -2,10 +2,8 @@ const express = require("express");
 const router = express.Router();
 const bcrypt = require("bcrypt");
 const { generateToken } = require('../utils/helper');
-const { verifyToken } = require('../utils/helper');
 
 const User = require('../models/user');
-const { verifyToken: verifyTokenMiddleware, verifyTokenAndRole } = require('../middleware/authMiddleware');
 
 // Register
 router.post('/register', async (req, res) => {
@@ -32,7 +30,7 @@ router.post('/register', async (req, res) => {
             }
         });
     } catch (error) {
-        console.error('Error in registration:', error);
+        console.error('Error in registration:', error); 
         return res.status(500).json({ error: error.toString() });
     }
 });
@@ -40,49 +38,41 @@ router.post('/register', async (req, res) => {
 // Login
 router.post('/login', (req, res) => {
     try {
-        const { email, password } = req.body;
-
-        if (!email || !password) {
-            return res.status(400).json({ message: "Please provide email and password" });
+      const { email, password } = req.body;
+  
+      if (!email || !password) {
+        return res.status(400).json({ message: "Please provide email and password" });
+      }
+  
+      User.getUserByEmail(email, async (error, user) => {
+        if (error) {
+          console.error('Error during login:', error);
+          return res.status(500).json({ error: error.toString() });
+        }
+        if (!user) {
+          return res.status(401).json({ message: "User not found" }); 
         }
 
-        User.getUserByEmail(email, async (error, user) => {
-            if (error) {
-                console.error('Error during login:', error);
-                return res.status(500).json({ error: error.toString() });
-            }
-            if (!user) {
-                return res.status(401).json({ message: "User not found" });
-            }
-
-            const isMatch = await bcrypt.compare(password, user.password);
-            if (isMatch) {
-                const token = generateToken(user.id);
-                return res.json({
-                    message: "Login successful",
-                    token,
-                });
-            } else {
-                return res.status(401).json({ message: "Password doesn't match" });
-            }
-        });
+        const isMatch = await bcrypt.compare(password, user.password);
+        if (isMatch) {
+          const token = generateToken(user.id);
+          return res.json({
+            message: "Login successful",
+            token,
+          });
+        } else {
+          return res.status(401).json({ message: "Password doesn't match" }); 
+        }
+      });
     } catch (error) {
-        console.error('Error in login:', error);
-        return res.status(500).json({ error: error.toString() });
+      console.error('Error in login:', error);
+      return res.status(500).json({ error: error.toString() });
     }
-});
+  });
 
 // View Profile 
-router.get('/profile', verifyTokenMiddleware, (req, res) => {
-
-    const token = req.headers.authorization;
-    const decoded = verifyToken(token);
-
-    if (!decoded) {
-        return res.status(401).json({ message: 'Failed to authenticate token' });
-    }
-
-    const userId = decoded.id;
+router.get('/profile', (req, res) => {
+    const userId = req.userId;
 
     User.getUserById(userId, (error, user) => {
         if (error) {
@@ -103,16 +93,8 @@ router.get('/profile', verifyTokenMiddleware, (req, res) => {
 });
 
 // Update Profile  
-router.put('/profile/', verifyTokenMiddleware, (req, res) => {
-
-    const token = req.headers.authorization;
-    const decoded = verifyToken(token);
-
-    if (!decoded) {
-        return res.status(401).json({ message: 'Failed to authenticate token' });
-    }
-
-    const userId = decoded.id;
+router.put('/profile/', (req, res) => {
+    const userId = req.userId;
     const updatedUserData = req.body;
 
     if (updatedUserData.name && updatedUserData.name.length === 0) {
