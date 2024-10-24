@@ -2,8 +2,9 @@ const express = require("express");
 const router = express.Router();
 const bcrypt = require("bcrypt");
 const { generateToken } = require('../utils/helper');
-
+const { verifyToken } = require('../utils/helper');
 const User = require('../models/user');
+const { verifyToken: verifyTokenMiddleware, verifyTokenAndRole } = require('../middleware/authMiddleware');
 
 // Register
 router.post('/register', async (req, res) => {
@@ -71,52 +72,68 @@ router.post('/login', (req, res) => {
   });
 
 // View Profile 
-router.get('/profile', (req, res) => {
-    const userId = req.userId;
+router.get('/profile', verifyTokenMiddleware, (req, res) => {
 
+    const token = req.headers.authorization;
+    const decoded = verifyToken(token);
+  
+    if (!decoded) {
+      return res.status(401).json({ message: 'Failed to authenticate token' });
+    }
+  
+    const userId = decoded.id;
+  
     User.getUserById(userId, (error, user) => {
-        if (error) {
-            console.error('Error fetching user profile:', error);
-            return res.status(500).json({ error: error.toString() });
-        }
-
-        if (!user) {
-            return res.status(404).json({
-                message: 'User not found'
-            });
-        }
-
-        const { password, ...userData } = user;
-
-        res.json({ user: userData });
+      if (error) {
+        console.error('Error fetching user profile:', error);
+        return res.status(500).json({ error: error.toString() });
+      }
+  
+      if (!user) {
+        return res.status(404).json({
+          message: 'User not found'
+        });
+      }
+  
+      const { password, ...userData } = user; 
+  
+      res.json({ user: userData });
     });
-});
+  });
 
 // Update Profile  
-router.put('/profile/', (req, res) => {
-    const userId = req.userId;
-    const updatedUserData = req.body;
+router.put('/profile/', verifyTokenMiddleware, (req, res) => {
 
+    const token = req.headers.authorization;
+    const decoded = verifyToken(token);
+  
+    if (!decoded) {
+      return res.status(401).json({ message: 'Failed to authenticate token' });
+    }
+  
+    const userId = decoded.id; 
+    const updatedUserData = req.body;
+  
     if (updatedUserData.name && updatedUserData.name.length === 0) {
-        return res.status(400).json({ message: 'Name cannot be empty' });
+      return res.status(400).json({ message: 'Name cannot be empty' });
     }
     if (updatedUserData.email && !isValidEmail(updatedUserData.email)) {
-        return res.status(400).json({ message: 'Invalid email format' });
+      return res.status(400).json({ message: 'Invalid email format' });
     }
-
+  
     User.updateUserById(userId, updatedUserData, (error, affectedRows) => {
-        if (error) {
-            console.error('Error updating user profile:', error);
-            return res.status(500).json({ error: error.toString() });
-        }
-
-        if (affectedRows === 0) {
-            return res.status(404).json({ message: 'User not found' });
-        }
-
-        res.json({ message: 'Profile updated successfully' });
+      if (error) {
+        console.error('Error updating user profile:', error);
+        return res.status(500).json({ error: error.toString() });
+      }
+  
+      if (affectedRows === 0) {
+        return res.status(404).json({ message: 'User not found' });
+      }
+  
+      res.json({ message: 'Profile updated successfully' });
     });
-});
+  });
 
 // Helper function to validate email format 
 function isValidEmail(email) {
