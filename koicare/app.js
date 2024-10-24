@@ -14,6 +14,7 @@ const waterValueRoutes = require('./routes/waterValueRoutes');
 const cartRoutes = require('./routes/cartRoutes');
 const orderRoutes = require('./routes/orderRoutes');
 const newsBlogRoutes = require('./routes/newsBlogRoutes');
+const waterParamRoutes = require('./routes/waterParamRoutes');
 const swaggerUi = require('swagger-ui-express');
 const YAML = require('yamljs');
 const swaggerDocument = YAML.load('./koi_swagger.yaml');
@@ -41,8 +42,9 @@ app.use('/waterValue', waterValueRoutes);
 app.use('/cart', cartRoutes);
 app.use('/order', orderRoutes);
 app.use('/newsBlog', newsBlogRoutes);
-app.use('/swagger-ui', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 app.use('/dashboard', dashboardRoutes);
+app.use('/waterParam', waterParamRoutes);
+app.use('/swagger-ui', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 db.connect((error) => {
     if (error) {

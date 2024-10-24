@@ -1,7 +1,7 @@
 const db = require('../config/db');
 
-// Get all water parameter
-const getAll = (callback) => {
+// Get all water parameters
+const getAllWaterParameters = (callback) => {
     const query = `SELECT * FROM Water_parameters;`;
     db.query(query, (error, results) => {
         if (error) {
@@ -11,8 +11,8 @@ const getAll = (callback) => {
     });
 };
 
-// Get water param by id
-const getById = (id, callback) => {
+// Get water parameter by ID
+const getWaterParameterById = (id, callback) => {
     const query = `SELECT * FROM Water_parameters WHERE id = ?;`;
     db.query(query, [id], (error, results) => {
         if (error) {
@@ -27,12 +27,12 @@ const getById = (id, callback) => {
     });
 };
 
-// Create water param
-const create = (measurement_time, pond_id, callback) => {
+// Create water parameter
+const createWaterParameter = (measurement_time, pond_id, callback) => {
     if (!measurement_time || !pond_id) {
         return callback(new Error('Invalid input data. Please check all fields.'), null);
     }
-    
+
     const query = `
     INSERT INTO Water_parameters (measurement_time, pond_id)  
     VALUES (?, ?);`;
@@ -44,14 +44,14 @@ const create = (measurement_time, pond_id, callback) => {
     });
 };
 
-// Update water param by id
-const updateById = (id, measurement_time, updateValue, callback) => {
-    if (!updateValue) {
-        return callback(new Error('Invalid input data. Param value is required.'), null);
+// Update water parameter by ID
+const updateWaterParameterById = (id, measurement_time, callback) => {
+    if (!measurement_time) {
+        return callback(new Error('Invalid input data. Measurement time is required.'), null);
     }
 
     const query = `UPDATE Water_parameters SET measurement_time = ? WHERE id = ?;`;
-    db.query(query, [updateValue, id], (error, results) => {
+    db.query(query, [measurement_time, id], (error, results) => {
         if (error) {
             return callback(error, null);
         }
@@ -59,10 +59,10 @@ const updateById = (id, measurement_time, updateValue, callback) => {
     });
 };
 
-// Delete water param by id
-const deleteById = (id, name, callback) => {
+// Delete water parameter by ID
+const deleteWaterParameterById = (id, callback) => {
     const query = `DELETE FROM Water_parameters WHERE id = ?;`;
-    db.query(query, [id, name], (error, results) => {
+    db.query(query, [id], (error, results) => {
         if (error) {
             return callback(error, null);
         }
@@ -71,9 +71,9 @@ const deleteById = (id, name, callback) => {
 };
 
 module.exports = {
-    getAll,
-    getById,
-    create,
-    updateById,
-    deleteById
+    getAllWaterParameters,
+    getWaterParameterById,
+    createWaterParameter,
+    updateWaterParameterById,
+    deleteWaterParameterById
 };
