@@ -1,8 +1,13 @@
 const jwt = require('jsonwebtoken');
 
 // Generate JWT token
-const generateToken = (userId, roleId) => { 
-  return jwt.sign({ id: userId, role_id: roleId }, process.env.JWT_SECRET, { expiresIn: '1h' });
+const generateToken = (userId, roleId) => {
+  const secret = process.env.JWT_SECRET; 
+  if (!secret) {
+    throw new Error('JWT_SECRET is not defined in the environment variables');
+  }
+
+  return jwt.sign({ id: userId, role_id: roleId }, secret, { expiresIn: '1h' });
 };
 
 // Verify JWT token
