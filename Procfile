@@ -1,1 +1,0 @@
-web: node --chdir koicare index.js
