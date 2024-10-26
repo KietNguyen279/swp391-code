@@ -1,16 +1,10 @@
 
-CREATE TABLE `Role` ( --TODO DETETE
-  `id` BIGINT PRIMARY KEY auto_increment ,
-  `name` VARCHAR(255)
-);
-
 CREATE TABLE `User` (
   `id` BIGINT PRIMARY KEY auto_increment,
   `name` VARCHAR(255),
   `email` VARCHAR(255),
   `password` VARCHAR(255),
-  `role_id` BIGINT, --TODO CHANGE TO ENUM TYPE
-  FOREIGN KEY (`role_id`) REFERENCES `Role` (`id`)
+  `role` ENUM('GUEST', 'MEMBER', 'SHOP', 'ADMIN'), 
 );
 
 CREATE TABLE `Pond` (
@@ -71,6 +65,7 @@ CREATE TABLE `Water_parameter_value` (
 CREATE TABLE `Product` (
   `id` BIGINT PRIMARY KEY auto_increment,
   `name` VARCHAR(255),
+  `image` VARCHAR(255),
   `description` TEXT,
   `price` DECIMAL(10, 2),
   `quantity` BIGINT
@@ -79,7 +74,6 @@ CREATE TABLE `Product` (
 CREATE TABLE `Order` (
   `id` BIGINT PRIMARY KEY auto_increment,
   `order_date` DATETIME,
-  `total_amount` DECIMAL(10, 2),
   `user_id` BIGINT,
   `status` ENUM('pending', 'processing', 'shipped', 'delivered', 'cancelled') DEFAULT 'pending',
   FOREIGN KEY (`user_id`) REFERENCES `User` (`id`)
@@ -120,19 +114,13 @@ CREATE TABLE `Cart_item` (
     FOREIGN KEY (`product_id`) REFERENCES `Product` (`id`)
 );
 
--- Role Values
-INSERT INTO `Role` (`name`) VALUES
-('Guest'),
-('Member'),
-('Shop'),
-('Admin');
 
 -- User Values
-INSERT INTO `User` (`name`, `email`, `password`, `role_id`) VALUES
-('TranThinh', 'tranthinh@example.com', '123', 2), -- Member
-('DucQuang', 'ducquang@example.com', '999', 1), -- Guest
-('PhuongNam', 'phuongnam@example.com', '111', 3), -- Shop
-('KietNguyen', 'kietnguyen@example.com', '279', 4); -- Admin
+INSERT INTO `User` (`name`, `email`, `password`, `role`) VALUES
+('TranThinh', 'tranthinh@example.com', '123', 'MEMBER'), -- Member
+('DucQuang', 'ducquang@example.com', '999', 'GUEST'), -- Guest
+('PhuongNam', 'phuongnam@example.com', '111', 'SHOP'), -- Shop
+('KietNguyen', 'kietnguyen@example.com', '279', 'ADMIN'); -- Admin
 
 -- Pond Values
 INSERT INTO `Pond` (`name`, `image`, `size`, `depth`, `volume`, `num_of_drains`, `pump_capacity`, `user_id`) VALUES
@@ -195,18 +183,18 @@ INSERT INTO `Water_parameter_value` (`name`, `param_value`, `water_parameters_id
 ('temperature', 27.00, 4);
 
 -- Product Values 
-INSERT INTO `Product` (`name`, `description`, `price`, `quantity`) VALUES
-('Koi Food', 'Premium koi food for all stages of growth.', 25.000, 93),
-('Water Treatment', 'Improves water quality and balances pH.', 60.000, 48),
-('Thermometer', 'to check the temperature of the water.', 20.000, 47),
-('Salt', 'Improves water salinity.', 10.000, 49);
+INSERT INTO `Product` (`name`, `image`, `description`, `price`, `quantity`) VALUES
+('Koi Food', 'koifood.jpg', 'Premium koi food for all stages of growth.', 25.000, 93),
+('Water Treatment', 'watertreatment.jpg', 'Improves water quality and balances pH.', 60.000, 48),
+('Thermometer', 'thermometer.jpg', 'to check the temperature of the water.', 20.000, 47),
+('Salt', 'salt.jpg', 'Improves water salinity.', 10.000, 49);
 
 -- Order Values
-INSERT INTO `Order` (`order_date`, `total_amount`, `user_id`, `status`) VALUES
-('2024-09-17 12:00:00', 50.000, 1, 'pending'), -- TranThinh order
-('2024-09-17 13:00:00', 150.000, 2, 'processing'), -- DucQuang order
-('2024-09-17 14:00:00', 60.000, 3, 'cancelled'), -- PhuongNam order
-('2024-09-17 15:00:00', 90.000, 4,'shipped'); -- KietNguyen order
+INSERT INTO `Order` (`order_date`, `user_id`, `status`) VALUES
+('2024-09-17 12:00:00', 1, 'pending'), -- TranThinh order
+('2024-09-17 13:00:00', 2, 'processing'), -- DucQuang order
+('2024-09-17 14:00:00', 3, 'cancelled'), -- PhuongNam order
+('2024-09-17 15:00:00', 4,'shipped'); -- KietNguyen order
 
 -- Order_Product Values
 INSERT INTO `Order_Product` (`order_id`, `product_id`, `quantity`, `price`) VALUES
