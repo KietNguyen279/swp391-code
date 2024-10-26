@@ -95,8 +95,6 @@ CREATE TABLE `News_blog` (
   `title` VARCHAR(255),
   `content` TEXT,
   `date_published` DATETIME,
-  `user_id` BIGINT, 
-  FOREIGN KEY (`user_id`) REFERENCES `User` (`id`)
 );
 
 CREATE TABLE `Cart` (
