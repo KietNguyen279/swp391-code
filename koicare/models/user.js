@@ -2,13 +2,13 @@ const db = require('../config/db');
 
 // Create user 
 const createUser = (userData, callback) => {
-    const { name, email, password, role_id } = userData;
+    const { name, email, password, role } = userData;
     if (!name || !email || !password) {
         return callback(new Error('Invalid input data'), null);
     }
 
-    const query = `INSERT INTO User (name, email, password, role_id) VALUES (?, ?, ?, ?)`;
-    db.query(query, [name, email, password, role_id], (error, results) => {
+    const query = `INSERT INTO User (name, email, password, role) VALUES (?, ?, ?, ?)`;
+    db.query(query, [name, email, password, role], (error, results) => {
         if (error) {
             return callback(error, null);
         }
