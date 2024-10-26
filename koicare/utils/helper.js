@@ -7,7 +7,7 @@ const generateToken = (userId, roleId) => {
     throw new Error('JWT_SECRET is not defined in the environment variables');
   }
 
-  return jwt.sign({ id: userId, role_id: roleId }, jwtSecretKey, { expiresIn: '1h' });
+  return jwt.sign({ id: userId, role: roleId }, jwtSecretKey, { expiresIn: '1h' });
 };
 
 // Verify JWT token

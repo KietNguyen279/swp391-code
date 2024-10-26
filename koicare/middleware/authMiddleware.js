@@ -15,7 +15,7 @@ const verifyTokenMiddleware = (req, res, next) => {
     return res.status(401).json({ message: 'You do not have permission here' });
   }
   try {
-    const token = bearerToken.split(' ')[1] 
+    const token = bearerToken.split(' ')[1]
     const decoded = jwt.verify(token, jwtSecretKey);
     req.userId = decoded.id;
     req.userRole = decoded.role;
@@ -29,7 +29,7 @@ const verifyTokenMiddleware = (req, res, next) => {
 // Verify Member role
 const verifyMemberRole = (req, res, next) => {
   const userRole = req.userRole;
-  if (userRole !== role.MEMBER) {
+  if (userRole !== 'MEMBER') {
     return res.status(403).json({ message: 'You do not have permission to access this resource' });
   }
   next();
@@ -38,7 +38,7 @@ const verifyMemberRole = (req, res, next) => {
 // Verify Shop role
 const verifyShopRole = (req, res, next) => {
   const userRole = req.userRole;
-  if (userRole !== role.SHOP) {
+  if (userRole !== 'SHOP') {
     return res.status(403).json({ message: 'You do not have permission to access this resource' });
   }
   next();
@@ -47,7 +47,7 @@ const verifyShopRole = (req, res, next) => {
 // Verify Admin role
 const verifyAdminRole = (req, res, next) => {
   const userRole = req.userRole
-  if (userRole !== role.ADMIN) {
+  if (userRole !== 'ADMIN') {
     return res.status(403).json({ message: 'You do not have permission to access this resource' });
   }
   next();
@@ -56,7 +56,7 @@ const verifyAdminRole = (req, res, next) => {
 // Verify Admin and Shop roles
 const verifyAdminAndShopRole = (req, res, next) => {
   const userRole = req.userRole;
-  if (userRole !== role.ADMIN && userRole !== role.SHOP) {
+  if (userRole !== 'ADMIN' && userRole !== 'SHOP') {
     return res.status(403).json({ message: 'You do not have permission to access this resource' });
   }
   next()
@@ -65,7 +65,7 @@ const verifyAdminAndShopRole = (req, res, next) => {
 // Verify Member and Shop roles
 const verifyMemberAndShopRole = (req, res, next) => {
   const userRole = req.userRole;
-  if (userRole !== role.MEMBER && userRole !== role.SHOP) {
+  if (userRole !== 'MEMBER' && userRole !== 'SHOP') {
     return res.status(403).json({ message: 'You do not have permission to access this resource' });
   }
   next();
@@ -74,7 +74,7 @@ const verifyMemberAndShopRole = (req, res, next) => {
 // Verify Member, Shop, and Admin roles
 const verifyMemberAndShopAndAdminRole = (req, res, next) => {
   const userRole = req.userRole;
-  if (userRole !== role.MEMBER && userRole !== role.SHOP && userRole !== role.ADMIN) {
+  if (userRole !== 'MEMBER' && userRole !== 'SHOP' && userRole !== 'ADMIN') {
     return res.status(403).json({ message: 'You do not have permission to access this resource' });
   }
   next();

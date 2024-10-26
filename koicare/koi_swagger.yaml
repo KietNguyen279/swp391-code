@@ -33,9 +33,8 @@ paths:
                 password_confirm:
                   type: string
                   format: password
-                role_id:
-                  type: integer
-                  description: ID of the role
+                role:
+                  type: string
       responses:
         "201":
           description: User registered successfully
@@ -85,8 +84,8 @@ paths:
                         type: string
                       email:
                         type: string
-                      role_id:
-                        type: integer
+                      role:
+                        type: string
         "400":
           description: Bad Request
         "401":
@@ -118,8 +117,8 @@ paths:
                         type: string
                       email:
                         type: string
-                      role_id:
-                        type: integer
+                      role:
+                        type: string
         "401":
           description: Unauthorized (missing or invalid token)
         "403":
