@@ -1,6 +1,12 @@
 const jwt = require('jsonwebtoken');
 const jwtSecretKey = require('../config/auth')
 
+const role = {
+  ADMIN: 'ADMIN',
+  SHOP: 'SHOP',
+  MEMBER: 'MEMBER',
+}
+
 // Middleware to verify JWT token
 const verifyTokenMiddleware = (req, res, next) => {
   const bearerToken = req.headers.authorization;
