@@ -1,1 +1,1 @@
-web: npm install --prefix koicare/api && npm start --prefix koicare/api
+web: npm install --prefix koicare && npm start --prefix koicare
