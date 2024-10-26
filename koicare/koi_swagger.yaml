@@ -1214,8 +1214,6 @@ paths:
                 date_published:
                   type: string
                   format: date-time
-                user_id:
-                  type: integer
       responses:
         "201":
           description: News blog created successfully
@@ -1279,8 +1277,6 @@ paths:
                 date_published:
                   type: string
                   format: date-time
-                user_id:
-                  type: integer
       responses:
         "200":
           description: News blog updated successfully

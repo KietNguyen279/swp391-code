@@ -31,13 +31,13 @@ router.get('/:id', (req, res) => {
 
 // Create news blog
 router.post('/', verifyShopRole, (req, res) => {
-  const { image, title, content, date_published, user_id } = req.body;
+  const { image, title, content, date_published } = req.body;
 
-  if (!image || !title || !content || !date_published || !user_id) {
+  if (!image || !title || !content || !date_published) {
     return res.status(400).json({ message: 'Invalid input data. Please check all fields.' });
   }
 
-  NewsBlog.createNewsBlog(image, title, content, date_published, user_id, (error, result) => {
+  NewsBlog.createNewsBlog(image, title, content, date_published, (error, result) => {
     if (error) {
       console.error('Error creating news blog:', error);
       return res.status(500).json({ error: error.toString() });;
@@ -49,9 +49,9 @@ router.post('/', verifyShopRole, (req, res) => {
 // Update news blog by ID
 router.put('/:id', verifyShopRole, (req, res) => {
   const newsBlogId = req.params.id;
-  const { image, title, content, date_published, user_id } = req.body;
+  const { image, title, content, date_published } = req.body;
 
-  NewsBlog.updateNewsBlogById(newsBlogId, image, title, content, date_published, user_id, (error, result) => {
+  NewsBlog.updateNewsBlogById(newsBlogId, image, title, content, date_published, (error, result) => {
     if (error) {
       console.error('Error updating news blog:', error);
       if (error.message === 'No fields to update.') {
