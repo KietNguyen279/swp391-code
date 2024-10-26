@@ -33,9 +33,9 @@ router.get('/:id', (req, res) => {
 
 // Create product
 router.post('/', verifyShopRole, (req, res) => {
-    const { name, description, price, quantity } = req.body;
+    const { name, image, description, price, quantity } = req.body;
 
-    if (!name || !description || !price || !quantity) {
+    if (!name || !image || !description || !price || !quantity) {
         return res.status(400).json({ message: 'Missing required fields' });
     }
     if (price <= 0) {
@@ -45,8 +45,7 @@ router.post('/', verifyShopRole, (req, res) => {
         return res.status(400).json({ message: 'Quantity cannot be negative' });
     }
 
-    Product.createProduct(name, description, price, quantity, (error, productId) => {
-        Product.createProduct(name, description, price, quantity, (error, productId) => {
+        Product.createProduct(name, image, description, price, quantity, (error, productId) => {
             if (error) {
                 console.error('Error creating product:', error);
                 if (error.code === 'ER_DUP_ENTRY') {
@@ -59,14 +58,14 @@ router.post('/', verifyShopRole, (req, res) => {
             }
         });
     });
-});
+
 
 // Update product by ID
 router.put('/:id', verifyShopRole, (req, res) => {
     const productId = req.params.id;
-    const { name, description, price, quantity } = req.body;
+    const { name, image, description, price, quantity } = req.body;
 
-    if (!name || !description || !price || !quantity) {
+    if (!name || !image || !description || !price || !quantity) {
         return res.status(400).json({ message: 'Missing required fields' });
     }
     if (price <= 0) {
@@ -76,7 +75,7 @@ router.put('/:id', verifyShopRole, (req, res) => {
         return res.status(400).json({ message: 'Quantity cannot be negative' });
     }
 
-    Product.updateProductById(productId, name, description, price, quantity, (error, result) => {
+    Product.updateProductById(productId, name, image, description, price, quantity, (error, result) => {
         if (error) {
             console.error('Error updating product:', error);
             return res.status(500).json({ message: 'Internal server error' });

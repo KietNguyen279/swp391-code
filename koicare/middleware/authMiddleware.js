@@ -18,7 +18,7 @@ const verifyTokenMiddleware = (req, res, next) => {
     const token = bearerToken.split(' ')[1] 
     const decoded = jwt.verify(token, jwtSecretKey);
     req.userId = decoded.id;
-    req.userRole = decoded.role_id;
+    req.userRole = decoded.role;
     next();
   } catch (err) {
     console.log(err)

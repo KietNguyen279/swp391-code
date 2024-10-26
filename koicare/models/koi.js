@@ -36,8 +36,8 @@ const createKoi = (name, image, body_shape, age, size, weight, gender, breed, or
     });
 };
 
-// Update pond by ID
-const updateKoiById = (id, name, image, body_shape, age, size, weight, gender, breed, origin, pond_id, callback) => {
+// Update koi by ID
+const updateKoiById = (name, image, body_shape, age, size, weight, gender, breed, origin, pond_id, callback) => {
 
     if (!name || !image || !body_shape || age <= 0 || size <= 0 || weight <= 0 || !gender || !breed || !origin || pond_id <= 0) {
         return callback(new Error('Invalid input data'), null);
@@ -49,7 +49,7 @@ const updateKoiById = (id, name, image, body_shape, age, size, weight, gender, b
     const query = `UPDATE Koi
     SET name = ?, image = ?, body_shape = ?, age = ?, size = ?, weight = ?, gender = ?, breed = ?, origin = ?, pond_id = ?
     WHERE id = ?;`;
-    db.query(query, [name, image, body_shape, age, size, weight, gender, breed, origin, pond_id, id], (error, results) => {
+    db.query(query, [name, image, body_shape, age, size, weight, gender, breed, origin, pond_id], (error, results) => {
         if (error) {
             return callback(error, null);
         }

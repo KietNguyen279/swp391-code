@@ -6,17 +6,14 @@ const createOrder = (userId, orderItems, totalAmount, callback) => {
     if (!orderItems || orderItems.length === 0) {
         return callback(new Error('Order items cannot be empty'), null);
     }
-    if (totalAmount <= 0) {
-        return callback(new Error('Total amount must be greater than 0'), null);
-    }
 
     db.beginTransaction((err) => {
         if (err) {
             return callback(err, null);
         }
         try {
-            const orderQuery = `INSERT INTO \`Order\` (user_id, total_amount) VALUES (?, ?)`;
-            db.query(orderQuery, [userId, totalAmount], (error, orderResult) => {
+            const orderQuery = `INSERT INTO \`Order\` (user_id) VALUES (?)`;
+            db.query(orderQuery, [userId], (error, orderResult) => {
                 if (error) {
                     throw error;
                 }
@@ -55,12 +52,12 @@ const createOrder = (userId, orderItems, totalAmount, callback) => {
 // Get order by ID 
 const getOrderById = (orderId, callback) => {
     const query = `
-    SELECT o.id AS order_id, o.order_date, o.total_amount, o.user_id, o.status, oi.product_id, oi.quantity, p.name, p.price 
-    FROM \`Order\` o
-    JOIN Order_Product oi ON o.id = oi.order_id  -- Use Order_Product
-    JOIN Product p ON oi.product_id = p.id
-    WHERE o.id = ?;
-  `;
+      SELECT o.id AS order_id, o.order_date, o.user_id, o.status, oi.product_id, oi.quantity, p.name, p.price 
+      FROM \`Order\` o
+      JOIN Order_Product oi ON o.id = oi.order_id
+      JOIN Product p ON oi.product_id = p.id
+      WHERE o.id = ?;
+    `;
     db.query(query, [orderId], (error, results) => {
         if (error) {
             return callback(error, null);
@@ -73,10 +70,7 @@ const getOrderById = (orderId, callback) => {
 // Update order by ID
 const updateOrderById = (orderId, updatedOrderData, callback) => {
 
-    const { orderItems, totalAmount, status } = updatedOrderData;
-    if (totalAmount && totalAmount <= 0) {
-        return callback(new Error('Total amount must be greater than 0'), null);
-    }
+    const { orderItems, status } = updatedOrderData;
     if (status && !['pending', 'processing', 'shipped', 'delivered', 'cancelled'].includes(status)) {
         return callback(new Error('Invalid order status'), null);
     }
@@ -190,7 +184,6 @@ const processOrderItems = (items) => {
         order_id: null,
         user_id: null,
         order_date: null,
-        total_amount: null,
         status: null,
         items: []
     };
@@ -216,12 +209,12 @@ const processOrderItems = (items) => {
 const getAllOrders = (callback) => {
     const query = `SELECT * FROM \`Order\``;
     db.query(query, (error, results) => {
-      if (error) {
-        return callback(error, null);
-      }
-      return callback(null, results);
+        if (error) {
+            return callback(error, null);
+        }
+        return callback(null, results);
     });
-  };
+};
 
 module.exports = {
     createOrder,
