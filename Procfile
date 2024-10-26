@@ -1,1 +1,1 @@
-web: node --chdir my-app index.js
+web: node --chdir koicare index.js
