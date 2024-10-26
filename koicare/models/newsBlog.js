@@ -34,11 +34,13 @@ const createNewsBlog = (image, title, content, date_published, callback) => {
     return callback(new Error('Invalid input data'), null);
   }
 
+  const formattedDate = new Date(date_published).toISOString().slice(0, 19).replace('T', ' ');
+
   const query = `
     INSERT INTO News_blog (image, title, content, date_published)
     VALUES (?, ?, ?, ?);
   `;
-  db.query(query, [image, title, content, date_published], (error, results) => {
+  db.query(query, [image, title, content, formattedDate], (error, results) => { // Use formattedDate here
     if (error) {
       return callback(error, null);
     }
