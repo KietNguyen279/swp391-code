@@ -1,5 +1,5 @@
 
-CREATE TABLE `Role` (
+CREATE TABLE `Role` ( --TODO DETETE
   `id` BIGINT PRIMARY KEY auto_increment ,
   `name` VARCHAR(255)
 );
@@ -9,7 +9,7 @@ CREATE TABLE `User` (
   `name` VARCHAR(255),
   `email` VARCHAR(255),
   `password` VARCHAR(255),
-  `role_id` BIGINT,
+  `role_id` BIGINT, --TODO CHANGE TO ENUM TYPE
   FOREIGN KEY (`role_id`) REFERENCES `Role` (`id`)
 );
 
