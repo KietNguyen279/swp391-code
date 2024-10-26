@@ -1,1 +1,1 @@
-web: npm install --prefix koicare && npm start --prefix koicare
+web: node --chdir my-app index.js
