@@ -57,11 +57,11 @@ const addItemToCart = (userId, productId, quantity, callback) => {
     }
 
     const query = `
-    INSERT INTO Cart_item (cart_id, product_id, quantity) 
-    SELECT (SELECT id FROM Cart WHERE user_id = ?), ?, ?  
-    ON DUPLICATE KEY UPDATE quantity = quantity + ?;
-  `;
-    db.query(query, [userId, productId, quantity, quantity], (error, results) => {
+      INSERT INTO Cart_item (cart_id, product_id, quantity) 
+      SELECT c.id, ?, ? FROM Cart c WHERE c.user_id = ?  
+      ON DUPLICATE KEY UPDATE quantity = quantity + ?;
+    `;
+    db.query(query, [productId, quantity, userId, quantity], (error, results) => {
       if (error) {
         if (error.code === 'ER_NO_REFERENCED_ROW_2') {
           if (error.message.includes('for key \'cart_id\'')) {
