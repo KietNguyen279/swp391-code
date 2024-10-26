@@ -756,6 +756,8 @@ paths:
               properties:
                 name:
                   type: string
+                image:
+                  type: string
                 description:
                   type: string
                 price:
@@ -819,6 +821,8 @@ paths:
               type: object
               properties:
                 name:
+                  type: string
+                image:
                   type: string
                 description:
                   type: string
@@ -1024,9 +1028,6 @@ paths:
                     order_date:
                       type: string
                       format: date-time
-                    total_amount:
-                      type: number
-                      format: float
                     user_id:
                       type: integer
                     status:
@@ -1059,9 +1060,6 @@ paths:
                     price:
                       type: number
                       format: float
-                totalAmount:
-                  type: number
-                  format: float
       responses:
         "201":
           description: Order created successfully
@@ -1097,9 +1095,6 @@ paths:
                   order_date:
                     type: string
                     format: date-time
-                  total_amount:
-                    type: number
-                    format: float
                   status:
                     type: string
                     enum: [pending, processing, shipped, delivered, cancelled]
@@ -1152,9 +1147,6 @@ paths:
                       price:
                         type: number
                         format: float
-                totalAmount:
-                  type: number
-                  format: float
                 status:
                   type: string
                   enum: [pending, processing, shipped, delivered, cancelled]
@@ -1564,8 +1556,6 @@ components:
     Koi:
       type: object
       properties:
-        id:
-          type: integer
         name:
           type: string
         image:

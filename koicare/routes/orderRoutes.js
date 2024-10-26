@@ -6,19 +6,16 @@ const { verifyMemberAndShopRole, verifyAdminAndShopRole } = require('../middlewa
 // Create a new order
 router.post('/', verifyMemberAndShopRole, (req, res) => {
   const userId = req.userId;
-  const { orderItems, totalAmount } = req.body;
+  const { orderItems } = req.body;
 
   if (!orderItems || orderItems.length === 0) {
     return res.status(400).json({ message: 'Order items cannot be empty' });
   }
-  if (totalAmount <= 0) {
-    return res.status(400).json({ message: 'Total amount must be a positive number' });
-  }
 
-  Order.createOrder(userId, orderItems, totalAmount, (error, orderId) => {
+  Order.createOrder(userId, orderItems, (error, orderId) => {
     if (error) {
       console.error('Error creating order:', error);
-      if (error.code === 'ER_NO_REFERENCED_ROW_2') { 
+      if (error.code === 'ER_NO_REFERENCED_ROW_2') {
         return res.status(400).json({ message: 'Invalid product ID in order items' });
       } else {
         return res.status(500).json({ error: error.toString() });;
@@ -45,14 +42,11 @@ router.get('/:id', verifyMemberAndShopRole, (req, res) => {
 });
 
 // Update an order by ID
-router.put('/:id', verifyMemberAndShopRole, (req, res) => {
+router.put('/:id', verifyAdminAndShopRole, (req, res) => {
   const orderId = req.params.id;
   const updatedOrderData = req.body;
 
-  const { orderItems, totalAmount, status } = updatedOrderData;
-  if (totalAmount && totalAmount <= 0) {
-    return res.status(400).json({ message: 'Total amount must be a positive number' });
-  }
+  const { orderItems, status } = updatedOrderData;
   if (status && !['pending', 'processing', 'shipped', 'delivered', 'cancelled'].includes(status)) {
     return res.status(400).json({ message: 'Invalid order status' });
   }
