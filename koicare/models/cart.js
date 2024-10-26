@@ -1,4 +1,5 @@
 const db = require('../config/db');
+const Product = require('../models/product');
 
 // Get cart by user id
 const getCartByUserId = (userId, callback) => {
@@ -56,22 +57,20 @@ const addItemToCart = (userId, productId, quantity, callback) => {
     }
 
     const query = `
-      INSERT INTO Cart (user_id) SELECT ? WHERE NOT EXISTS (SELECT 1 FROM Cart WHERE user_id = ?);
-      SELECT id INTO @cart_id FROM Cart WHERE user_id = ?; 
-      INSERT INTO Cart_item (cart_id, product_id, quantity) 
-      VALUES (@cart_id, ?, ?) 
-      ON DUPLICATE KEY UPDATE quantity = quantity + ?;
-    `;
-    db.query(query, [userId, userId, userId, productId, quantity, quantity], (error, results) => {
+    INSERT INTO Cart_item (cart_id, product_id, quantity) 
+    SELECT (SELECT id FROM Cart WHERE user_id = ?), ?, ?  
+    ON DUPLICATE KEY UPDATE quantity = quantity + ?;
+  `;
+    db.query(query, [userId, productId, quantity, quantity], (error, results) => {
       if (error) {
         if (error.code === 'ER_NO_REFERENCED_ROW_2') {
-          if (error.sqlMessage.includes('for key \'cart_id\'')) { 
+          if (error.message.includes('for key \'cart_id\'')) {
             return callback(new Error('Invalid cart ID'), null);
-          } else if (error.sqlMessage.includes('for key \'product_id\'')) {
+          } else if (error.message.includes('for key \'product_id\'')) {
             return callback(new Error('Invalid product ID'), null);
-          } 
-        } 
-        return callback(error, null); 
+          }
+        }
+        return callback(error, null);
       }
       return callback(null, results.affectedRows);
     });

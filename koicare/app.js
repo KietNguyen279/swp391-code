@@ -3,6 +3,7 @@ const path = require("path");
 const dotenv = require("dotenv");
 const bcrypt = require("bcrypt");
 const cors = require('cors');
+const { verifyTokenMiddleware } = require('./middleware/authMiddleware');
 
 const authRoutes = require('./routes/auth');
 const homeRoutes = require('./routes/homeRoutes');
@@ -32,18 +33,18 @@ app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 app.set('view engine', 'hbs');
 app.set('views', path.join(__dirname, 'views'));
-app.use('/auth', authRoutes);
-app.use('/', homeRoutes);
-app.use('/koi', koiRoutes);
-app.use('/koiGrowth', koiGrowthRoutes);
-app.use('/pond', pondRoutes);
-app.use('/product', productRoutes);
-app.use('/waterValue', waterValueRoutes);
-app.use('/cart', cartRoutes);
-app.use('/order', orderRoutes);
-app.use('/newsBlog', newsBlogRoutes);
-app.use('/dashboard', dashboardRoutes);
-app.use('/waterParam', waterParamRoutes);
+app.use('/auth', authRoutes); 
+app.use('/', homeRoutes); 
+app.use('/koi', verifyTokenMiddleware, koiRoutes); 
+app.use('/koiGrowth', verifyTokenMiddleware, koiGrowthRoutes); 
+app.use('/pond', verifyTokenMiddleware, pondRoutes); 
+app.use('/product', verifyTokenMiddleware, productRoutes); 
+app.use('/waterValue', verifyTokenMiddleware, waterValueRoutes); 
+app.use('/cart', verifyTokenMiddleware, cartRoutes); 
+app.use('/order', verifyTokenMiddleware, orderRoutes); 
+app.use('/newsBlog', verifyTokenMiddleware, newsBlogRoutes); 
+app.use('/dashboard', verifyTokenMiddleware, dashboardRoutes); 
+app.use('/waterParam', verifyTokenMiddleware, waterParamRoutes);
 app.use('/swagger-ui', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 db.connect((error) => {
@@ -53,6 +54,7 @@ db.connect((error) => {
         console.log("MYSQL Connected")
     }
 });
+
 const port = process.env.PORT||80
 
 app.listen(port, () => {

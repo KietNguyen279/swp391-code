@@ -1,53 +1,85 @@
 const jwt = require('jsonwebtoken');
+const jwtSecretKey = require('../config/auth')
 
 // Middleware to verify JWT token
 const verifyTokenMiddleware = (req, res, next) => {
-  const token = req.headers.authorization;
+  const bearerToken = req.headers.authorization;
 
-  if (!token) {
-    return res.status(401).json({
-      message: 'No token provided'
-    });
+  if (!bearerToken) {
+    return res.status(401).json({ message: 'You do not have permission here' });
   }
-
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const token = bearerToken.split(' ')[1]
+    const decoded = jwt.verify(token, jwtSecretKey);
     req.userId = decoded.id;
     req.userRole = decoded.role_id;
     next();
   } catch (err) {
-    console.error("JWT Verification failed:", err);
+    console.log(err)
     return res.status(401).json({ message: 'Failed to authenticate token' });
   }
 };
 
-// Middleware to verify JWT token and check role
-const verifyTokenAndRole = (allowedRoles) => {
-  return (req, res, next) => {
-    const token = req.headers.authorization;
+// Verify Member role
+const verifyMemberRole = (req, res, next) => {
+  const userRole = req.userRole;
+  if (userRole !== 2) {
+    return res.status(403).json({ message: 'You do not have permission to access this resource' });
+  }
+  next();
+};
 
-    if (!token) {
-      return res.status(401).json({ message: 'No token provided' });
-    }
+// Verify Shop role
+const verifyShopRole = (req, res, next) => {
+  const userRole = req.userRole;
+  if (userRole !== 3) {
+    return res.status(403).json({ message: 'You do not have permission to access this resource' });
+  }
+  next();
+};
 
-    try {
-      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+// Verify Admin role
+const verifyAdminRole = (req, res, next) => {
+  const userRole = req.userRole
+  if (userRole !== 4) {
+    return res.status(403).json({ message: 'You do not have permission to access this resource' });
+  }
+  next();
+};
 
-      req.userId = decoded.id;
-      req.userRole = decoded.role_id;
+// Verify Admin and Shop roles
+const verifyAdminAndShopRole = (req, res, next) => {
+  const userRole = req.userRole;
+  if (userRole !== 3 && userRole !== 4) {
+    return res.status(403).json({ message: 'You do not have permission to access this resource' });
+  }
+  next()
+};
 
-      if (allowedRoles.includes(req.userRole)) {
-        next();
-      } else {
-        res.status(403).json({ message: 'Forbidden - You do not have permission to access this resource' });
-      }
-    } catch (err) {
-      return res.status(401).json({ message: 'Failed to authenticate token' });
-    }
-  };
+// Verify Member and Shop roles
+const verifyMemberAndShopRole = (req, res, next) => {
+  const userRole = req.userRole;
+  if (userRole !== 2 && userRole !== 3) {
+    return res.status(403).json({ message: 'You do not have permission to access this resource' });
+  }
+  next();
+};
+
+// Verify Member, Shop, and Admin roles
+const verifyMemberAndShopAndAdminRole = (req, res, next) => {
+  const userRole = req.userRole;
+  if (userRole !== 2 && userRole !== 3 && userRole !== 4) {
+    return res.status(403).json({ message: 'You do not have permission to access this resource' });
+  }
+  next();
 };
 
 module.exports = {
-  verifyToken: verifyTokenMiddleware,
-  verifyTokenAndRole
+  verifyTokenMiddleware,
+  verifyMemberRole,
+  verifyShopRole,
+  verifyAdminRole,
+  verifyMemberAndShopRole,
+  verifyAdminAndShopRole,
+  verifyMemberAndShopAndAdminRole
 };

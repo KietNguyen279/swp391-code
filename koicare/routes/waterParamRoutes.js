@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const WaterParam = require('../models/waterParam');
-const { verifyToken, verifyTokenAndRole } = require('../middleware/authMiddleware');
+const { verifyShopRole } = require('../middleware/authMiddleware');
 
 // Get all water parameters
 router.get('/', (req, res) => {
@@ -31,7 +31,7 @@ router.get('/:id', (req, res) => {
 });
 
 // Create water parameter
-router.post('/', verifyTokenAndRole([3, 4]), (req, res) => {
+router.post('/', verifyShopRole, (req, res) => {
   const { measurement_time, pond_id } = req.body;
 
   if (!measurement_time || !pond_id) {
@@ -49,7 +49,7 @@ router.post('/', verifyTokenAndRole([3, 4]), (req, res) => {
 });
 
 // Update water parameter by ID
-router.put('/:id', verifyTokenAndRole([3, 4]), (req, res) => {
+router.put('/:id', verifyShopRole, (req, res) => {
   const waterParamId = req.params.id;
   const { measurement_time } = req.body; 
 
@@ -70,7 +70,7 @@ router.put('/:id', verifyTokenAndRole([3, 4]), (req, res) => {
 });
 
 // Delete water parameter by ID
-router.delete('/:id', verifyTokenAndRole([4]), (req, res) => {
+router.delete('/:id', verifyShopRole, (req, res) => {
   const waterParamId = req.params.id;
 
   WaterParam.deleteWaterParameterById(waterParamId, (error, result) => {

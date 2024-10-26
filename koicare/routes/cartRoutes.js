@@ -1,10 +1,11 @@
 const express = require('express');
 const router = express.Router();
 const Cart = require('../models/cart')
-const { verifyToken, verifyTokenAndRole } = require('../middleware/authMiddleware'); 
+const Product = require('../models/product');
+const { verifyMemberAndShopRole } = require('../middleware/authMiddleware'); 
 
 // Get cart by user ID
-router.get('/', verifyTokenAndRole([3, 4]), (req, res) => {
+router.get('/', (req, res) => {
   const userId = req.userId;
 
   Cart.getCartByUserId(userId, (error, cart) => {
@@ -17,7 +18,7 @@ router.get('/', verifyTokenAndRole([3, 4]), (req, res) => {
 });
 
 // Add item to cart
-router.post('/', verifyTokenAndRole([2]), (req, res) => {
+router.post('/', verifyMemberAndShopRole, (req, res) => {
   const userId = req.userId;
   const { productId, quantity } = req.body;
 
@@ -25,7 +26,7 @@ router.post('/', verifyTokenAndRole([2]), (req, res) => {
     return res.status(400).json({ message: 'Invalid input data' });
   }
 
-  Product.getProductById(productId, (productError, product) => {
+  return Product.getProductById(productId, (productError, product) => {
     if (productError) {
       console.error('Error fetching product:', productError);
       return res.status(500).json({ error: productError.toString() });
@@ -37,15 +38,21 @@ router.post('/', verifyTokenAndRole([2]), (req, res) => {
     Cart.addItemToCart(userId, productId, quantity, (error, result) => {
       if (error) {
         console.error('Error adding item to cart:', error);
-        return res.status(500).json({ error: error.toString() });
+        if (error.code === 'ER_DUP_ENTRY') { 
+          return res.status(409).json({ message: 'Item already exists in the cart' });
+        } else if (error.code === 'ER_NO_REFERENCED_ROW_2') { 
+          return res.status(400).json({ message: 'Invalid product ID or cart ID' });
+        } else {
+          return res.status(500).json({ error: error.toString() });
+        }
       }
-      res.status(201).json({ message: 'Item added to cart' });
-    });
+      return res.status(201).json({message: 'Add item to cart successfully'})
+    })
   });
 });
 
 // Update item quantity in cart
-router.put('/:productId', verifyTokenAndRole([2]), (req, res) => {
+router.put('/:productId', verifyMemberAndShopRole, (req, res) => {
   const userId = req.userId;
   const productId = req.params.productId;
   const { quantity } = req.body;
@@ -67,7 +74,7 @@ router.put('/:productId', verifyTokenAndRole([2]), (req, res) => {
 });
 
 // Remove item from cart
-router.delete('/:productId', verifyTokenAndRole([2, 3, 4]), (req, res) => {
+router.delete('/:productId', verifyMemberAndShopRole, (req, res) => {
   const userId = req.userId;
   const productId = req.params.productId;
 

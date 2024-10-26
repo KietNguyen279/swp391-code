@@ -4,7 +4,7 @@ const bcrypt = require("bcrypt");
 const { generateToken } = require('../utils/helper');
 const { verifyToken } = require('../utils/helper');
 const User = require('../models/user');
-const { verifyToken: verifyTokenMiddleware, verifyTokenAndRole } = require('../middleware/authMiddleware');
+const { verifyTokenMiddleware } = require('../middleware/authMiddleware');
 
 // Register
 router.post('/register', async (req, res) => {
@@ -86,14 +86,7 @@ router.post('/login', async (req, res) => {
 // View Profile 
 router.get('/profile', verifyTokenMiddleware, (req, res) => {
 
-  const token = req.headers.authorization;
-  const decoded = verifyToken(token);
-
-  if (!decoded) {
-    return res.status(401).json({ message: 'Failed to authenticate token' });
-  }
-
-  const userId = decoded.id;
+  const userId = req.userId;
 
   User.getUserById(userId, (error, user) => {
     if (error) {
@@ -120,7 +113,7 @@ router.put('/profile/', verifyTokenMiddleware, (req, res) => {
   const decoded = verifyToken(token);
 
   if (!decoded) {
-    return res.status(401).json({ message: 'Failed to authenticate token' });
+    return res.status(401).json({ message: 'Failed to authenticate token 003' });
   }
 
   const userId = decoded.id;

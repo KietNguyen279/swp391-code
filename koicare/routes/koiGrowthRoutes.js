@@ -1,10 +1,10 @@
 const express = require('express');
 const router = express.Router();
 const KoiGrowth = require('../models/koiGrowth');
-const { verifyToken, verifyTokenAndRole } = require('../middleware/authMiddleware');
+const { verifyShopRole } = require('../middleware/authMiddleware');
 
 // Create koi growth record
-router.post('/', verifyTokenAndRole([3, 4]), (req, res) => {
+router.post('/', verifyShopRole, (req, res) => {
   const { growth_date, age, size, weight, koi_id } = req.body;
 
   if (!growth_date || age <= 0 || size <= 0 || weight <= 0 || !koi_id) {
@@ -36,7 +36,7 @@ router.get('/:id', (req, res) => {
 });
 
 // Update koi growth record by ID
-router.put('/:id', verifyTokenAndRole([3, 4]), (req, res) => {
+router.put('/:id', verifyShopRole, (req, res) => {
   const koiGrowthId = req.params.id;
   const updatedKoiGrowthData = req.body; 
 

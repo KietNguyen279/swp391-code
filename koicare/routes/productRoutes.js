@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const Product = require('../models/product');
-const { verifyTokenAndRole } = require('../middleware/authMiddleware'); 
+const { verifyShopRole } = require('../middleware/authMiddleware');
 
 // Get all products
 router.get('/', (req, res) => {
@@ -32,10 +32,10 @@ router.get('/:id', (req, res) => {
 });
 
 // Create product
-router.post('/', verifyTokenAndRole([3, 4]), (req, res) => {
+router.post('/', verifyShopRole, (req, res) => {
     const { name, description, price, quantity } = req.body;
 
-    if (!id || !name || !description || !price || !quantity) {
+    if (!name || !description || !price || !quantity) {
         return res.status(400).json({ message: 'Missing required fields' });
     }
     if (price <= 0) {
@@ -45,18 +45,24 @@ router.post('/', verifyTokenAndRole([3, 4]), (req, res) => {
         return res.status(400).json({ message: 'Quantity cannot be negative' });
     }
 
-    Product.createProduct(name, description, price, quantity, (error, result) => {
-        if (error) {
-            console.error('Error creating product:', error);
-            return res.status(500).json({ error: error.toString() });
-        } else {
-            res.status(201).json({ message: 'Product created' });
-        }
+    Product.createProduct(name, description, price, quantity, (error, productId) => {
+        Product.createProduct(name, description, price, quantity, (error, productId) => {
+            if (error) {
+                console.error('Error creating product:', error);
+                if (error.code === 'ER_DUP_ENTRY') {
+                    return res.status(409).json({ message: 'A product with this name already exists' });
+                } else {
+                    return res.status(500).json({ error: error.toString() });
+                }
+            } else {
+                res.status(201).json({ message: 'Product created', productId });
+            }
+        });
     });
 });
 
 // Update product by ID
-router.put('/:id', verifyTokenAndRole([3, 4]), (req, res) => {
+router.put('/:id', verifyShopRole, (req, res) => {
     const productId = req.params.id;
     const { name, description, price, quantity } = req.body;
 
@@ -70,7 +76,7 @@ router.put('/:id', verifyTokenAndRole([3, 4]), (req, res) => {
         return res.status(400).json({ message: 'Quantity cannot be negative' });
     }
 
-    Product.updateProductById(productId, name, description, price, quantity, (error, result) => { 
+    Product.updateProductById(productId, name, description, price, quantity, (error, result) => {
         if (error) {
             console.error('Error updating product:', error);
             return res.status(500).json({ message: 'Internal server error' });
@@ -83,7 +89,7 @@ router.put('/:id', verifyTokenAndRole([3, 4]), (req, res) => {
 });
 
 // Delete product by ID
-router.delete('/:id', verifyTokenAndRole([4]), (req, res) => {
+router.delete('/:id', verifyShopRole, (req, res) => {
     const productId = req.params.id;
     Product.deleteProductById(productId, (error, result) => {
         if (error) {

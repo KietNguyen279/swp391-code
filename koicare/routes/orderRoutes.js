@@ -1,10 +1,10 @@
 const express = require('express');
 const router = express.Router();
 const Order = require('../models/order');
-const { verifyToken, verifyTokenAndRole } = require('../middleware/authMiddleware');
+const { verifyMemberAndShopRole, verifyAdminAndShopRole } = require('../middleware/authMiddleware');
 
 // Create a new order
-router.post('/', verifyTokenAndRole([2, 3, 4]), (req, res) => {
+router.post('/', verifyMemberAndShopRole, (req, res) => {
   const userId = req.userId;
   const { orderItems, totalAmount } = req.body;
 
@@ -29,7 +29,7 @@ router.post('/', verifyTokenAndRole([2, 3, 4]), (req, res) => {
 });
 
 // Get order by ID
-router.get('/:id', verifyToken, (req, res) => {
+router.get('/:id', verifyMemberAndShopRole, (req, res) => {
   const orderId = req.params.id;
 
   Order.getOrderById(orderId, (error, order) => {
@@ -40,17 +40,12 @@ router.get('/:id', verifyToken, (req, res) => {
     if (!order) {
       return res.status(404).json({ message: 'Order not found' });
     }
-    // Check if the user is authorized to access this order
-    if (req.userId !== order.user_id && req.userRole !== 4) { 
-      return res.status(403).json({ message: 'You do not have permission to access this order' });
-    }
-
     res.json(order);
   });
 });
 
 // Update an order by ID
-router.put('/:id', verifyTokenAndRole([3, 4]), (req, res) => {
+router.put('/:id', verifyMemberAndShopRole, (req, res) => {
   const orderId = req.params.id;
   const updatedOrderData = req.body;
 
@@ -76,7 +71,7 @@ router.put('/:id', verifyTokenAndRole([3, 4]), (req, res) => {
 });
 
 // Delete an order by ID
-router.delete('/:id', verifyTokenAndRole([4]), (req, res) => {
+router.delete('/:id', verifyMemberAndShopRole, (req, res) => {
   const orderId = req.params.id;
 
   Order.deleteOrderById(orderId, (error, result) => {
@@ -93,7 +88,7 @@ router.delete('/:id', verifyTokenAndRole([4]), (req, res) => {
 });
 
 // Get all orders
-router.get('/', verifyTokenAndRole([4]), (req, res) => {
+router.get('/', verifyAdminAndShopRole, (req, res) => {
   Order.getAllOrders((error, orders) => {
     if (error) {
       console.error('Error fetching orders:', error);

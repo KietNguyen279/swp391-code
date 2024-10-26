@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const Pond = require('../models/pond');
-const { verifyToken, verifyTokenAndRole } = require('../middleware/authMiddleware');
+const { verifyMemberAndShopRole } = require('../middleware/authMiddleware');
 
 // Get pond by ID
 router.get('/:id', (req, res) => {
@@ -19,7 +19,7 @@ router.get('/:id', (req, res) => {
 });
 
 // Create pond
-router.post('/', verifyTokenAndRole([2, 3, 4]), (req, res) => {
+router.post('/', verifyMemberAndShopRole, (req, res) => {
     const { name, image, size, depth, volume, num_of_drains, pump_capacity, user_id } = req.body;
 
     if (!name || !image || !size || !depth || !volume || !num_of_drains || !pump_capacity || !user_id) {
@@ -37,7 +37,7 @@ router.post('/', verifyTokenAndRole([2, 3, 4]), (req, res) => {
 });
 
 // Update pond by ID
-router.put('/:id', verifyToken, (req, res) => {
+router.put('/:id', verifyMemberAndShopRole, (req, res) => {
     const pondId = req.params.id;
     const { name, image, size, depth, volume, num_of_drains, pump_capacity } = req.body;
   
@@ -46,11 +46,6 @@ router.put('/:id', verifyToken, (req, res) => {
         console.error('Error fetching pond:', error);
         return res.status(500).json({ message: 'Internal server error' });
       } else if (pond) {
-        // Check if the user is authorized to update this pond
-        if (req.userId !== pond.user_id && req.userRole !== 4) { 
-          return res.status(403).json({ message: 'You do not have permission to update this pond' });
-        }
-  
         Pond.updatePondById(pondId, name, image, size, depth, volume, num_of_drains, pump_capacity, (error, result) => {
           if (error) {
             console.error('Error updating pond:', error);
@@ -74,7 +69,7 @@ router.put('/:id', verifyToken, (req, res) => {
   });
 
 // Delete pond by ID
-router.delete('/:id', verifyTokenAndRole([4]), (req, res) => {
+router.delete('/:id', verifyMemberAndShopRole, (req, res) => {
     const pondId = req.params.id;
     Pond.deletePondById(pondId, (error, result) => {
         if (error) {
@@ -104,7 +99,7 @@ router.get('/', (req, res) => {
 });
 
 // Calculate salt amount for a pond
-router.get('/:id/details', verifyTokenAndRole([2, 3, 4]), (req, res) => {
+router.get('/:id/details', verifyMemberAndShopRole, (req, res) => {
     const pondId = req.params.id;
 
     Pond.getPondDetails(pondId, (error, pondDetails) => {

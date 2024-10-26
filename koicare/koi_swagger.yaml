@@ -4,7 +4,7 @@ info:
   description: API documentation for your web application
   version: 1.0.0
 servers:
-  - url: https://koicare.onrender.com
+  - url: "http://localhost:80"
     description: Local development server
 
 paths:
@@ -13,6 +13,8 @@ paths:
       summary: Register a new user
       tags:
         - Authentication
+      security:
+        - bearerAuth: [] 
       requestBody:
         required: true
         content:
@@ -47,6 +49,8 @@ paths:
       summary: Login an existing user
       tags:
         - Authentication
+      security:
+        - bearerAuth: []
       requestBody:
         required: true
         content:
@@ -129,6 +133,8 @@ paths:
       summary: Update user profile
       tags:
         - Profile
+      security:
+        - bearerAuth: []
       parameters:
         - in: path
           name: userId
@@ -149,8 +155,6 @@ paths:
                   type: string
                   format: email
 
-      security:
-        - bearerAuth: []
       responses:
         "200":
           description: Profile updated successfully
@@ -168,6 +172,8 @@ paths:
       summary: Get role by ID
       tags:
         - Role
+      security:
+        - bearerAuth: []  
       parameters:
         - in: path
           name: id
@@ -194,6 +200,8 @@ paths:
       summary: Update role by ID
       tags:
         - Role
+      security:
+        - bearerAuth: []
       parameters:
         - in: path
           name: id
@@ -221,6 +229,8 @@ paths:
       summary: Get all koi
       tags:
         - Koi
+      security:
+        - bearerAuth: []  
       responses:
         "200":
           description: A list of all koi
@@ -234,6 +244,8 @@ paths:
       summary: Create a new koi
       tags:
         - Koi
+      security:
+        - bearerAuth: []
       requestBody:
         required: true
         content:
@@ -276,6 +288,8 @@ paths:
       summary: Get koi by ID
       tags:
         - Koi
+      security:
+        - bearerAuth: [] 
       parameters:
         - in: path
           name: id
@@ -299,6 +313,8 @@ paths:
       summary: Update koi by ID
       tags:
         - Koi
+      security:
+        - bearerAuth: []
       parameters:
         - in: path
           name: id
@@ -324,6 +340,8 @@ paths:
       summary: Delete koi by ID
       tags:
         - Koi
+      security:
+        - bearerAuth: []
       parameters:
         - in: path
           name: id
@@ -344,6 +362,8 @@ paths:
       summary: Get all koi growth records
       tags:
         - Koi Growth
+      security:
+        - bearerAuth: []  
       responses:
         "200":
           description: A list of all koi growth records
@@ -375,6 +395,8 @@ paths:
       summary: Create a new koi growth record
       tags:
         - Koi Growth
+      security:
+        - bearerAuth: []
       requestBody:
         required: true
         content:
@@ -408,6 +430,8 @@ paths:
       summary: Get koi growth record by ID
       tags:
         - Koi Growth
+      security:
+        - bearerAuth: []  
       parameters:
         - in: path
           name: id
@@ -445,6 +469,8 @@ paths:
       summary: Update koi growth record by ID
       tags:
         - Koi Growth
+      security:
+        - bearerAuth: []
       parameters:
         - in: path
           name: id
@@ -481,6 +507,8 @@ paths:
       summary: Get food calculation by koi ID
       tags:
         - Koi
+      security:
+        - bearerAuth: []  
       parameters:
         - in: path
           name: id
@@ -509,6 +537,8 @@ paths:
       summary: Get all ponds
       tags:
         - Pond
+      security:
+        - bearerAuth: []  
       responses:
         "200":
           description: A list of all ponds
@@ -524,6 +554,8 @@ paths:
       summary: Create a new pond
       tags:
         - Pond
+      security:
+        - bearerAuth: []
       requestBody:
         required: true
         content:
@@ -564,6 +596,8 @@ paths:
       summary: Get pond by ID
       tags:
         - Pond
+      security:
+        - bearerAuth: []  
       parameters:
         - in: path
           name: id
@@ -587,6 +621,8 @@ paths:
       summary: Update pond by ID
       tags:
         - Pond
+      security:
+        - bearerAuth: []
       parameters:
         - in: path
           name: id
@@ -633,6 +669,8 @@ paths:
       summary: Delete pond by ID
       tags:
         - Pond
+      security:
+        - bearerAuth: []
       parameters:
         - in: path
           name: id
@@ -653,6 +691,8 @@ paths:
       summary: Get pond details by ID
       tags:
         - Pond
+      security:
+        - bearerAuth: []  
       parameters:
         - in: path
           name: id
@@ -687,6 +727,8 @@ paths:
       summary: Get all products
       tags:
         - Product
+      security:
+        - bearerAuth: []  
       responses:
         "200":
           description: A list of all products
@@ -703,6 +745,8 @@ paths:
       summary: Create a new product
       tags:
         - Product
+      security:
+        - bearerAuth: []
       requestBody:
         required: true
         content:
@@ -732,6 +776,8 @@ paths:
       summary: Get product by ID
       tags:
         - Product
+      security:
+        - bearerAuth: []  
       parameters:
         - in: path
           name: id
@@ -756,6 +802,8 @@ paths:
 
       tags:
         - Product
+      security:
+        - bearerAuth: []
       parameters:
         - in: path
           name: id
@@ -791,6 +839,8 @@ paths:
       summary: Delete product by ID
       tags:
         - Product
+      security:
+        - bearerAuth: []
       parameters:
         - in: path
           name: id
@@ -811,6 +861,8 @@ paths:
       summary: Get all water parameter values
       tags:
         - Water Value
+      security:
+        - bearerAuth: []  
       responses:
         "200":
           description: A list of all water parameter values
@@ -826,6 +878,8 @@ paths:
       summary: Create a new water parameter value
       tags:
         - Water Value
+      security:
+        - bearerAuth: []
       requestBody:
         required: true
         content:
@@ -853,6 +907,8 @@ paths:
       summary: Get water parameter value by ID and name
       tags:
         - Water Value
+      security:
+        - bearerAuth: []  
       parameters:
         - in: path
           name: id
@@ -886,6 +942,8 @@ paths:
       summary: Update water parameter value by ID and name
       tags:
         - Water Value
+      security:
+        - bearerAuth: []
       parameters:
         - in: path
           name: id
@@ -921,6 +979,8 @@ paths:
       summary: Delete water parameter value by ID and name
       tags:
         - Water Value
+      security:
+        - bearerAuth: []
       parameters:
         - in: path
           name: id
@@ -1128,6 +1188,8 @@ paths:
       summary: Get all news blogs
       tags:
         - News Blog
+      security:
+        - bearerAuth: []  
       responses:
         "200":
           description: A list of all news blogs
@@ -1143,6 +1205,8 @@ paths:
       summary: Create a new news_blog
       tags:
         - News Blog
+      security:
+        - bearerAuth: []
       requestBody:
         required: true
         content:
@@ -1174,6 +1238,8 @@ paths:
       summary: Get news blog by ID
       tags:
         - News Blog
+      security:
+        - bearerAuth: []  
       parameters:
         - in: path
           name: id
@@ -1197,6 +1263,8 @@ paths:
       summary: Update news blog by ID
       tags:
         - News Blog
+      security:
+        - bearerAuth: []
       parameters:
         - in: path
           name: id
@@ -1236,6 +1304,8 @@ paths:
       summary: Delete news blog by ID
       tags:
         - News Blog
+      security:
+        - bearerAuth: []
       parameters:
         - in: path
           name: id
@@ -1367,6 +1437,8 @@ paths:
       summary: Get all water parameters
       tags:
         - Water Parameter
+      security:
+        - bearerAuth: []  
       responses:
         "200":
           description: A list of all water parameters
@@ -1382,6 +1454,8 @@ paths:
       summary: Create a new water parameter
       tags:
         - Water Parameter
+      security:
+        - bearerAuth: []
       requestBody:
         required: true
         content:
@@ -1407,6 +1481,8 @@ paths:
       summary: Get water parameter by ID
       tags:
         - Water Parameter
+      security:
+        - bearerAuth: []  
       parameters:
         - in: path
           name: id
@@ -1430,6 +1506,8 @@ paths:
       summary: Update water parameter by ID
       tags:
         - Water Parameter
+      security:
+        - bearerAuth: []
       parameters:
         - in: path
           name: id
@@ -1459,6 +1537,8 @@ paths:
       summary: Delete water parameter by ID
       tags:
         - Water Parameter
+      security:
+        - bearerAuth: []
       parameters:
         - in: path
           name: id

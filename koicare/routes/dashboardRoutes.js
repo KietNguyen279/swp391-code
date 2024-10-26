@@ -1,9 +1,9 @@
 const express = require('express');
 const router = express.Router();
-const { verifyToken, verifyTokenAndRole } = require('../middleware/authMiddleware');
+const { verifyAdminAndShopRole } = require('../middleware/authMiddleware');
 const Dashboard = require('../models/dashboard'); 
 
-router.get('/', verifyTokenAndRole([4]), (req, res) => {
+router.get('/', verifyAdminAndShopRole, (req, res) => {
   const userId = req.userId; 
 
   Dashboard.getDashboardData(userId, (error, data) => {
