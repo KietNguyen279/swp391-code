@@ -8,9 +8,10 @@ router.post('/', verifyMemberAndShopRole, (req, res) => {
   const userId = req.userId;
   const { orderItems } = req.body;
 
-  if (!orderItems || orderItems.length === 0) {
+  if (!Array.isArray(orderItems) || orderItems.length === 0) {
     return res.status(400).json({ message: 'Order items cannot be empty' });
   }
+
   for (const item of orderItems) {
     if (!item.product_id || item.quantity <= 0 || item.price <= 0) {
       return callback(new Error('Invalid order item data. Please check product_id, quantity, and price.'), null);
