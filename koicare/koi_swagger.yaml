@@ -1044,21 +1044,28 @@ paths:
         required: true
         content:
           application/json:
-            schema: 
+            schema:
               type: object
               properties:
                 orderItems:
                   type: array
                   items:
                     type: object
-                  properties: 
-                    product_id:
-                      type: integer
-                    quantity:
-                      type: integer
-                    price:
-                      type: number
-                      format: float
+                    properties: 
+                      product_id:
+                        type: integer
+                        description: ID of the product
+                      quantity:
+                        type: integer
+                        description: Quantity of the product
+                      price:
+                        type: number
+                        format: float
+                        description: Price of the product
+                    required: 
+                      - product_id
+                      - quantity
+                      - price 
       responses:
         '201':
           description: Order created successfully
