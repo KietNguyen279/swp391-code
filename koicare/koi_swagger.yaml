@@ -1044,14 +1044,14 @@ paths:
         required: true
         content:
           application/json:
-            schema:
+            schema: 
               type: object
               properties:
                 orderItems:
                   type: array
-                items:
-                  type: object
-                  properties:
+                  items:
+                    type: object
+                  properties: 
                     product_id:
                       type: integer
                     quantity:
@@ -1060,9 +1060,20 @@ paths:
                       type: number
                       format: float
       responses:
-        "201":
+        '201':
           description: Order created successfully
-        "500":
+          content:  
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  orderId:
+                    type: integer
+        '400':
+          description: Bad Request (e.g., invalid input)
+        '500':
           description: Internal server error
 
   /order/{id}:
@@ -1080,13 +1091,13 @@ paths:
           required: true
           description: ID of the order
       responses:
-        "200":
+        '200':
           description: Order retrieved successfully
           content:
             application/json:
               schema:
                 type: object
-                properties:
+                properties:  # Removed total_amount
                   order_id:
                     type: integer
                   user_id:
@@ -1111,8 +1122,10 @@ paths:
                           format: float
                         quantity:
                           type: integer
-        "404":
+        '404':
           description: Order not found
+        '500':
+          description: Internal server error
 
     put:
       summary: Update order by ID
@@ -1138,7 +1151,7 @@ paths:
                   type: array
                   items:
                     type: object
-                    properties:
+                    properties: 
                       product_id:
                         type: integer
                       quantity:
@@ -1150,10 +1163,12 @@ paths:
                   type: string
                   enum: [pending, processing, shipped, delivered, cancelled]
       responses:
-        "200":
+        '200':
           description: Order updated successfully
-        "404":
+        '404':
           description: Order not found
+        '500':
+          description: Internal server error
 
     delete:
       summary: Delete order by ID

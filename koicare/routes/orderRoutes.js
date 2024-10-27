@@ -8,8 +8,8 @@ router.post('/', verifyMemberAndShopRole, (req, res) => {
   const userId = req.userId;
   const { orderItems } = req.body;
 
-  if (!Array.isArray(orderItems) || orderItems.length === 0) {
-    return res.status(400).json({ message: 'Order items cannot be empty' });
+  if (!orderItems || !Array.isArray(orderItems) || orderItems.length === 0) {
+    return res.status(400).json({ message: 'Invalid request data. orderItems must be a non-empty array.' });
   }
 
   for (const item of orderItems) {
