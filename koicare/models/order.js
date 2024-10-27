@@ -61,9 +61,8 @@ const getOrderById = (orderId, callback) => {
     const query = `
       SELECT o.id AS order_id, o.order_date, o.user_id, o.status, oi.product_id, oi.quantity, p.name, p.price 
       FROM \`Order\` o
-      JOIN Order_Product oi ON o.id = oi.order_id
-      JOIN Product p ON oi.product_id = p.id
-      WHERE o.id = ?;
+      LEFT JOIN Order_Product oi ON o.id = oi.order_id  
+      LEFT JOIN Product p ON oi.product_id = p.id      
     `;
     db.query(query, [orderId], (error, results) => {
         if (error) {
