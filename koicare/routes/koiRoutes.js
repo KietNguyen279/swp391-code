@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const Koi = require('../models/koi');
-const { verifyAdminAndShopRole, verifyMemberAndShopAndAdminRole } = require('../middleware/authMiddleware');
+const { verifyMemberAndShopAndAdminRole } = require('../middleware/authMiddleware');
 
 // Get koi by id
 router.get('/:id', (req, res) => {
@@ -36,7 +36,7 @@ router.post('/', verifyMemberAndShopAndAdminRole, (req, res) => {
 });
 
 // Update koi by ID
-router.put('/:id', verifyAdminAndShopRole, (req, res) => {
+router.put('/:id', verifyMemberAndShopAndAdminRole, (req, res) => {
     const koiId = req.params.id;
     const { name, image, body_shape, age, size, weight, gender, breed, origin, pond_id } = req.body;
     if (!name || !image || !body_shape || !age || !size || !weight || !gender || !breed || !origin || !pond_id) {
@@ -56,7 +56,7 @@ router.put('/:id', verifyAdminAndShopRole, (req, res) => {
 });
 
 // Delete koi by ID
-router.delete('/:id', verifyAdminAndShopRole, (req, res) => {
+router.delete('/:id', verifyMemberAndShopAndAdminRole, (req, res) => {
     const koiId = req.params.id;
     Koi.deleteKoiById(koiId, (error, result) => {
         if (error) {
