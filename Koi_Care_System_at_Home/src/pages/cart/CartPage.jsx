@@ -8,60 +8,94 @@ import LayoutTemplate from "../../components/header-footer-template/LayoutTempla
 
 function CartPage() {
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
-  const data = useSelector((store) => store.cart);
-  const dispatch = useDispatch();
-
   const onSelectChange = (newSelectedRowKeys) => {
-    // console.log("selectedRowKeys changed: ", newSelectedRowKeys);
     setSelectedRowKeys(newSelectedRowKeys);
   };
-
-  const rowSelection = {
-    selectedRowKeys,
-    onChange: onSelectChange,
-  };
-
-  const handleBuy = async () => {
-    try {
-      // từ id con cá trong redux lấy ra con cá
-      const selectedItems = data.filter((koi) =>
-        selectedRowKeys.includes(koi.id)
-      );
-      const detail = selectedItems.map((koi) => ({
-        koiId: koi.id,
-        quantity: koi.quantity,
-      }));
-      // call API
-      const response = await api.post("/order", { detail });
-      dispatch(clearAll());
-      toast.success("ok hehe");
-    } catch (error) {
-      toast.error("fail to create order");
-    }
-  };
+  const data = useSelector((store) => store.cart);
+  const dispatch = useDispatch();
   const columns = [
     {
-      title: "Image",
+      title: "image",
       dataIndex: "image",
-      render: (image) => <Image src={image} width="200px" />,
+      render: (img) => {
+        return <Image src={img} width="200px"></Image>;
+      },
     },
     {
       title: "Name",
       dataIndex: "name",
     },
     {
-      title: "Description",
+      title: "description",
       dataIndex: "description",
     },
     {
-      title: "Quantity",
+      title: "quantity",
       dataIndex: "quantity",
     },
     {
-      title: "Price",
+      title: "price",
       dataIndex: "price",
     },
   ];
+  const rowSelection = {
+    selectedRowKeys,
+    onChange: onSelectChange,
+    selections: [
+      Table.SELECTION_ALL,
+      Table.SELECTION_INVERT,
+      Table.SELECTION_NONE,
+      {
+        key: "odd",
+        text: "Select Odd Row",
+        onSelect: (changeableRowKeys) => {
+          let newSelectedRowKeys = [];
+          newSelectedRowKeys = changeableRowKeys.filter((_, index) => {
+            if (index % 2 !== 0) {
+              return false;
+            }
+            return true;
+          });
+          setSelectedRowKeys(newSelectedRowKeys);
+        },
+      },
+      {
+        key: "even",
+        text: "Select Even Row",
+        onSelect: (changeableRowKeys) => {
+          let newSelectedRowKeys = [];
+          newSelectedRowKeys = changeableRowKeys.filter((_, index) => {
+            if (index % 2 !== 0) {
+              return true;
+            }
+            return false;
+          });
+          setSelectedRowKeys(newSelectedRowKeys);
+        },
+      },
+    ],
+  };
+  const handleBuy = async () => {
+    //from id, take product info
+    try {
+      const koiProductBought = data.filter((koiProduct) =>
+        selectedRowKeys.includes(koiProduct.id)
+      );
+
+      const items = koiProductBought.map((koiProduct) => ({
+        product_id: koiProduct.id,
+        quantity: koiProduct.quantity,
+        price: koiProduct.price * koiProduct.quantity,
+      }));
+      console.log(items);
+      const response = await api.post("order", { items });
+      console.log(response.data);
+      window.open(response.data);
+      toast.success("buy successfull");
+    } catch (error) {
+      toast.error("error");
+    }
+  };
 
   return (
     <div>

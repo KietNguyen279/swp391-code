@@ -68,7 +68,7 @@ function LayoutTemplate({ children }) {
             </Menu.Item>
           </Menu.SubMenu>
           <Menu.Item key="product">
-            <a className="menu_item" href="#products">
+            <a className="menu_item" href="/listProduct">
               Product
             </a>
           </Menu.Item>

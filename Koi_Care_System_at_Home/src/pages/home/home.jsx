@@ -2,29 +2,12 @@ import { Button, Carousel } from "antd";
 import "./home.css";
 import { Link, Outlet } from "react-router-dom";
 import LayoutTemplate from "../../components/header-footer-template/LayoutTemplate";
-import { useState } from "react";
+
 import { useEffect } from "react";
-import { useDispatch } from "react-redux";
-import { addProduct } from "../../redux/features/cartSlice";
 
 function HomePage() {
   const handleNavigation = () => {};
   // const limitedArticles = products.slice(0, 4);
-
-  const [product, setProduct] = useState([]);
-  const fetchProduct = async () => {
-    try {
-      const response = await api.get("/koi");
-      console.log(response.data);
-      setProduct(response.data);
-      console.log(response.data);
-    } catch (err) {
-      console.log("ERROR", err);
-    }
-  };
-  useEffect(() => {
-    fetchProduct();
-  }, []);
 
   const blogs = [
     {
@@ -148,17 +131,6 @@ function HomePage() {
             ))}
           </div>
         </div>
-        <div id="products" className="products">
-          <h1>Our Products</h1>
-          <div
-            className="row justify-content-center"
-            style={{ gap: "6%", "--bs-gutter-x": "0" }}
-          >
-            {product.map((product) => (
-              <Product key={product.id} product={product} />
-            ))}
-          </div>
-        </div>
         <div id="contact" className="contact">
           <h1>Contact Us</h1>
           <p>Phone: 0915533944</p>
@@ -172,24 +144,5 @@ function HomePage() {
     </div>
   );
 }
-const Product = ({ product }) => {
-  const dispatch = useDispatch();
-  const handleAddToCart = () => {
-    dispatch(addProduct(product));
-  };
-  return (
-    <div className="product">
-      {/* <img src={product.image} alt="" />
-      <h3>{product.name}</h3>
-      <p>{product.description}</p>
-      <span>{product.price}</span> */}
-      <h1>hehe</h1>
-
-      <center>
-        <button onClick={handleAddToCart}>Add to cart</button>
-      </center>
-    </div>
-  );
-};
 
 export default HomePage;
