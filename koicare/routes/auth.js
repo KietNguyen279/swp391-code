@@ -11,12 +11,41 @@ router.post('/register', async (req, res) => {
   try {
     const { name, email, password, password_confirm, role } = req.body;
 
+    // 1. Basic input validation
     if (!name || !email || !password || !password_confirm || !role) {
       return res.status(400).json({ message: "Please fill in all fields" });
     }
     if (password !== password_confirm) {
       return res.status(400).json({ message: "Passwords do not match" });
     }
+
+    // 2. Validate email format
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@gmail\.com$/;
+    if (!emailRegex.test(email)) {
+      return res.status(400).json({ message: "Invalid email format. Must be a @gmail.com, and no special characters." });
+    }
+
+    // 3. Password validation
+    if (password.length < 6) {
+      return res.status(400).json({
+        message: "Password must be at least 6 characters"
+      });
+    }
+    if (!/\d/.test(password) || !/[a-zA-Z]/.test(password)) {
+      return res.status(400).json({ message: "Password must contain both letters and numbers" });
+    }
+
+    // 4. Check if email already exists 
+    User.getUserByEmail(email, (error, existingUser) => {
+      if (error) {
+        console.error('Error checking for existing user:', error);
+        return res.status(500).json({ message: 'Failed to check for existing user' });
+      }
+      if (existingUser) {
+        return res.status(409).json({ message: 'Email already exists' });
+      }
+    });
+
     const hashedPassword = await bcrypt.hash(password, 10);
     User.createUser({ name, email, password: hashedPassword, role }, (error, results) => {
       if (error) {
@@ -64,7 +93,7 @@ router.post('/login', async (req, res) => {
 
       const isMatch = await bcrypt.compare(password, user.password);
       if (isMatch) {
-        const userRole = user.role; 
+        const userRole = user.role;
         const token = generateToken(user.id, userRole);
         return res.json({
           message: "Login successful",

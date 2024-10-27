@@ -65,7 +65,7 @@ const updateUserById = (id, updatedUserData, callback) => {
 
 // Check valid email
 function isValidEmail(email) {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@gmail\.com$/;
     return emailRegex.test(email);
   }
   
