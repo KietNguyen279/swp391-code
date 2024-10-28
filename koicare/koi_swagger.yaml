@@ -166,63 +166,6 @@ paths:
         "500":
           description: Internal Server Error
 
-  /role/{id}:
-    get:
-      summary: Get role by ID
-      tags:
-        - Role
-      security:
-        - bearerAuth: []  
-      parameters:
-        - in: path
-          name: id
-          schema:
-            type: integer
-          required: true
-          description: ID of the role
-      responses:
-        "200":
-          description: Role retrieved successfully
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  id:
-                    type: integer
-                  name:
-                    type: string
-        "404":
-          description: Role not found
-
-    put:
-      summary: Update role by ID
-      tags:
-        - Role
-      security:
-        - bearerAuth: []
-      parameters:
-        - in: path
-          name: id
-          schema:
-            type: integer
-          required: true
-          description: ID of the role
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                name:
-                  type: string
-      responses:
-        "200":
-          description: Role updated successfully
-        "404":
-          description: Role not found
-
   /koi:
     get:
       summary: Get all koi
