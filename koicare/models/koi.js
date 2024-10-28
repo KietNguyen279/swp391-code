@@ -42,9 +42,6 @@ const updateKoiById = (id, image, body_shape, age, size, weight, pond_id, callba
     if (!image || !body_shape || age <= 0 || size <= 0 || weight <= 0 || pond_id <= 0) {
         return callback(new Error('Invalid input data'), null);
     }
-    if (!['male', 'female'].includes(gender)) {
-        return callback(new Error('Invalid gender value. Must be "male" or "female".'), null);
-    }
 
     const query = `UPDATE Koi
     SET image = ?, body_shape = ?, age = ?, size = ?, weight = ?, pond_id = ?
