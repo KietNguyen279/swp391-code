@@ -166,63 +166,6 @@ paths:
         "500":
           description: Internal Server Error
 
-  /role/{id}:
-    get:
-      summary: Get role by ID
-      tags:
-        - Role
-      security:
-        - bearerAuth: []  
-      parameters:
-        - in: path
-          name: id
-          schema:
-            type: integer
-          required: true
-          description: ID of the role
-      responses:
-        "200":
-          description: Role retrieved successfully
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  id:
-                    type: integer
-                  name:
-                    type: string
-        "404":
-          description: Role not found
-
-    put:
-      summary: Update role by ID
-      tags:
-        - Role
-      security:
-        - bearerAuth: []
-      parameters:
-        - in: path
-          name: id
-          schema:
-            type: integer
-          required: true
-          description: ID of the role
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                name:
-                  type: string
-      responses:
-        "200":
-          description: Role updated successfully
-        "404":
-          description: Role not found
-
   /koi:
     get:
       summary: Get all koi
@@ -1049,20 +992,38 @@ paths:
               properties:
                 orderItems:
                   type: array
-                items:
-                  type: object
-                  properties:
-                    product_id:
-                      type: integer
-                    quantity:
-                      type: integer
-                    price:
-                      type: number
-                      format: float
+                  items:
+                    type: object
+                    properties: 
+                      product_id:
+                        type: integer
+                        description: ID of the product
+                      quantity:
+                        type: integer
+                        description: Quantity of the product
+                      price:
+                        type: number
+                        format: float
+                        description: Price of the product
+                    required: 
+                      - product_id
+                      - quantity
+                      - price 
       responses:
-        "201":
+        '201':
           description: Order created successfully
-        "500":
+          content:  
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  orderId:
+                    type: integer
+        '400':
+          description: Bad Request (e.g., invalid input)
+        '500':
           description: Internal server error
 
   /order/{id}:
@@ -1080,13 +1041,13 @@ paths:
           required: true
           description: ID of the order
       responses:
-        "200":
+        '200':
           description: Order retrieved successfully
           content:
             application/json:
               schema:
                 type: object
-                properties:
+                properties:  # Removed total_amount
                   order_id:
                     type: integer
                   user_id:
@@ -1111,8 +1072,10 @@ paths:
                           format: float
                         quantity:
                           type: integer
-        "404":
+        '404':
           description: Order not found
+        '500':
+          description: Internal server error
 
     put:
       summary: Update order by ID
@@ -1138,7 +1101,7 @@ paths:
                   type: array
                   items:
                     type: object
-                    properties:
+                    properties: 
                       product_id:
                         type: integer
                       quantity:
@@ -1150,10 +1113,12 @@ paths:
                   type: string
                   enum: [pending, processing, shipped, delivered, cancelled]
       responses:
-        "200":
+        '200':
           description: Order updated successfully
-        "404":
+        '404':
           description: Order not found
+        '500':
+          description: Internal server error
 
     delete:
       summary: Delete order by ID

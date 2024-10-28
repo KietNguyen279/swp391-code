@@ -1,10 +1,15 @@
 const db = require('../config/db');
 
 // create order
-const createOrder = (userId, orderItems, totalAmount, callback) => {
+const createOrder = (userId, orderItems, callback) => {
 
     if (!orderItems || orderItems.length === 0) {
         return callback(new Error('Order items cannot be empty'), null);
+    }
+    for (const item of orderItems) {
+        if (!item.product_id || item.quantity <= 0 || item.price <= 0) {
+            return callback(new Error('Invalid order item data. Please check product_id, quantity, and price.'), null);
+        }
     }
 
     db.beginTransaction((err) => {
@@ -24,14 +29,16 @@ const createOrder = (userId, orderItems, totalAmount, callback) => {
                     item.quantity,
                     item.price
                 ]);
+
                 const orderItemQuery = `
-          INSERT INTO Order_Product (order_id, product_id, quantity, price) 
-          VALUES ?
-        `;
+            INSERT INTO Order_Product (order_id, product_id, quantity, price) 
+            VALUES ?
+          `;
                 db.query(orderItemQuery, [orderItemValues], (error, orderItemResult) => {
                     if (error) {
                         throw error;
                     }
+
                     db.commit((err) => {
                         if (err) {
                             throw err;
@@ -54,14 +61,17 @@ const getOrderById = (orderId, callback) => {
     const query = `
       SELECT o.id AS order_id, o.order_date, o.user_id, o.status, oi.product_id, oi.quantity, p.name, p.price 
       FROM \`Order\` o
-      JOIN Order_Product oi ON o.id = oi.order_id
-      JOIN Product p ON oi.product_id = p.id
-      WHERE o.id = ?;
+      LEFT JOIN Order_Product oi ON o.id = oi.order_id  
+      LEFT JOIN Product p ON oi.product_id = p.id      
+      WHERE o.id = ?;  
     `;
     db.query(query, [orderId], (error, results) => {
         if (error) {
             return callback(error, null);
         }
+        if (results.length === 0) {
+            return callback(null, null); 
+          }
         const order = processOrderItems(results);
         return callback(null, order);
     });

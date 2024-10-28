@@ -8,17 +8,22 @@ router.post('/', verifyMemberAndShopRole, (req, res) => {
   const userId = req.userId;
   const { orderItems } = req.body;
 
-  if (!orderItems || orderItems.length === 0) {
-    return res.status(400).json({ message: 'Order items cannot be empty' });
+  if (!orderItems || !Array.isArray(orderItems) || orderItems.length === 0) {
+    return res.status(400).json({ message: 'Invalid request data. orderItems must be a non-empty array.' });
   }
 
+  for (const item of orderItems) {
+    if (!item.product_id || item.quantity <= 0 || item.price <= 0) {
+      return callback(new Error('Invalid order item data. Please check product_id, quantity, and price.'), null);
+    }
+  }
   Order.createOrder(userId, orderItems, (error, orderId) => {
     if (error) {
       console.error('Error creating order:', error);
       if (error.code === 'ER_NO_REFERENCED_ROW_2') {
         return res.status(400).json({ message: 'Invalid product ID in order items' });
       } else {
-        return res.status(500).json({ error: error.toString() });;
+        return res.status(500).json({ error: error.toString() });
       }
     }
     res.status(201).json({ message: 'Order created successfully', orderId });

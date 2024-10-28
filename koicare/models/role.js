@@ -65,7 +65,11 @@ const deleteRoleById = (id, callback) => {
     if (error) {
       return callback(error, null);
     }
-    return callback(null, results.affectedRows);
+    if (results.affectedRows === 0) {
+      return callback(new Error('Role not found.'), null); 
+    } else {
+      return callback(null, results.affectedRows);
+    }
   });
 };
 

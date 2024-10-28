@@ -18,7 +18,7 @@ const createUser = (userData, callback) => {
 
 // Get user by ID
 const getUserById = (id, callback) => {
-    const query = `SELECT * FROM User WHERE id = ?`;
+    const query = `SELECT id, name, email, role FROM User WHERE id = ?`;
     db.query(query, [id], (error, results) => {
         if (error) {
             return callback(error, null);
@@ -36,12 +36,12 @@ const getUserByEmail = (email, callback) => {
     const query = `SELECT * FROM User WHERE email = ?`;
     db.query(query, [email], (error, results) => {
         if (error) {
-            return callback(error,null);
+            return callback(error, null);
         }
         if (results.length > 0) {
             return callback(null, results[0]);
         } else {
-            return callback(null,null);
+            return callback(null, null);
         }
     });
 };
@@ -49,29 +49,29 @@ const getUserByEmail = (email, callback) => {
 // Update User
 const updateUserById = (id, updatedUserData, callback) => {
     if (updatedUserData.name && updatedUserData.name.length === 0) {
-      return callback(new Error('Name cannot be empty'), null);
+        return callback(new Error('Name cannot be empty'), null);
     }
     if (updatedUserData.email && !isValidEmail(updatedUserData.email)) {
-      return callback(new Error('Invalid email format'), null);
+        return callback(new Error('Invalid email format'), null);
     }
     const query = `UPDATE User SET ? WHERE id = ?`;
     db.query(query, [updatedUserData, id], (error, results) => {
-      if (error) {
-        return callback(error, null);
-      }
-      return callback(null, results.affectedRows);
+        if (error) {
+            return callback(error, null);
+        }
+        return callback(null, results.affectedRows);
     });
-  };
+};
 
 // Check valid email
 function isValidEmail(email) {
     const emailRegex = /^[a-zA-Z0-9._%+-]+@gmail\.com$/;
     return emailRegex.test(email);
-  }
-  
-  module.exports = {
+}
+
+module.exports = {
     getUserById,
-    getUserByEmail, 
-    createUser, 
+    getUserByEmail,
+    createUser,
     updateUserById
-  };
+};
