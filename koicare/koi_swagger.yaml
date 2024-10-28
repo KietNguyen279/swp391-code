@@ -269,7 +269,22 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/Koi"
+              type: object
+              properties:
+                image:
+                  type: string
+                body_shape:
+                  type: string
+                age:
+                  type: integer
+                size:
+                  type: number
+                  format: float
+                weight:
+                  type: number
+                  format: float
+                pond_id:
+                  type: integer
       responses:
         "200":
           description: Koi updated successfully
@@ -1516,6 +1531,8 @@ components:
     Koi:
       type: object
       properties:
+        id:
+          type: integer
         name:
           type: string
         image:

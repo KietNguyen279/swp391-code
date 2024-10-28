@@ -58,7 +58,7 @@ router.put('/:productId', verifyMemberAndShopRole, (req, res) => {
   const { quantity } = req.body;
 
   if (quantity <= 0) {
-    return res.status(400).json({ message: 'Invalid input data' });
+    return res.status(400).json({ message: 'Quantity must be a positive number!' }); 
   }
 
   Cart.updateCartItemQuantity(userId, productId, quantity, (error, result) => {
