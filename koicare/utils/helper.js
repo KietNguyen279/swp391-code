@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken');
-const  jwtSecretKey = require('../config/auth')
+const jwtSecretKey = require('../config/auth')
 
 // Generate JWT token
 const generateToken = (userId, roleId) => {
@@ -12,12 +12,25 @@ const generateToken = (userId, roleId) => {
 
 // Verify JWT token
 const verifyToken = (bearerToken) => {
+  if (!bearerToken || !bearerToken.startsWith('Bearer ')) {
+    return { error: 'Invalid token format' };
+  }
+
   try {
     const token = bearerToken.split(' ')[1];
-    const decoded = jwt.verify(token, jwtSecretKey); 
-    return decoded; 
+    const decoded = jwt.verify(token, jwtSecretKey);
+    return decoded;
   } catch (err) {
-    return null; 
+    if (err.name === 'TokenExpiredError') {
+      console.error('Token expired:', err);
+      return { error: 'TokenExpiredError' };
+    } else if (err.name === 'JsonWebTokenError') {
+      console.error('Invalid token:', err);
+      return { error: 'JsonWebTokenError' };
+    } else {
+      console.error('Error verifying token:', err);
+    }
+    return null;
   }
 };
 

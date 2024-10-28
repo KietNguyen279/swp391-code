@@ -92,12 +92,11 @@ router.post('/login', async (req, res) => {
       }
 
       const isMatch = await bcrypt.compare(password, user.password);
-      if (isMatch) {
-        const userRole = user.role;
-        const token = generateToken(user.id, userRole);
-        return res.json({
-          message: "Login successful",
-          token,
+    if (isMatch) {
+      const token = generateToken(user.id, user.role); 
+      return res.json({
+        message: "Login successful",
+        token,
         });
       } else {
         return res.status(401).json({ message: "Invalid credentials" });
