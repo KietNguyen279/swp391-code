@@ -2,11 +2,16 @@ const express = require('express');
 const router = express.Router();
 const Cart = require('../models/cart')
 const Product = require('../models/product');
-const { verifyMemberAndShopRole } = require('../middleware/authMiddleware'); 
+const { verifyMemberAndShopRole } = require('../middleware/authMiddleware');
 
 // Get cart by user ID
 router.get('/', (req, res) => {
   const userId = req.userId;
+
+  // Validate userId
+  if (isNaN(userId) || userId <= 0) {
+    return res.status(400).json({ message: 'Invalid user ID' });
+  }
 
   Cart.getCartByUserId(userId, (error, cart) => {
     if (error) {
@@ -38,15 +43,15 @@ router.post('/', verifyMemberAndShopRole, (req, res) => {
     Cart.addItemToCart(userId, productId, quantity, (error, result) => {
       if (error) {
         console.error('Error adding item to cart:', error);
-        if (error.code === 'ER_DUP_ENTRY') { 
+        if (error.code === 'ER_DUP_ENTRY') {
           return res.status(409).json({ message: 'Item already exists in the cart' });
-        } else if (error.code === 'ER_NO_REFERENCED_ROW_2') { 
+        } else if (error.code === 'ER_NO_REFERENCED_ROW_2') {
           return res.status(400).json({ message: 'Invalid product ID or cart ID' });
         } else {
           return res.status(500).json({ error: error.toString() });
         }
       }
-      return res.status(201).json({message: 'Add item to cart successfully'})
+      return res.status(201).json({ message: 'Add item to cart successfully' })
     })
   });
 });
@@ -57,8 +62,9 @@ router.put('/:productId', verifyMemberAndShopRole, (req, res) => {
   const productId = req.params.productId;
   const { quantity } = req.body;
 
-  if (quantity <= 0) {
-    return res.status(400).json({ message: 'Quantity must be a positive number!' }); 
+  // Input validation
+  if (!productId || quantity <= 0) {
+    return res.status(400).json({ message: 'Invalid input data' });
   }
 
   Cart.updateCartItemQuantity(userId, productId, quantity, (error, result) => {
@@ -77,6 +83,11 @@ router.put('/:productId', verifyMemberAndShopRole, (req, res) => {
 router.delete('/:productId', verifyMemberAndShopRole, (req, res) => {
   const userId = req.userId;
   const productId = req.params.productId;
+
+  // Input validation
+  if (!productId) {
+    return res.status(400).json({ message: 'Product not existed' });
+  }
 
   Cart.removeItemFromCart(userId, productId, (error, result) => {
     if (error) {
