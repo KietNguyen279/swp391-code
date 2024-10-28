@@ -47,7 +47,7 @@ router.get('/:id', verifyMemberAndShopRole, (req, res) => {
 });
 
 // Update an order by ID
-router.put('/:id', verifyAdminAndShopRole, (req, res) => {
+router.put('/:id', verifyMemberAndShopRole, (req, res) => {
   const orderId = req.params.id;
   const updatedOrderData = req.body;
 
