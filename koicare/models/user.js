@@ -18,7 +18,7 @@ const createUser = (userData, callback) => {
 
 // Get user by ID
 const getUserById = (id, callback) => {
-    const query = `SELECT id, name, email, role FROM users WHERE id = ?`;
+    const query = `SELECT id, name, email, role FROM User WHERE id = ?`;
     db.query(query, [id], (error, results) => {
         if (error) {
             return callback(error, null);
