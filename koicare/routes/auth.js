@@ -60,18 +60,18 @@ router.post('/register', async (req, res) => {
     }
 
     //Check if email already exists 
-    try {
-      const existingUser = await getUserByEmail(email);
-      if (existingUser) {
-        return res.status(409).json({ message: 'Email already exists' });
-      }
-    } catch (error) {
-      console.error('Error checking for existing user:', error);
-      return res.status(500).json({
-        message:
-          'Failed to check for existing user'
-      });
-    }
+    // try {
+    //   const existingUser = await getUserByEmail(email);
+    //   if (existingUser) {
+    //     return res.status(409).json({ message: 'Email already exists' });
+    //   }
+    // } catch (error) {
+    //   console.error('Error checking for existing user:', error);
+    //   return res.status(500).json({
+    //     message:
+    //       'Failed to check for existing user'
+    //   });
+    // }
 
     //Check the data types of the input fields
     if (typeof name !== 'string' || typeof email !== 'string' || typeof password !== 'string' || typeof role !== 'string') {
@@ -79,10 +79,15 @@ router.post('/register', async (req, res) => {
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
+
     User.createUser({ name, email, password: hashedPassword, role }, (error, results) => {
       if (error) {
         console.error('Error registering user:', error);
-        return res.status(500).json({ error: error.toString() });
+        if (error.code === 'ER_DUP_ENTRY') {
+          return res.status(409).json({ message: 'Email already exists' });
+        } else {
+          return res.status(500).json({ error: error.toString() });
+        }
       } else {
         return res.status(201).json({ message: "User registered" });
       }

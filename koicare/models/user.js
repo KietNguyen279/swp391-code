@@ -2,6 +2,7 @@ const db = require('../config/db');
 
 // Create user 
 const createUser = (userData, callback) => {
+    const { name, email, password, role } = userData;
     // Input validation
     if (!name || !email || !password || !role) {
         return callback(new Error('Missing required fields'), null);
