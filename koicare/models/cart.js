@@ -3,6 +3,11 @@ const Product = require('../models/product');
 
 // Get cart by user id
 const getCartByUserId = (userId, callback) => {
+  // Input validation
+  if (isNaN(userId) || userId <= 0) {
+    return callback(new Error('Invalid user ID'), null);
+  }
+
   const query = `
     SELECT c.id AS cart_id, c.user_id, ci.product_id, ci.quantity, p.name, p.price 
     FROM Cart c
@@ -47,6 +52,16 @@ const addItemToCart = (userId, productId, quantity, callback) => {
   if (quantity <= 0) {
     return callback(new Error('Quantity must be greater than 0'), null);
   }
+  if (isNaN(userId) || userId <= 0) {
+    return callback(new Error('Invalid user ID'), null);
+  }
+  if (isNaN(productId) || productId <= 0) {
+    return callback(new Error('Invalid product ID'), null);
+  }
+  if (quantity % 1 !== 0) {
+    return callback(new Error('Quantity must be a whole number'), null);
+  }
+
   // Check if product exists 
   Product.getProductById(productId, (productError, product) => {
     if (productError) {
@@ -79,6 +94,20 @@ const addItemToCart = (userId, productId, quantity, callback) => {
 
 // Update item quantity in cart
 const updateCartItemQuantity = (userId, productId, quantity, callback) => {
+  // Input validation
+  if (isNaN(userId) || userId <= 0) {
+    return callback(new Error('Invalid user ID'), null);
+  }
+  if (isNaN(productId) || productId <= 0) {
+    return callback(new Error('Invalid product ID'), null);
+  }
+  if (quantity <= 0) {
+    return callback(new Error('Quantity must be a positive integer'), null);
+  }
+  if (quantity % 1 !== 0) {
+    return callback(new Error('Quantity must be a whole number'), null);
+  }
+
   const query = `
       UPDATE Cart_item 
       SET quantity = ? 
@@ -94,6 +123,50 @@ const updateCartItemQuantity = (userId, productId, quantity, callback) => {
 
 // Remove item from cart
 const removeItemFromCart = (userId, productId, callback) => {
+  // Input validation
+  if (isNaN(userId) || userId <= 0) {
+    return callback(new Error('Invalid user ID'), null);
+  }
+  if (isNaN(productId) || productId <= 0) {
+    return callback(new Error('Invalid product ID'), null);
+  }
+  if (productId % 1 !== 0) {
+    return callback(new Error('Product ID must be a whole number'), null);
+  }
+  if (userId % 1 !== 0) {
+    return callback(new Error('User ID must be a whole number'), null);
+  }
+  if (productId <= 0) {
+    return callback(new Error('Product ID must be greater than 0'), null);
+  }
+  if (userId <= 0) {
+    return callback(new Error('User ID must be greater than 0'), null);
+  }
+  if (productId === null) {
+    return callback(new Error('Product ID cannot be null'), null);
+  }
+  if (userId === null) {
+    return callback(new Error('User ID cannot be null'), null);
+  }
+  if (productId === undefined) {
+    return callback(new Error('Product ID cannot be undefined'), null);
+  }
+  if (userId === undefined) {
+    return callback(new Error('User ID cannot be undefined'), null);
+  }
+  if (productId === '') {
+    return callback(new Error('Product ID cannot be empty'), null);
+  }
+  if (userId === '') {
+    return callback(new Error('User ID cannot be empty'), null);
+  }
+  if (productId === ' ') {
+    return callback(new Error('Product ID cannot be a space'), null);
+  }
+  if (userId === ' ') {
+    return callback(new Error('User ID cannot be a space'), null);
+  }
+
   const query = `
       DELETE FROM Cart_item 
       WHERE cart_id = (SELECT id FROM Cart WHERE user_id = ?) AND product_id = ?;
