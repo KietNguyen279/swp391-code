@@ -81,7 +81,7 @@ const verifyMemberAndShopAndAdminRole = (req, res, next) => {
 };
 
 module.exports = {
-  verifyTokenMiddleware,
+  verifyToken: verifyTokenMiddleware,
   verifyMemberRole,
   verifyShopRole,
   verifyAdminRole,
