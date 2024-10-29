@@ -61,15 +61,7 @@ router.post('/register', async (req, res) => {
 
     //Check if email already exists 
     try {
-      const existingUser = await new Promise((resolve, reject) => {
-        User.getUserByEmail(email, (error, existingUser) => {
-          if (error) {
-            reject(error);
-          } else {
-            resolve(existingUser);
-          }
-        });
-      });
+      const existingUser = await getUserByEmail(email);
       if (existingUser) {
         return res.status(409).json({ message: 'Email already exists' });
       }
@@ -217,7 +209,7 @@ router.put('/profile/', verifyTokens, (req, res) => {
     if (updatedUserData.name.length > 10) {
       return res.status(400).json({ message: 'Name must be less than 10 characters long' });
     }
-    const nameRegex = /^[a-zA-Z\s]+$/;  
+    const nameRegex = /^[a-zA-Z\s]+$/;
     if (!nameRegex.test(updatedUserData.name)) {
       return res.status(400).json({ message: 'Name can only contain letters and spaces' });
     }
