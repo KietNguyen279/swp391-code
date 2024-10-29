@@ -184,9 +184,6 @@ router.get('/profile', verifyTokenMiddleware, (req, res) => {
     if (!user.role) {
       return res.status(500).json({ message: 'User profile is missing role' });
     }
-    if (!user.created_at) {
-      return res.status(500).json({ message: 'User profile is missing created_at' });
-    }
     const { password, ...userData } = user;
 
     res.json({ user: userData });
