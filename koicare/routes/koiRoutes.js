@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const Koi = require('../models/koi');
-const { verifyToken, verifyMemberAndShopAndAdminRole } = require('../middleware/authMiddleware');
+const { verifyTokens, verifyMemberAndShopAndAdminRole } = require('../middleware/authMiddleware');
 
 // Get koi by id
 router.get('/:id', (req, res) => {
@@ -24,7 +24,7 @@ router.get('/:id', (req, res) => {
 });
 
 // Create koi
-router.post('/', verifyToken, verifyMemberAndShopAndAdminRole, (req, res) => {
+router.post('/', verifyTokens, verifyMemberAndShopAndAdminRole, (req, res) => {
     const { name, image, body_shape, age, size, weight, gender, breed, origin, pond_id } = req.body;
     // Input validation
     if (!name || !image || !body_shape || !age || !size || !weight || !gender || !breed || !origin || !pond_id) {
@@ -61,7 +61,7 @@ router.post('/', verifyToken, verifyMemberAndShopAndAdminRole, (req, res) => {
 });
 
 // Update koi by ID
-router.put('/:id', verifyToken, verifyMemberAndShopAndAdminRole, (req, res) => {
+router.put('/:id', verifyTokens, verifyMemberAndShopAndAdminRole, (req, res) => {
     const koiId = req.params.id;
     const { image, body_shape, age, size, weight, pond_id } = req.body;
     // Input validation
@@ -122,7 +122,7 @@ router.put('/:id', verifyToken, verifyMemberAndShopAndAdminRole, (req, res) => {
 });
 
 // Delete koi by ID
-router.delete('/:id', verifyToken, verifyMemberAndShopAndAdminRole, (req, res) => {
+router.delete('/:id', verifyTokens, verifyMemberAndShopAndAdminRole, (req, res) => {
     const koiId = req.params.id;
     // Input validation
     if (isNaN(koiId) || koiId <= 0) {
@@ -157,7 +157,7 @@ router.get('/', (req, res) => {
 });
 
 // Calculate Koi Food
-router.get('/:id/food', verifyToken, verifyMemberAndShopAndAdminRole, (req, res) => {
+router.get('/:id/food', verifyTokens, verifyMemberAndShopAndAdminRole, (req, res) => {
     const koiId = req.params.id;
     Koi.getKoiWithFoodById(koiId, (error, koi) => {
         if (error) {
