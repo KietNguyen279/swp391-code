@@ -184,30 +184,6 @@ router.delete('/:id/:name', verifyShopRole, (req, res) => {
     if (isNaN(waterParamId) || waterParamId <= 0) {
         return res.status(400).json({ message: 'Invalid water parameter ID' });
     }
-    if (typeof waterParamName !== 'string' || waterParamName.length === 0) {
-        return res.status(400).json({ message: 'Invalid water parameter name' });
-    }
-    if (typeof waterParamId !== 'number') {
-        return res.status(400).json({ message: 'Water parameter ID must be a number' });
-    }
-    if (typeof waterParamName !== 'string') {
-        return res.status(400).json({ message: 'Water parameter name must be a string' });
-    }
-    if (waterParamName.length === 0) {
-        return res.status(400).json({ message: 'Water parameter name must not be empty' });
-    }
-    if (waterParamName.length > 255) {
-        return res.status(400).json({ message: 'Water parameter name is too long' });
-    }
-    if (new Date(measurement_time) > new Date()) {
-        return res.status(400).json({ message: 'Invalid measurement_time. It must be a date in the past.' });
-    }
-    if (typeof pond_id !== 'number') {
-        return res.status(400).json({ message: 'Pond ID must be a number' });
-    }
-    if (pond_id <= 0) {
-        return res.status(400).json({ message: 'Invalid pond_id.' });
-    }
 
     WaterValue.deleteWaterParam(waterParamId, waterParamName, (error, result) => {
         if (error) {

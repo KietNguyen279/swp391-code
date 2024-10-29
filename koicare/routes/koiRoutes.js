@@ -128,10 +128,6 @@ router.delete('/:id', verifyTokens, verifyMemberAndShopAndAdminRole, (req, res) 
     if (isNaN(koiId) || koiId <= 0) {
         return res.status(400).json({ message: 'Invalid koi ID' });
     }
-    if (typeof koiId !== 'number') {
-        return res.status(400).json({ message: 'Invalid koi ID. Koi ID must be a number.' });
-    }
-    
     Koi.deleteKoiById(koiId, (error, result) => {
         if (error) {
             console.error('Error deleting koi:', error);

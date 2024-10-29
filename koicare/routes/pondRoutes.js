@@ -144,11 +144,7 @@ router.delete('/:id', verifyTokens, verifyMemberAndShopAndAdminRole, (req, res) 
     if (isNaN(pondId) || pondId <= 0) {
         return res.status(400).json({ message: 'Invalid pond ID' });
     }
-    if (typeof pondId !== 'number') {
-        return res.status(400).json({ message: 'Pond ID must be a number' });
-    }
 
-    
     Pond.deletePondById(pondId, (error, result) => {
         if (error) {
             console.error('Error deleting pond:', error);
