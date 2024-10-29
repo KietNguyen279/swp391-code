@@ -13,6 +13,23 @@ const getAllNewsBlogs = (callback) => {
 
 // Get news blog by ID
 const getNewsBlogById = (id, callback) => {
+  // Input validation
+  if (isNaN(id) || id <= 0) {
+    return callback(new Error('Invalid news blog ID'), null);
+  }
+  if (id === '' || id === null || id === undefined) {
+    return callback(new Error('Invalid news blog ID'), null);
+  }
+  if (id === 'null' || id === 'undefined') {
+    return callback(new Error('Invalid news blog ID'), null);
+  }
+  if (typeof id !== 'number') {
+    return callback(new Error('ID must be a number'), null);
+  }
+  if (id === 'NaN') {
+    return callback(new Error('Invalid news blog ID'), null);
+  }
+
   const query = `SELECT * FROM News_blog WHERE id = ?;`;
   db.query(query, [id], (error, results) => {
     if (error) {
@@ -22,7 +39,7 @@ const getNewsBlogById = (id, callback) => {
       return callback(null, results[0]);
     } else {
       return callback(null,
-        null); // News blog not found
+        null);
     }
   });
 };
@@ -30,8 +47,34 @@ const getNewsBlogById = (id, callback) => {
 // Create news blog
 const createNewsBlog = (image, title, content, date_published, callback) => {
 
+  // Input validation
   if (!image || !title || !content || !date_published) {
-    return callback(new Error('Invalid input data'), null);
+    return callback(new Error('Invalid input data. Please check all fields.'), null);
+  }
+  // Additional validation 
+  if (typeof image !== 'string' || image.length === 0) {
+    return callback(new Error('Invalid image URL'), null);
+  }
+  if (typeof title !== 'string' || title.length === 0) {
+    return callback(new Error('Invalid title'), null);
+  }
+  if (typeof content !== 'string' || content.length === 0) {
+    return callback(new Error('Invalid content'), null);
+  }
+  if (typeof date_published !== 'string' || date_published.length === 0) {
+    return callback(new Error('Invalid date published'), null);
+  }
+  if (date_published === '' || date_published === null || date_published === undefined) {
+    return callback(new Error('Invalid date published'), null);
+  }
+  if (date_published === 'null' || date_published === 'undefined') {
+    return callback(new Error('Invalid date published'), null);
+  }
+  if (date_published === 'NaN') {
+    return callback(new Error('Invalid date published'), null);
+  }
+  if (date_published === ' ') {
+    return callback(new Error('Invalid date published'), null);
   }
 
   const formattedDate = new Date(date_published).toISOString().slice(0, 19).replace('T', ' ');
@@ -40,7 +83,7 @@ const createNewsBlog = (image, title, content, date_published, callback) => {
     INSERT INTO News_blog (image, title, content, date_published)
     VALUES (?, ?, ?, ?);
   `;
-  db.query(query, [image, title, content, formattedDate], (error, results) => { // Use formattedDate here
+  db.query(query, [image, title, content, formattedDate], (error, results) => { 
     if (error) {
       return callback(error, null);
     }
@@ -96,6 +139,23 @@ const updateNewsBlogById = (id, image, title, content, date_published, callback)
 
 // Delete news blog by ID
 const deleteNewsBlogById = (id, callback) => {
+  // Input validation
+  if (isNaN(id) || id <= 0) {
+    return callback(new Error('Invalid news blog ID'), null);
+  }
+  if (id === '' || id === null || id === undefined) {
+    return callback(new Error('Invalid news blog ID'), null);
+  }
+  if (id === 'null' || id === 'undefined') {
+    return callback(new Error('Invalid news blog ID'), null);
+  }
+  if (typeof id !== 'number') {
+    return callback(new Error('ID must be a number'), null);
+  }
+  if (id === 'NaN') {
+    return callback(new Error('Invalid news blog ID'), null);
+  }
+  
   const query = `DELETE FROM News_blog WHERE id = ?;`;
   db.query(query, [id], (error, results) => {
     if (error) {

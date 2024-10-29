@@ -2,6 +2,11 @@ const db = require('../config/db');
 
 // Get pond by ID
 const getPondById = (id, callback) => {
+  // Input validation
+  if (isNaN(id) || id <= 0) {
+    return callback(new Error('Invalid pond ID'), null);
+  }
+
   const query = `SELECT * FROM Pond WHERE id = ?;`;
   db.query(query, [id], (error, results) => {
     if (error) {
@@ -10,8 +15,7 @@ const getPondById = (id, callback) => {
     if (results.length > 0) {
       return callback(null, results[0]);
     } else {
-      return callback(null,
-        null);
+      return callback(null, null);
     }
   });
 };
@@ -19,8 +23,34 @@ const getPondById = (id, callback) => {
 // Create pond
 const createPond = (name, image, size, depth, volume, num_of_drains, pump_capacity, user_id, callback) => {
 
+  // Input validation
   if (!name || !image || size <= 0 || depth <= 0 || volume <= 0 || num_of_drains <= 0 || pump_capacity <= 0 || !user_id) {
     return callback(new Error('Invalid input data. Please check all fields.'), null);
+  }
+  // Additional validation 
+  if (typeof name !== 'string' || name.length === 0) {
+    return callback(new Error('Invalid name'), null);
+  }
+  if (typeof image !== 'string' || image.length === 0) {
+    return callback(new Error('Invalid image URL'), null);
+  }
+  if (typeof size !== 'number' || size <= 0) {
+    return callback(new Error('Invalid size'), null);
+  }
+  if (typeof depth !== 'number' || depth <= 0) {
+    return callback(new Error('Invalid depth'), null);
+  }
+  if (typeof volume !== 'number' || volume <= 0) {
+    return callback(new Error('Invalid volume'), null);
+  }
+  if (typeof num_of_drains !== 'number' || num_of_drains <= 0) {
+    return callback(new Error('Invalid number of drains'), null);
+  }
+  if (typeof pump_capacity !== 'number' || pump_capacity <= 0) {
+    return callback(new Error('Invalid pump capacity'), null);
+  }
+  if (typeof user_id !== 'number' || user_id <= 0) {
+    return callback(new Error('Invalid user ID'), null);
   }
 
   const query = `
@@ -61,6 +91,7 @@ const updatePondById = (id, name, image, size, depth, volume, num_of_drains, pum
 
   const updateFields = [];
   const updateValues = [];
+
   if (name !== undefined) { updateFields.push('name = ?'); updateValues.push(name); }
   if (image !== undefined) { updateFields.push('image = ?'); updateValues.push(image); }
   if (size !== undefined) { updateFields.push('size = ?'); updateValues.push(size); }
@@ -70,7 +101,7 @@ const updatePondById = (id, name, image, size, depth, volume, num_of_drains, pum
   if (pump_capacity !== undefined) { updateFields.push('pump_capacity = ?'); updateValues.push(pump_capacity); }
 
   if (updateFields.length === 0) {
-    return callback(new Error('No fields to update.'), null); 
+    return callback(new Error('No fields to update.'), null);
   }
 
   const query = `UPDATE Pond SET ${updateFields.join(', ')} WHERE id = ?`;
@@ -84,6 +115,11 @@ const updatePondById = (id, name, image, size, depth, volume, num_of_drains, pum
 
 // Delete pond by ID
 const deletePondById = (id, callback) => {
+  // Input validation
+  if (isNaN(id) || id <= 0) {
+    return callback(new Error('Invalid pond ID'), null);
+  }
+
   const query = `DELETE FROM Pond WHERE id = ?`;
   db.query(query, [id], (error, results) => {
     if (error) {
@@ -135,8 +171,7 @@ const getPondDetails = (pondId, callback) => {
     if (results.length > 0) {
       return callback(null, results[0]);
     } else {
-      return callback(null,
-        null);
+      return callback(null, null);
     }
   });
 };

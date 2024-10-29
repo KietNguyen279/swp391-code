@@ -13,6 +13,14 @@ const getAllRoles = (callback) => {
 
 // Get role by ID
 const getRoleById = (id, callback) => {
+  // Input validation
+  if (isNaN(id) || id <= 0) {
+    return callback(new Error('Invalid role ID'), null);
+  }
+  if (id === '') {
+    return callback(new Error('Role ID is required'), null);
+  }
+
   const query = `SELECT * FROM Role WHERE id = ?`;
   db.query(query, [id], (error, results) => {
     if (error) {
@@ -28,8 +36,9 @@ const getRoleById = (id, callback) => {
 
 // Create a new role
 const createRole = (name, callback) => {
-  if (!name) {
-    return callback(new Error('Role name is required.'), null);
+  // Input validation
+  if (!name || typeof name !== 'string' || name.trim().length === 0) {
+    return callback(new Error('Invalid role name. Name must be a non-empty string.'), null);
   }
 
   const query = `INSERT INTO Role (name) VALUES (?)`;
@@ -45,8 +54,12 @@ const createRole = (name, callback) => {
 // Update role by ID
 const updateRoleById = (id, updatedRoleData, callback) => {
 
-  if (!updatedRoleData.name) {
-    return callback(new Error('Invalid input data. Role name is required.'), null);
+  // Input validation
+  if (isNaN(id) || id <= 0) {
+    return callback(new Error('Invalid role ID'), null);
+  }
+  if (!updatedRoleData.name || typeof updatedRoleData.name !== 'string' || updatedRoleData.name.trim().length === 0) {
+    return callback(new Error('Invalid role name. Name must be a non-empty string.'), null);
   }
 
   const query = `UPDATE Role SET ? WHERE id = ?`;
@@ -60,13 +73,18 @@ const updateRoleById = (id, updatedRoleData, callback) => {
 
 // Delete role by ID
 const deleteRoleById = (id, callback) => {
+  // Input validation
+  if (isNaN(id) || id <= 0) {
+    return callback(new Error('Invalid role ID'), null);
+  }
+
   const query = `DELETE FROM Role WHERE id = ?`;
   db.query(query, [id], (error, results) => {
     if (error) {
       return callback(error, null);
     }
     if (results.affectedRows === 0) {
-      return callback(new Error('Role not found.'), null); 
+      return callback(new Error('Role not found.'), null);
     } else {
       return callback(null, results.affectedRows);
     }

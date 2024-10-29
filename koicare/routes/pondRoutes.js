@@ -6,6 +6,10 @@ const { verifyMemberAndShopAndAdminRole } = require('../middleware/authMiddlewar
 // Get pond by ID
 router.get('/:id', (req, res) => {
     const pondId = req.params.id;
+    // Input validation
+    if (isNaN(pondId) || pondId <= 0) {
+        return res.status(400).json({ message: 'Invalid ID' });
+    }
     Pond.getPondById(pondId, (error, pond) => {
         if (error) {
             console.error('Error fetching pond:', error);
@@ -22,8 +26,40 @@ router.get('/:id', (req, res) => {
 router.post('/', verifyMemberAndShopAndAdminRole, (req, res) => {
     const { name, image, size, depth, volume, num_of_drains, pump_capacity, user_id } = req.body;
 
+    // Input validation
     if (!name || !image || !size || !depth || !volume || !num_of_drains || !pump_capacity || !user_id) {
         return res.status(400).json({ message: 'Missing required fields' });
+    }
+    // Additional validation
+    if (typeof name !== 'string' || name.length === 0) {
+        return res.status(400).json({ message: 'Invalid name' });
+    }
+    if (typeof image !== 'string' || image.length === 0) {
+        return res.status(400).json({ message: 'Invalid image URL' });
+    }
+    if (isNaN(size) || size <= 0) {
+        return res.status(400).json({ message: 'Invalid size' });
+    }
+    if (isNaN(depth) || depth <= 0) {
+        return res.status(400).json({ message: 'Invalid depth' });
+    }
+    if (isNaN(volume) || volume <= 0) {
+        return res.status(400).json({ message: 'Invalid volume' });
+    }
+    if (isNaN(num_of_drains) || num_of_drains <= 0) {
+        return res.status(400).json({ message: 'Invalid number of drains' });
+    }
+    if (isNaN(pump_capacity) || pump_capacity <= 0) {
+        return res.status(400).json({ message: 'Invalid pump capacity' });
+    }
+    if (isNaN(user_id) || user_id <= 0) {
+        return res.status(400).json({ message: 'Invalid user ID' });
+    }
+    if (typeof user_id !== 'number') {
+        return res.status(400).json({ message: 'User ID must be a number' });
+    }
+    if (typeof size !== 'number' || typeof depth !== 'number' || typeof volume !== 'number' || typeof num_of_drains !== 'number' || typeof pump_capacity !== 'number') {
+        return res.status(400).json({ message: 'Must be a number' });
     }
 
     Pond.createPond(name, image, size, depth, volume, num_of_drains, pump_capacity, user_id, (error, result) => {
@@ -40,37 +76,79 @@ router.post('/', verifyMemberAndShopAndAdminRole, (req, res) => {
 router.put('/:id', verifyMemberAndShopAndAdminRole, (req, res) => {
     const pondId = req.params.id;
     const { name, image, size, depth, volume, num_of_drains, pump_capacity } = req.body;
-  
-    Pond.getPondById(pondId, (error, pond) => { 
-      if (error) {
-        console.error('Error fetching pond:', error);
-        return res.status(500).json({ message: 'Internal server error' });
-      } else if (pond) {
-        Pond.updatePondById(pondId, name, image, size, depth, volume, num_of_drains, pump_capacity, (error, result) => {
-          if (error) {
-            console.error('Error updating pond:', error);
-            if (error.message === 'No fields to update.') {
-              return res.status(400).json({ message: error.message });
-            } else if (error.message.startsWith('Invalid input data')) {
-              return res.status(400).json({ message: error.message });
-            } else {
-              return res.status(500).json({ message: 'Internal server error' });
-            }
-          } else if (result === 1) {
-            res.json({ message: 'Pond updated' });
-          } else {
+
+    // Input validation
+    if (isNaN(pondId) || pondId <= 0) {
+        return res.status(400).json({ message: 'Invalid pond ID' });
+    }
+    if (!name && !image && !size && !depth && !volume && !num_of_drains && !pump_capacity) {
+        return res.status(400).json({ message: 'No fields to update.' });
+    }
+    // Additional validation
+    if (name && (typeof name !== 'string' || name.length === 0)) {
+        return res.status(400).json({ message: 'Invalid name' });
+    }
+    if (image && (typeof image !== 'string' || image.length === 0)) {
+        return res.status(400).json({ message: 'Invalid image URL' });
+    }
+    if (size && (isNaN(size) || size <= 0)) {
+        return res.status(400).json({ message: 'Invalid size' });
+    }
+    if (depth && (isNaN(depth) || depth <= 0)) {
+        return res.status(400).json({ message: 'Invalid depth' });
+    }
+    if (volume && (isNaN(volume) || volume <= 0)) {
+        return res.status(400).json({ message: 'Invalid volume' });
+    }
+    if (num_of_drains && (isNaN(num_of_drains) || num_of_drains <= 0)) {
+        return res.status(400).json({ message: 'Invalid number of drains' });
+    }
+    if (pump_capacity && (isNaN(pump_capacity) || pump_capacity <= 0)) {
+        return res.status(400).json({ message: 'Invalid pump capacity' });
+    }
+    if (typeof size !== 'number' || typeof depth !== 'number' || typeof volume !== 'number' || typeof num_of_drains !== 'number' || typeof pump_capacity !== 'number') {
+        return res.status(400).json({ message: 'Must be a number' });
+    }
+
+    Pond.getPondById(pondId, (error, pond) => {
+        if (error) {
+            console.error('Error fetching pond:', error);
+            return res.status(500).json({ message: 'Internal server error' });
+        } else if (pond) {
+            Pond.updatePondById(pondId, name, image, size, depth, volume, num_of_drains, pump_capacity, (error, result) => {
+                if (error) {
+                    console.error('Error updating pond:', error);
+                    if (error.message === 'No fields to update.') {
+                        return res.status(400).json({ message: error.message });
+                    } else if (error.message.startsWith('Invalid input data')) {
+                        return res.status(400).json({ message: error.message });
+                    } else {
+                        return res.status(500).json({ message: 'Internal server error' });
+                    }
+                } else if (result === 1) {
+                    res.json({ message: 'Pond updated' });
+                } else {
+                    res.status(404).json({ message: 'Pond not found' });
+                }
+            });
+        } else {
             res.status(404).json({ message: 'Pond not found' });
-          }
-        });
-      } else {
-        res.status(404).json({ message: 'Pond not found' });
-      }
+        }
     });
-  });
+});
 
 // Delete pond by ID
 router.delete('/:id', verifyMemberAndShopAndAdminRole, (req, res) => {
     const pondId = req.params.id;
+    // Input validation
+    if (isNaN(pondId) || pondId <= 0) {
+        return res.status(400).json({ message: 'Invalid pond ID' });
+    }
+    if (typeof pondId !== 'number') {
+        return res.status(400).json({ message: 'Pond ID must be a number' });
+    }
+
+    
     Pond.deletePondById(pondId, (error, result) => {
         if (error) {
             console.error('Error deleting pond:', error);

@@ -2,6 +2,11 @@ const db = require('../config/db');
 
 // Get product by ID
 const getProductById = (id, callback) => {
+    // Input validation
+    if (isNaN(id) || id <= 0) {
+        return callback(new Error('Invalid product ID'), null);
+    }
+
     const query = `SELECT * FROM Product WHERE id = ?;`;
     db.query(query, [id], (error, results) => {
         if (error) {
@@ -28,11 +33,26 @@ const createProduct = (name, image, description, price, quantity, callback) => {
     if (quantity < 0) {
         return callback(new Error('Quantity cannot be smaller than 0'), null);
     }
+    if (typeof name !== 'string' || name.length === 0) {
+        return callback(new Error('Invalid name'), null);
+    }
+    if (typeof image !== 'string' || image.length === 0) {
+        return callback(new Error('Invalid image URL'), null);
+    }
+    if (typeof description !== 'string' || description.length === 0) {
+        return callback(new Error('Invalid description'), null);
+    }
+    if (typeof price !== 'number' || price <= 0) {
+        return callback(new Error('Invalid price'), null);
+    }
+    if (typeof quantity !== 'number' || quantity < 0) {
+        return callback(new Error('Invalid quantity'), null);
+    }
 
     const query = `
         INSERT INTO Product (name, image, description, price, quantity)
         VALUES (?, ?, ?, ?, ?);`;
-    db.query(query, [name,  image, description, price, quantity], (error, results) => {
+    db.query(query, [name, image, description, price, quantity], (error, results) => {
         if (error) {
             return callback(error, null);
         }
@@ -43,20 +63,34 @@ const createProduct = (name, image, description, price, quantity, callback) => {
 // Update product by ID
 const updateProductById = (id, name, image, description, price, quantity, callback) => {
 
+    // Input validation
     if (!name || !image || !description || !price || !quantity) {
         return callback(new Error('Missing required fields'), null);
     }
-    if (price <= 0) {
-        return callback(new Error('Price must be greater than 0'), null);
+    // Additional validation
+    if (isNaN(id) || id <= 0) {
+        return callback(new Error('Invalid product ID'), null);
     }
-    if (quantity < 0) {
-        return callback(new Error('Quantity cannot be smaller than 0'), null);
+    if (typeof name !== 'string' || name.length === 0) {
+        return callback(new Error('Invalid name'), null);
+    }
+    if (typeof image !== 'string' || image.length === 0) {
+        return callback(new Error('Invalid image URL'), null);
+    }
+    if (typeof description !== 'string' || description.length === 0) {
+        return callback(new Error('Invalid description'), null);
+    }
+    if (typeof price !== 'number' || price <= 0) {
+        return callback(new Error('Invalid price'), null);
+    }
+    if (typeof quantity !== 'number' || quantity < 0) {
+        return callback(new Error('Invalid quantity'), null);
     }
 
     const query = `UPDATE Product
   SET name = ?, image = ?, description = ?, price = ?, quantity = ?
   WHERE id = ?;`;
-    db.query(query, [name, image, description, price, quantity, id], (error, results) => { 
+    db.query(query, [name, image, description, price, quantity, id], (error, results) => {
         if (error) {
             return callback(error, null);
         }
@@ -66,6 +100,11 @@ const updateProductById = (id, name, image, description, price, quantity, callba
 
 // Delete product by ID
 const deleteProductById = (id, callback) => {
+    // Input validation
+    if (isNaN(id) || id <= 0) {
+        return callback(new Error('Invalid product ID'), null);
+    }
+
     const query = `DELETE FROM Product WHERE id = ?;`;
     db.query(query, [id], (error, results) => {
         if (error) {
