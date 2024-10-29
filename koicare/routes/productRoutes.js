@@ -19,6 +19,11 @@ router.get('/', (req, res) => {
 // Get product by ID
 router.get('/:id', (req, res) => {
     const productId = req.params.id;
+    // Input validation
+    if (isNaN(productId) || productId <= 0) {
+        return res.status(400).json({ message: 'Invalid product ID' });
+    }
+
     Product.getProductById(productId, (error, product) => {
         if (error) {
             console.error('Error fetching product:', error);
@@ -35,29 +40,46 @@ router.get('/:id', (req, res) => {
 router.post('/', verifyShopRole, (req, res) => {
     const { name, image, description, price, quantity } = req.body;
 
+    // Input validation
     if (!name || !image || !description || !price || !quantity) {
         return res.status(400).json({ message: 'Missing required fields' });
     }
-    if (price <= 0) {
-        return res.status(400).json({ message: 'Price must be a positive number' });
+    // Additional validation
+    if (typeof name !== 'string' || name.length === 0) {
+        return res.status(400).json({ message: 'Invalid name' });
     }
-    if (quantity < 0) {
-        return res.status(400).json({ message: 'Quantity cannot be negative' });
+    if (typeof image !== 'string' || image.length === 0) {
+        return res.status(400).json({ message: 'Invalid image URL' });
+    }
+    if (typeof description !== 'string' || description.length === 0) {
+        return res.status(400).json({ message: 'Invalid description' });
+    }
+    if (isNaN(price) || price <= 0) {
+        return res.status(400).json({ message: 'Invalid price' });
+    }
+    if (isNaN(quantity) || quantity < 0) {
+        return res.status(400).json({ message: 'Invalid quantity' });
+    }
+    if (typeof price !== 'number' || typeof quantity !== 'number') {
+        return res.status(400).json({ message: 'Price and quantity must be numbers' });
+    }
+    if (price % 1 !== 0 || quantity % 1 !== 0) {
+        return res.status(400).json({ message: 'Price and quantity must be integers' });
     }
 
-        Product.createProduct(name, image, description, price, quantity, (error, productId) => {
-            if (error) {
-                console.error('Error creating product:', error);
-                if (error.code === 'ER_DUP_ENTRY') {
-                    return res.status(409).json({ message: 'A product with this name already exists' });
-                } else {
-                    return res.status(500).json({ error: error.toString() });
-                }
+    Product.createProduct(name, image, description, price, quantity, (error, productId) => {
+        if (error) {
+            console.error('Error creating product:', error);
+            if (error.code === 'ER_DUP_ENTRY') {
+                return res.status(409).json({ message: 'A product with this name already exists' });
             } else {
-                res.status(201).json({ message: 'Product created', productId });
+                return res.status(500).json({ error: error.toString() });
             }
-        });
+        } else {
+            res.status(201).json({ message: 'Product created', productId });
+        }
     });
+});
 
 
 // Update product by ID
@@ -73,6 +95,30 @@ router.put('/:id', verifyShopRole, (req, res) => {
     }
     if (quantity < 0) {
         return res.status(400).json({ message: 'Quantity cannot be negative' });
+    }
+    if (isNaN(productId) || productId <= 0) {
+        return res.status(400).json({ message: 'Invalid product ID' });
+    }
+    if (typeof name !== 'string' || name.length === 0) {
+        return res.status(400).json({ message: 'Invalid name' });
+    }
+    if (typeof image !== 'string' || image.length === 0) {
+        return res.status(400).json({ message: 'Invalid image URL' });
+    }
+    if (typeof description !== 'string' || description.length === 0) {
+        return res.status(400).json({ message: 'Invalid description' });
+    }
+    if (typeof price !== 'number' || typeof quantity !== 'number') {
+        return res.status(400).json({ message: 'Price and quantity must be numbers' });
+    }
+    if (price % 1 !== 0 || quantity % 1 !== 0) {
+        return res.status(400).json({ message: 'Price and quantity must be integers' });
+    }
+    if (quantity === 0) {
+        return res.status(400).json({ message: 'Quantity must be greater than 0' });
+    }
+    if (price === 0) {
+        return res.status(400).json({ message: 'Price must be greater than 0' });
     }
 
     Product.updateProductById(productId, name, image, description, price, quantity, (error, result) => {
@@ -90,6 +136,11 @@ router.put('/:id', verifyShopRole, (req, res) => {
 // Delete product by ID
 router.delete('/:id', verifyShopRole, (req, res) => {
     const productId = req.params.id;
+    // Input validation
+    if (isNaN(productId) || productId <= 0) {
+        return res.status(400).json({ message: 'Invalid product ID' });
+    }
+
     Product.deleteProductById(productId, (error, result) => {
         if (error) {
             console.error('Error deleting product:', error);
