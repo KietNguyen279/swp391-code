@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const NewsBlog = require('../models/newsBlog');
-const { verifyShopRole } = require('../middleware/authMiddleware');
+const { verifyTokens, verifyShopRole } = require('../middleware/authMiddleware');
 
 // Get all news blogs
 router.get('/', (req, res) => {
@@ -34,7 +34,7 @@ router.get('/:id', (req, res) => {
 });
 
 // Create news blog
-router.post('/', verifyShopRole, (req, res) => {
+router.post('/', verifyTokens, verifyShopRole, (req, res) => {
   const { image, title, content, date_published } = req.body;
 
   // Input validation
@@ -71,7 +71,7 @@ router.post('/', verifyShopRole, (req, res) => {
 });
 
 // Update news blog by ID
-router.put('/:id', verifyShopRole, (req, res) => {
+router.put('/:id', verifyTokens, verifyShopRole, (req, res) => {
   const newsBlogId = req.params.id;
   const { image, title, content, date_published } = req.body;
 
@@ -118,7 +118,7 @@ router.put('/:id', verifyShopRole, (req, res) => {
 });
 
 // Delete news blog by ID
-router.delete('/:id', verifyShopRole, (req, res) => {
+router.delete('/:id', verifyTokens, verifyShopRole, (req, res) => {
   const newsBlogId = req.params.id;
   // Input validation
   if (isNaN(newsBlogId) || newsBlogId <= 0) {

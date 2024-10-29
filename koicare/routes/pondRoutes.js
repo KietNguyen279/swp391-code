@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const Pond = require('../models/pond');
-const { verifyMemberAndShopAndAdminRole } = require('../middleware/authMiddleware');
+const { verifyTokens, verifyMemberAndShopAndAdminRole } = require('../middleware/authMiddleware');
 
 // Get pond by ID
 router.get('/:id', (req, res) => {
@@ -23,7 +23,7 @@ router.get('/:id', (req, res) => {
 });
 
 // Create pond
-router.post('/', verifyMemberAndShopAndAdminRole, (req, res) => {
+router.post('/', verifyTokens, verifyMemberAndShopAndAdminRole, (req, res) => {
     const { name, image, size, depth, volume, num_of_drains, pump_capacity, user_id } = req.body;
 
     // Input validation
@@ -73,7 +73,7 @@ router.post('/', verifyMemberAndShopAndAdminRole, (req, res) => {
 });
 
 // Update pond by ID
-router.put('/:id', verifyMemberAndShopAndAdminRole, (req, res) => {
+router.put('/:id', verifyTokens, verifyMemberAndShopAndAdminRole, (req, res) => {
     const pondId = req.params.id;
     const { name, image, size, depth, volume, num_of_drains, pump_capacity } = req.body;
 
@@ -138,17 +138,13 @@ router.put('/:id', verifyMemberAndShopAndAdminRole, (req, res) => {
 });
 
 // Delete pond by ID
-router.delete('/:id', verifyMemberAndShopAndAdminRole, (req, res) => {
+router.delete('/:id', verifyTokens, verifyMemberAndShopAndAdminRole, (req, res) => {
     const pondId = req.params.id;
     // Input validation
     if (isNaN(pondId) || pondId <= 0) {
         return res.status(400).json({ message: 'Invalid pond ID' });
     }
-    if (typeof pondId !== 'number') {
-        return res.status(400).json({ message: 'Pond ID must be a number' });
-    }
 
-    
     Pond.deletePondById(pondId, (error, result) => {
         if (error) {
             console.error('Error deleting pond:', error);
@@ -177,7 +173,7 @@ router.get('/', (req, res) => {
 });
 
 // Calculate salt amount for a pond
-router.get('/:id/details', verifyMemberAndShopAndAdminRole, (req, res) => {
+router.get('/:id/details', verifyTokens, verifyMemberAndShopAndAdminRole, (req, res) => {
     const pondId = req.params.id;
 
     Pond.getPondDetails(pondId, (error, pondDetails) => {

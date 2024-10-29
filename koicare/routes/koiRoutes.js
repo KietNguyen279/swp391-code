@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const Koi = require('../models/koi');
-const { verifyMemberAndShopAndAdminRole } = require('../middleware/authMiddleware');
+const { verifyTokens, verifyMemberAndShopAndAdminRole } = require('../middleware/authMiddleware');
 
 // Get koi by id
 router.get('/:id', (req, res) => {
@@ -24,7 +24,7 @@ router.get('/:id', (req, res) => {
 });
 
 // Create koi
-router.post('/', verifyMemberAndShopAndAdminRole, (req, res) => {
+router.post('/', verifyTokens, verifyMemberAndShopAndAdminRole, (req, res) => {
     const { name, image, body_shape, age, size, weight, gender, breed, origin, pond_id } = req.body;
     // Input validation
     if (!name || !image || !body_shape || !age || !size || !weight || !gender || !breed || !origin || !pond_id) {
@@ -61,7 +61,7 @@ router.post('/', verifyMemberAndShopAndAdminRole, (req, res) => {
 });
 
 // Update koi by ID
-router.put('/:id', verifyMemberAndShopAndAdminRole, (req, res) => {
+router.put('/:id', verifyTokens, verifyMemberAndShopAndAdminRole, (req, res) => {
     const koiId = req.params.id;
     const { image, body_shape, age, size, weight, pond_id } = req.body;
     // Input validation
@@ -122,16 +122,12 @@ router.put('/:id', verifyMemberAndShopAndAdminRole, (req, res) => {
 });
 
 // Delete koi by ID
-router.delete('/:id', verifyMemberAndShopAndAdminRole, (req, res) => {
+router.delete('/:id', verifyTokens, verifyMemberAndShopAndAdminRole, (req, res) => {
     const koiId = req.params.id;
     // Input validation
     if (isNaN(koiId) || koiId <= 0) {
         return res.status(400).json({ message: 'Invalid koi ID' });
     }
-    if (typeof koiId !== 'number') {
-        return res.status(400).json({ message: 'Invalid koi ID. Koi ID must be a number.' });
-    }
-    
     Koi.deleteKoiById(koiId, (error, result) => {
         if (error) {
             console.error('Error deleting koi:', error);
@@ -157,7 +153,7 @@ router.get('/', (req, res) => {
 });
 
 // Calculate Koi Food
-router.get('/:id/food', verifyMemberAndShopAndAdminRole, (req, res) => {
+router.get('/:id/food', verifyTokens, verifyMemberAndShopAndAdminRole, (req, res) => {
     const koiId = req.params.id;
     Koi.getKoiWithFoodById(koiId, (error, koi) => {
         if (error) {

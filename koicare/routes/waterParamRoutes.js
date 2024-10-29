@@ -110,10 +110,7 @@ router.delete('/:id', verifyShopRole, (req, res) => {
   if (isNaN(waterParamId) || waterParamId <= 0) {
     return res.status(400).json({ message: 'Invalid water parameter ID' });
   }
-  if (typeof waterParamId !== 'number') {
-    return res.status(400).json({ message: 'Water parameter ID must be a number' });
-  }
-
+  
   WaterParam.deleteWaterParameterById(waterParamId, (error, result) => {
     if (error) {
       console.error('Error deleting water parameter:', error);

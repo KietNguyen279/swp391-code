@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const Product = require('../models/product');
-const { verifyShopRole } = require('../middleware/authMiddleware');
+const { verifyTokens, verifyShopRole } = require('../middleware/authMiddleware');
 
 // Get all products
 router.get('/', (req, res) => {
@@ -37,7 +37,7 @@ router.get('/:id', (req, res) => {
 });
 
 // Create product
-router.post('/', verifyShopRole, (req, res) => {
+router.post('/', verifyTokens, verifyShopRole, (req, res) => {
     const { name, image, description, price, quantity } = req.body;
 
     // Input validation
@@ -83,7 +83,7 @@ router.post('/', verifyShopRole, (req, res) => {
 
 
 // Update product by ID
-router.put('/:id', verifyShopRole, (req, res) => {
+router.put('/:id', verifyTokens, verifyShopRole, (req, res) => {
     const productId = req.params.id;
     const { name, image, description, price, quantity } = req.body;
 
@@ -134,7 +134,7 @@ router.put('/:id', verifyShopRole, (req, res) => {
 });
 
 // Delete product by ID
-router.delete('/:id', verifyShopRole, (req, res) => {
+router.delete('/:id', verifyTokens, verifyShopRole, (req, res) => {
     const productId = req.params.id;
     // Input validation
     if (isNaN(productId) || productId <= 0) {

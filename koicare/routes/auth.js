@@ -4,7 +4,7 @@ const bcrypt = require("bcrypt");
 const { generateToken } = require('../utils/helper');
 const { verifyToken } = require('../utils/helper');
 const User = require('../models/user');
-const { verifyTokenMiddleware } = require('../middleware/authMiddleware');
+const { verifyTokens } = require('../middleware/authMiddleware');
 
 // Register
 router.post('/register', async (req, res) => {
@@ -154,7 +154,7 @@ router.post('/login', async (req, res) => {
 });
 
 // View Profile 
-router.get('/profile', verifyTokenMiddleware, (req, res) => {
+router.get('/profile', verifyTokens, (req, res) => {
 
   //Validate userId from token
   const userId = req.userId;
@@ -191,7 +191,7 @@ router.get('/profile', verifyTokenMiddleware, (req, res) => {
 });
 
 // Update Profile  
-router.put('/profile/', verifyTokenMiddleware, (req, res) => {
+router.put('/profile/', verifyTokens, (req, res) => {
 
   const token = req.headers.authorization;
   const decoded = verifyToken(token);

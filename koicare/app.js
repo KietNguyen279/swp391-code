@@ -3,7 +3,7 @@ const path = require("path");
 const dotenv = require("dotenv");
 const bcrypt = require("bcrypt");
 const cors = require('cors');
-const { verifyTokenMiddleware } = require('./middleware/authMiddleware');
+const { verifyTokens } = require('./middleware/authMiddleware');
 
 const authRoutes = require('./routes/auth');
 const homeRoutes = require('./routes/homeRoutes');
@@ -36,15 +36,15 @@ app.set('views', path.join(__dirname, 'views'));
 app.use('/auth', authRoutes); 
 app.use('/', homeRoutes); 
 app.use('/koi', koiRoutes); 
-app.use('/koiGrowth', verifyTokenMiddleware, koiGrowthRoutes); 
+app.use('/koiGrowth', verifyTokens, koiGrowthRoutes); 
 app.use('/pond', pondRoutes); 
 app.use('/product', productRoutes); 
-app.use('/waterValue', verifyTokenMiddleware, waterValueRoutes); 
-app.use('/cart', verifyTokenMiddleware, cartRoutes); 
-app.use('/order', verifyTokenMiddleware, orderRoutes); 
+app.use('/waterValue', verifyTokens, waterValueRoutes); 
+app.use('/cart', verifyTokens, cartRoutes); 
+app.use('/order', verifyTokens, orderRoutes); 
 app.use('/newsBlog', newsBlogRoutes); 
-app.use('/dashboard', verifyTokenMiddleware, dashboardRoutes); 
-app.use('/waterParam', verifyTokenMiddleware, waterParamRoutes);
+app.use('/dashboard', verifyTokens, dashboardRoutes); 
+app.use('/waterParam', verifyTokens, waterParamRoutes);
 app.use('/swagger-ui', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 db.connect((error) => {
