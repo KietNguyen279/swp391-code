@@ -32,7 +32,12 @@ const getKoiById = (id, callback) => {
         return callback(new Error('Invalid koi ID'), null);
     }
 
-    const query = `SELECT * FROM Koi WHERE id = ?;`;
+    const query = `
+        SELECT k.*, u.name AS owner_name
+        FROM Koi k
+        JOIN User u ON k.user_id = u.id
+        WHERE k.id = ?;
+    `;
     db.query(query, [id], (error, results) => {
         if (error) {
             return callback(error, null);
@@ -207,7 +212,11 @@ const deleteKoiById = (id, callback) => {
 
 // Get all koi
 const getAllKoi = (callback) => {
-    const query = `SELECT * FROM Koi;`;
+    const query = `
+        SELECT k.*, u.name AS owner_name
+        FROM Koi k
+        JOIN User u ON k.user_id = u.id;
+    `;
     db.query(query, (error, results) => {
         if (error) {
             return callback(error, null);
