@@ -9,26 +9,25 @@ const { verifyTokens } = require("../middleware/authMiddleware");
 // Register
 router.post("/register", async (req, res) => {
   try {
-    const { name, email, password } = req.body;
+    const { name, email, password } = req.body; 
 
     // Input validation
     if (!name || !email || !password) {
       return res.status(400).json({ message: "Please fill in all fields" });
     }
-    if (password !== password_confirm) {
-      return res.status(400).json({ message: "Passwords do not match" });
-    }
 
-    //Validate email format
+    // Validate email format
     const emailRegex = /^[a-zA-Z0-9._%+-]+@gmail\.com$/;
     if (!emailRegex.test(email)) {
-      return res.status(400).json({
-        message:
-          "Invalid email format. Must be a @gmail.com, and no special characters.",
-      });
+      return res
+        .status(400)
+        .json({
+          message:
+            "Invalid email format. Must be a @gmail.com email, and no special characters.",
+        });
     }
 
-    //Password validation
+    // Password validation
     if (password.length < 6) {
       return res.status(400).json({
         message: "Password must be at least 6 characters",
@@ -40,7 +39,7 @@ router.post("/register", async (req, res) => {
         .json({ message: "Password must contain both letters and numbers" });
     }
 
-    //Name validation
+    // Name validation
     if (name.length < 2) {
       return res
         .status(400)
@@ -51,7 +50,7 @@ router.post("/register", async (req, res) => {
         .json({ message: "Name must be less than 10 characters long" });
     }
 
-    //Stronger validation for name and password
+    // Stronger validation for name
     const nameRegex = /^[a-zA-Z\s]+$/;
     if (!nameRegex.test(name)) {
       return res
@@ -68,7 +67,6 @@ router.post("/register", async (req, res) => {
       });
     }
 
-    // Check the data types of the input fields
     if (
       typeof name !== "string" ||
       typeof email !== "string" ||
@@ -80,10 +78,10 @@ router.post("/register", async (req, res) => {
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
-
-    const userRole = "MEMBER";
+    const role = "MEMBER";
+    
     User.createUser(
-      { name, email, password: hashedPassword, role: userRole },
+      { name, email, password: hashedPassword, role },
       (error, results) => {
         if (error) {
           console.error("Error registering user:", error);
@@ -202,11 +200,9 @@ router.put("/profile", verifyTokens, (req, res) => {
   // Name validation
   if (updatedUserData.name !== undefined) {
     if (typeof updatedUserData.name !== "string") {
-      return res
-        .status(400)
-        .json({
-          message: "Invalid data type for name. Name must be a string.",
-        });
+      return res.status(400).json({
+        message: "Invalid data type for name. Name must be a string.",
+      });
     }
     if (updatedUserData.name.length === 0) {
       return res.status(400).json({ message: "Name cannot be empty" });
