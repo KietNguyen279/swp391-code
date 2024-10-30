@@ -27,7 +27,7 @@ const getPondById = (id, callback) => {
         pump_capacity: results[0].pump_capacity,
         salt_kg_required: results[0].salt_kg_required,
         kois: [],
-      }
+      };
       results.forEach((result) => {
         pondInfo.kois.push(result.koi_id);
       });
@@ -66,6 +66,7 @@ const createPond = (
       null
     );
   }
+
   // Additional validation
   if (typeof name !== "string" || name.length === 0) {
     return callback(new Error("Invalid name"), null);
@@ -109,7 +110,7 @@ const createPond = (
       num_of_drains,
       pump_capacity,
       user_id,
-      salt_kg_required,
+      salt_kg_required, 
     ],
     (error, results) => {
       if (error) {
@@ -177,6 +178,11 @@ const updatePondById = (
     );
   }
 
+  let salt_required_kg = null;
+  if (volume !== undefined) {
+    salt_required_kg = Math.round(volume * 0.003); 
+  }
+
   const updateFields = [];
   const updateValues = [];
 
@@ -208,11 +214,16 @@ const updatePondById = (
     updateFields.push("pump_capacity = ?");
     updateValues.push(pump_capacity);
   }
+  
+  if (salt_required_kg !== null) {
+    updateFields.push("salt_required_kg = ?");
+    updateValues.push(salt_required_kg);
+  }
 
   if (updateFields.length === 0) {
     return callback(new Error("No fields to update."), null);
   }
-
+  
   const query = `UPDATE Pond SET ${updateFields.join(", ")} WHERE id = ?`;
   db.query(query, [...updateValues, id], (error, results) => {
     if (error) {
