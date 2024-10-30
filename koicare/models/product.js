@@ -45,10 +45,6 @@ const createProduct = (name, image, description, price, quantity, callback) => {
     if (typeof price !== 'number' || price <= 0) {
         return callback(new Error('Invalid price'), null);
     }
-    if (typeof quantity !== 'number' || quantity < 0) {
-        return callback(new Error('Invalid quantity'), null);
-    }
-
     const query = `
         INSERT INTO Product (name, image, description, price, quantity)
         VALUES (?, ?, ?, ?, ?);`;
@@ -80,10 +76,10 @@ const updateProductById = (id, name, image, description, price, quantity, callba
     if (typeof description !== 'string' || description.length === 0) {
         return callback(new Error('Invalid description'), null);
     }
-    if (typeof price !== 'number' || price <= 0) {
+    if (price <= 0) {
         return callback(new Error('Invalid price'), null);
     }
-    if (typeof quantity !== 'number' || quantity < 0) {
+    if (quantity < 0) {
         return callback(new Error('Invalid quantity'), null);
     }
 

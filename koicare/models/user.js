@@ -108,13 +108,24 @@ const updateUserById = (id, updatedUserData, callback) => {
 
 // Check valid email
 function isValidEmail(email) {
-    const emailRegex = /^[a-zA-Z0-9._%+-]+@gmail\.com$/;
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     return emailRegex.test(email);
 }
+
+const userSchema = new mongoose.Schema({
+    name: { type: String, required: true, unique: true },
+    email: { type: String, required: true, unique: true },
+    password: { type: String, required: true },
+    resetToken: String,
+    resetTokenExpiration: Date,
+});
+
+const User = mongoose.model('User', userSchema);
 
 module.exports = {
     getUserById,
     getUserByEmail,
     createUser,
-    updateUserById
+    updateUserById,
+    User
 };

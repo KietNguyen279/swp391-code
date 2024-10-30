@@ -23,9 +23,6 @@ router.get('/:id', (req, res) => {
   if (isNaN(waterParamId) || waterParamId <= 0) {
     return res.status(400).json({ message: 'Invalid water parameter ID' });
   }
-  if (typeof waterParamId !== 'number') {
-    return res.status(400).json({ message: 'Water parameter ID must be a number' });
-  }
 
   WaterParam.getWaterParameterById(waterParamId, (error, waterParam) => {
     if (error) {
@@ -48,15 +45,10 @@ router.post('/', verifyShopRole, (req, res) => {
     return res.status(400).json({ message: 'Invalid input data. Please check all fields.' });
   }
   // Additional validation for each field
-  if (typeof measurement_time !== 'string') {
-    return res.status(400).json({ message: 'Invalid measurement_time. It must be a string.' });
-  }
   if (isNaN(pond_id) || pond_id <= 0) {
     return res.status(400).json({ message: 'Invalid pond_id.' });
   }
-  if (typeof pond_id !== 'number') {
-    return res.status(400).json({ message: 'Pond ID must be a number' });
-  }
+
   if (new Date(measurement_time) > new Date()) {
     return res.status(400).json({ message: 'Measurement time cannot be in the future' });
   }
@@ -83,9 +75,6 @@ router.put('/:id', verifyShopRole, (req, res) => {
   // Additional validation 
   if (isNaN(waterParamId) || waterParamId <= 0) {
     return res.status(400).json({ message: 'Invalid water parameter ID' });
-  }
-  if (typeof measurement_time !== 'string') {
-    return res.status(400).json({ message: 'Invalid measurement_time. It must be a string.' });
   }
   if (new Date(measurement_time) > new Date()) {
     return res.status(400).json({ message: 'Measurement time cannot be in the future' });

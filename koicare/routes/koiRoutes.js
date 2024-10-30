@@ -90,24 +90,6 @@ router.put('/:id', verifyTokens, verifyMemberAndShopAndAdminRole, (req, res) => 
     if (isNaN(pond_id) || pond_id <= 0) {
         return res.status(400).json({ message: 'Invalid pond ID' });
     }
-    if (typeof pond_id !== 'number') {
-        return res.status(400).json({ message: 'Invalid pond ID. Pond ID must be a number.' });
-    }
-    if (typeof body_shape !== 'string') {
-        return res.status(400).json({ message: 'Invalid body_shape. Body shape must be a string.' });
-    }
-    if (typeof image !== 'string') {
-        return res.status(400).json({ message: 'Invalid image. Image URL must be a string.' });
-    }
-    if (typeof age !== 'number') {
-        return res.status(400).json({ message: 'Invalid age. Age must be a number.' });
-    }
-    if (typeof size !== 'number') {
-        return res.status(400).json({ message: 'Invalid size. Size must be a number.' });
-    }
-    if (typeof weight !== 'number') {
-        return res.status(400).json({ message: 'Invalid weight. Weight must be a number.' });
-    }
 
     Koi.updateKoiById(koiId, image, body_shape, age, size, weight, pond_id, (error, result) => {
         if (error) {

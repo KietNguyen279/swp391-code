@@ -23,9 +23,6 @@ const getNewsBlogById = (id, callback) => {
   if (id === 'null' || id === 'undefined') {
     return callback(new Error('Invalid news blog ID'), null);
   }
-  if (typeof id !== 'number') {
-    return callback(new Error('ID must be a number'), null);
-  }
   if (id === 'NaN') {
     return callback(new Error('Invalid news blog ID'), null);
   }
@@ -148,9 +145,6 @@ const deleteNewsBlogById = (id, callback) => {
   }
   if (id === 'null' || id === 'undefined') {
     return callback(new Error('Invalid news blog ID'), null);
-  }
-  if (typeof id !== 'number') {
-    return callback(new Error('ID must be a number'), null);
   }
   if (id === 'NaN') {
     return callback(new Error('Invalid news blog ID'), null);

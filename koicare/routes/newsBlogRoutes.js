@@ -42,18 +42,6 @@ router.post('/', verifyTokens, verifyShopRole, (req, res) => {
     return res.status(400).json({ message: 'Invalid input data. Please check all fields.' });
   }
   // Additional validation for each field
-  if (typeof image !== 'string' || image.length === 0) {
-    return res.status(400).json({ message: 'Invalid image URL' });
-  }
-  if (typeof title !== 'string' || title.length === 0) {
-    return res.status(400).json({ message: 'Invalid title' });
-  }
-  if (typeof content !== 'string' || content.length === 0) {
-    return res.status(400).json({ message: 'Invalid content' });
-  }
-  if (typeof date_published !== 'string' || date_published.length === 0) {
-    return res.status(400).json({ message: 'Invalid date published' });
-  }
   if (isNaN(Date.parse(date_published))) {
     return res.status(400).json({ message: 'Invalid date published' }); 
   }
