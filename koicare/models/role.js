@@ -17,9 +17,6 @@ const getRoleById = (id, callback) => {
   if (isNaN(id) || id <= 0) {
     return callback(new Error('Invalid role ID'), null);
   }
-  if (id === '') {
-    return callback(new Error('Role ID is required'), null);
-  }
 
   const query = `SELECT * FROM Role WHERE id = ?`;
   db.query(query, [id], (error, results) => {
@@ -29,7 +26,7 @@ const getRoleById = (id, callback) => {
     if (results.length > 0) {
       return callback(null, results[0]);
     } else {
-      return callback(null, null);
+      return callback(new Error('Role not found'), null);
     }
   });
 };
@@ -50,10 +47,8 @@ const createRole = (name, callback) => {
   });
 };
 
-
 // Update role by ID
 const updateRoleById = (id, updatedRoleData, callback) => {
-
   // Input validation
   if (isNaN(id) || id <= 0) {
     return callback(new Error('Invalid role ID'), null);
@@ -66,6 +61,9 @@ const updateRoleById = (id, updatedRoleData, callback) => {
   db.query(query, [updatedRoleData, id], (error, results) => {
     if (error) {
       return callback(error, null);
+    }
+    if (results.affectedRows === 0) {
+      return callback(new Error('Role not found'), null);
     }
     return callback(null, results.affectedRows);
   });
@@ -84,10 +82,9 @@ const deleteRoleById = (id, callback) => {
       return callback(error, null);
     }
     if (results.affectedRows === 0) {
-      return callback(new Error('Role not found.'), null);
-    } else {
-      return callback(null, results.affectedRows);
+      return callback(new Error('Role not found'), null);
     }
+    return callback(null, results.affectedRows);
   });
 };
 

@@ -2,12 +2,13 @@ const db = require('../config/db');
 
 // Create user 
 const createUser = (userData, callback) => {
-    const { name, email, password, role } = userData;
+    const { name, email, password } = userData;
+    const role = "MEMBER";  // Default role
+
     // Input validation
-    if (!name || !email || !password || !role) {
+    if (!name || !email || !password) {
         return callback(new Error('Missing required fields'), null);
     }
-    // Additional validation 
     if (typeof name !== 'string' || name.length < 2) {
         return callback(new Error('Invalid name. Name must be a string with at least 2 characters.'), null);
     }
@@ -17,12 +18,7 @@ const createUser = (userData, callback) => {
     if (typeof password !== 'string' || password.length < 6) {
         return callback(new Error('Invalid password. Password must be at least 6 characters long.'), null);
     }
-    if (typeof role !== 'string') {
-        return callback(new Error('Invalid role. Role must be a string.'), null);
-    }
-    if (role !== 'GUEST' && role !== 'MEMBER' && role !== 'SHOP' && role !== 'ADMIN') {
-        return callback(new Error('Invalid role. Role must be GUEST, MEMBER, SHOP, or ADMIN.'), null);
-    }
+
     // Check if email already exists
     const query = `SELECT * FROM User WHERE email = ?`;
     db.query(query, [email], (error, results) => {
@@ -45,7 +41,6 @@ const createUser = (userData, callback) => {
 
 // Get user by ID
 const getUserById = (id, callback) => {
-    // Input validation
     if (isNaN(id) || id <= 0) {
         return callback(new Error('Invalid user ID'), null);
     }
@@ -80,7 +75,6 @@ const getUserByEmail = (email, callback) => {
 
 // Update User
 const updateUserById = (id, updatedUserData, callback) => {
-    // Input validation
     if (isNaN(id) || id <= 0) {
         return callback(new Error('Invalid user ID'), null);
     }
@@ -93,10 +87,7 @@ const updateUserById = (id, updatedUserData, callback) => {
     if (updatedUserData.password && (typeof updatedUserData.password !== 'string' || updatedUserData.password.length < 6)) {
         return callback(new Error('Invalid password. Password must be at least 6 characters long.'), null);
     }
-    if (updatedUserData.role && (typeof updatedUserData.role !== 'string' || (updatedUserData.role !== 'GUEST' && updatedUserData.role !== 'MEMBER' && updatedUserData.role !== 'SHOP' && updatedUserData.role !== 'ADMIN'))) {
-        return callback(new Error('Invalid role. Role must be GUEST, MEMBER, SHOP, or ADMIN.'), null);
-    }
-    
+
     const query = `UPDATE User SET ? WHERE id = ?`;
     db.query(query, [updatedUserData, id], (error, results) => {
         if (error) {
@@ -106,12 +97,11 @@ const updateUserById = (id, updatedUserData, callback) => {
     });
 };
 
-// Check valid email
+// Check valid email for @gmail.com only
 function isValidEmail(email) {
-    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@gmail\.com$/;
     return emailRegex.test(email);
 }
-
 
 module.exports = {
     getUserById,
