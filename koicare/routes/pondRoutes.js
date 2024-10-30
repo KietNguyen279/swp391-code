@@ -65,7 +65,7 @@ router.post('/', verifyTokens, verifyMemberAndShopAndAdminRole, (req, res) => {
     Pond.createPond(name, image, size, depth, volume, num_of_drains, pump_capacity, user_id, (error, result) => {
         if (error) {
             console.error('Error creating pond:', error);
-            return res.status(500).json({ message: 'Internal server error' });
+            return res.status(500).json({ error: error.toString() });
         } else {
             res.status(201).json({ message: 'Pond created' });
         }
