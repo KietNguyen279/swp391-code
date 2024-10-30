@@ -4,40 +4,40 @@ import { Link, Outlet } from "react-router-dom";
 import LayoutTemplate from "../../components/header-footer-template/LayoutTemplate";
 
 import { useEffect } from "react";
+import BlogList from "../blogs/blogList";
 
 function HomePage() {
-  const handleNavigation = () => {};
   // const limitedArticles = products.slice(0, 4);
 
-  const blogs = [
-    {
-      title: "The Koi Perspective",
-      description:
-        "A digital magazine featuring monthly updates, tips, and Koi hobbyist stories. Each issue is free and made for enthusiasts.",
-      author: "Joe Mitchell",
-      date: "November 1, 2024",
-      imgSrc:
-        "https://cdn.pixabay.com/photo/2019/10/12/04/59/koi-4543131_1280.jpg",
-    },
-    {
-      title: "Doitsu Variety: The Scaleless Koi",
-      description:
-        "A detailed guide on choosing Doitsu Koi, a unique scaleless variety.",
-      author: "Next Day Koi",
-      date: "March 20, 2024",
-      imgSrc:
-        "https://cdn.pixabay.com/photo/2019/10/12/04/59/koi-4543131_1280.jpg",
-    },
-    {
-      title: "The Many Kinds of Koi Fish Behavior",
-      description:
-        "Explores different Koi behaviors and tips to identify stress and illness.",
-      author: "Paige Braaten",
-      date: "December 16, 2023",
-      imgSrc:
-        "https://cdn.pixabay.com/photo/2019/10/12/04/59/koi-4543131_1280.jpg",
-    },
-  ];
+  // const blogs = [
+  //   {
+  //     title: "The Koi Perspective",
+  //     description:
+  //       "A digital magazine featuring monthly updates, tips, and Koi hobbyist stories. Each issue is free and made for enthusiasts.",
+  //     author: "Joe Mitchell",
+  //     date: "November 1, 2024",
+  //     imgSrc:
+  //       "https://cdn.pixabay.com/photo/2019/10/12/04/59/koi-4543131_1280.jpg",
+  //   },
+  //   {
+  //     title: "Doitsu Variety: The Scaleless Koi",
+  //     description:
+  //       "A detailed guide on choosing Doitsu Koi, a unique scaleless variety.",
+  //     author: "Next Day Koi",
+  //     date: "March 20, 2024",
+  //     imgSrc:
+  //       "https://cdn.pixabay.com/photo/2019/10/12/04/59/koi-4543131_1280.jpg",
+  //   },
+  //   {
+  //     title: "The Many Kinds of Koi Fish Behavior",
+  //     description:
+  //       "Explores different Koi behaviors and tips to identify stress and illness.",
+  //     author: "Paige Braaten",
+  //     date: "December 16, 2023",
+  //     imgSrc:
+  //       "https://cdn.pixabay.com/photo/2019/10/12/04/59/koi-4543131_1280.jpg",
+  //   },
+  // ];
 
   return (
     <div>
@@ -97,39 +97,7 @@ function HomePage() {
           </p>
         </div>
         <div id="blogs" className="blogs">
-          <h1>Check out our News</h1>
-          <div
-            className="row justify-content-center"
-            style={{ gap: "6%", "--bs-gutter-x": "0" }}
-          >
-            {blogs.map((blog, index) => (
-              <div key={index} className="col-md-3 mb-5 blogChild">
-                <Link to={"/blogDetail"}>
-                  <img
-                    src={blog.imgSrc}
-                    alt={blog.title}
-                    style={{
-                      width: "100%",
-                      height: "auto",
-                      borderTopRightRadius: "15px",
-                      borderTopLeftRadius: "15px",
-                      objectFit: "cover",
-                    }}
-                  />
-                </Link>
-                <h4>{blog.title}</h4>
-                <p>{blog.description}</p>
-                <h6>
-                  {blog.author} - {blog.date}
-                </h6>
-                <center>
-                  <Button onClick={() => handleNavigation("/blogDetail")}>
-                    View more
-                  </Button>
-                </center>
-              </div>
-            ))}
-          </div>
+          <BlogList />
         </div>
         <div id="contact" className="contact">
           <h1>Contact Us</h1>

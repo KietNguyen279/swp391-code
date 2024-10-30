@@ -16,6 +16,7 @@ import ManageProduct from "./dashboard/manage-product/ManageProduct.jsx";
 import UserProfile from "./pages/profile/profile.jsx";
 import ViewProfile from "./pages/profile/manage-profile/ViewProfile.jsx";
 import ViewOrderList from "./pages/profile/manage-order/ViewOrderList.jsx";
+import BlogDetail from "./pages/blogs/blogDetail.jsx";
 
 function App() {
   const router = createBrowserRouter([
@@ -73,6 +74,10 @@ function App() {
           element: <ViewPond />,
         },
       ],
+    },
+    {
+      path: "/blogDetail/:id",
+      element: <BlogDetail />,
     },
     {
       path: "/profile",
