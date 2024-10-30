@@ -53,7 +53,7 @@ const createPond = (name, image, size, depth, volume, num_of_drains, pump_capaci
     return callback(new Error('Invalid user ID'), null);
   }
 
-  const salt_kg_required = Math.round(volume * 0.003 * 100) / 100;
+  const salt_kg_required = Math.round(volume * 0.003);
 
   const query = `
     INSERT INTO Pond (name, image, size, depth, volume, num_of_drains, pump_capacity, user_id, salt_kg_required)

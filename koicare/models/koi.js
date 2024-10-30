@@ -212,11 +212,7 @@ const deleteKoiById = (id, callback) => {
 
 // Get all koi
 const getAllKoi = (callback) => {
-    const query = `
-        SELECT k.*, u.name AS owner_name
-        FROM Koi k
-        JOIN User u ON k.user_id = u.id;
-    `;
+    const query = `SELECT * FROM Koi;`;
     db.query(query, (error, results) => {
         if (error) {
             return callback(error, null);
