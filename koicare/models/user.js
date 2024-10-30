@@ -112,20 +112,10 @@ function isValidEmail(email) {
     return emailRegex.test(email);
 }
 
-const userSchema = new mongoose.Schema({
-    name: { type: String, required: true, unique: true },
-    email: { type: String, required: true, unique: true },
-    password: { type: String, required: true },
-    resetToken: String,
-    resetTokenExpiration: Date,
-});
-
-const User = mongoose.model('User', userSchema);
 
 module.exports = {
     getUserById,
     getUserByEmail,
     createUser,
-    updateUserById,
-    User
+    updateUserById
 };
