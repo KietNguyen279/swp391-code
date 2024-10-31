@@ -4,7 +4,7 @@ info:
   description: API documentation for your web application
   version: 1.0.0
 servers:
-  - url: "https://api-koicare-5f7e5d44b191.herokuapp.com/"
+  - url: "http://localhost:80"
     description: Production server
 
 paths:

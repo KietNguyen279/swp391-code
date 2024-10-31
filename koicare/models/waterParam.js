@@ -51,15 +51,12 @@ const getWaterParameterById = (id, callback) => {
 };
 
 // Create water parameter
-const createWaterParameter = (measurement_time, pond_id, callback) => {
+const createWaterParameter = (date, pond_id, callback) => {
     // Input validation
-    if (!measurement_time || !pond_id) {
+    if (!date || !pond_id) {
         return callback(new Error('Invalid input data. Please check all fields.'), null);
     }
     // Additional validation 
-    if (typeof measurement_time !== 'string') {
-        return callback(new Error('Invalid measurement_time. It must be a string.'), null);
-    }
     if (isNaN(pond_id) || pond_id <= 0) {
         return callback(new Error('Invalid pond_id.'), null);
     }
@@ -81,27 +78,6 @@ const createWaterParameter = (measurement_time, pond_id, callback) => {
     if (pond_id === true) {
         return callback(new Error('Invalid pond_id. Must not be true.'), null);
     }
-    if (measurement_time === '') {
-        return callback(new Error('Invalid measurement_time. Must not be empty.'), null);
-    }
-    if (measurement_time === null) {
-        return callback(new Error('Invalid measurement_time. Must not be null.'), null);
-    }
-    if (measurement_time === undefined) {
-        return callback(new Error('Invalid measurement_time. Must not be undefined.'), null);
-    }
-    if (measurement_time === false) {
-        return callback(new Error('Invalid measurement_time. Must not be false.'), null);
-    }
-    if (measurement_time === true) {
-        return callback(new Error('Invalid measurement_time. Must not be true.'), null);
-    }
-    if (measurement_time.length > 255) {
-        return callback(new Error('Invalid measurement_time. Must not exceed 255 characters.'), null);
-    }
-    if (measurement_time.length < 1) {
-        return callback(new Error('Invalid measurement_time. Must be at least 1 character.'), null);
-    }
     if (pond_id.length > 255) {
         return callback(new Error('Invalid pond_id. Must not exceed 255 characters.'), null);
     }
@@ -110,9 +86,9 @@ const createWaterParameter = (measurement_time, pond_id, callback) => {
     }
 
     const query = `
-    INSERT INTO Water_parameters (measurement_time, pond_id)  
+    INSERT INTO Water_parameters (date, pond_id)  
     VALUES (?, ?);`;
-    db.query(query, [measurement_time, pond_id], (error, results) => {
+    db.query(query, [date, pond_id], (error, results) => {
         if (error) {
             return callback(error, null);
         }
@@ -121,34 +97,34 @@ const createWaterParameter = (measurement_time, pond_id, callback) => {
 };
 
 // Update water parameter by ID
-const updateWaterParameterById = (id, measurement_time, callback) => {
+const updateWaterParameterById = (id, date, callback) => {
     // Input validation
     if (isNaN(id) || id <= 0) {
         return callback(new Error('Invalid water parameter ID'), null);
     }
-    if (!measurement_time || typeof measurement_time !== 'string') {
+    if (!date || typeof date !== 'string') {
         return callback(new Error('Invalid input data. Measurement time is required and must be a string.'), null);
     }
-    if (measurement_time === '') {
-        return callback(new Error('Invalid measurement_time. Must not be empty.'), null);
+    if (date === '') {
+        return callback(new Error('Invalid date. Must not be empty.'), null);
     }
-    if (measurement_time === null) {
-        return callback(new Error('Invalid measurement_time. Must not be null.'), null);
+    if (date === null) {
+        return callback(new Error('Invalid date. Must not be null.'), null);
     }
-    if (measurement_time === undefined) {
-        return callback(new Error('Invalid measurement_time. Must not be undefined.'), null);
+    if (date === undefined) {
+        return callback(new Error('Invalid date. Must not be undefined.'), null);
     }
-    if (measurement_time === false) {
-        return callback(new Error('Invalid measurement_time. Must not be false.'), null);
+    if (date === false) {
+        return callback(new Error('Invalid date. Must not be false.'), null);
     }
-    if (measurement_time === true) {
-        return callback(new Error('Invalid measurement_time. Must not be true.'), null);
+    if (date === true) {
+        return callback(new Error('Invalid date. Must not be true.'), null);
     }
-    if (measurement_time.length > 255) {
-        return callback(new Error('Invalid measurement_time. Must not exceed 255 characters.'), null);
+    if (date.length > 255) {
+        return callback(new Error('Invalid date. Must not exceed 255 characters.'), null);
     }
-    if (measurement_time.length < 1) {
-        return callback(new Error('Invalid measurement_time. Must be at least 1 character.'), null);
+    if (date.length < 1) {
+        return callback(new Error('Invalid date. Must be at least 1 character.'), null);
     }
     if (!Number.isInteger(id)) {
         return callback(new Error('Invalid water parameter ID. Must be an integer.'), null);
@@ -169,8 +145,8 @@ const updateWaterParameterById = (id, measurement_time, callback) => {
         return callback(new Error('Invalid water parameter ID. Must not be true.'), null);
     }
 
-    const query = `UPDATE Water_parameters SET measurement_time = ? WHERE id = ?;`;
-    db.query(query, [measurement_time, id], (error, results) => {
+    const query = `UPDATE Water_parameters SET date = ? WHERE id = ?;`;
+    db.query(query, [date, id], (error, results) => {
         if (error) {
             return callback(error, null);
         }
@@ -212,6 +188,7 @@ const deleteWaterParameterById = (id, callback) => {
     });
 };
 
+ 
 module.exports = {
     getAllWaterParameters,
     getWaterParameterById,

@@ -15,4 +15,4 @@ router.get('/', verifyAdminAndShopRole, (req, res) => {
   });
 });
 
-module.exports = router;
+module.exports = router; 

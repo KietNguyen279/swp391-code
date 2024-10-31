@@ -263,12 +263,13 @@ const deletePondById = (id, callback) => {
 
 // Get all pond
 const getAllPonds = (callback) => {
-  const query = `SELECT * FROM Pond;`;
+  const query = `SELECT id FROM Pond;`;
   db.query(query, (error, results) => {
     if (error) {
       return callback(error, null);
     }
-    return callback(null, results);
+    const pondIds = results.map((result) => result.id);
+    return callback(null, pondIds);
   });
 };
 
