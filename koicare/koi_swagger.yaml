@@ -201,12 +201,27 @@ paths:
                   format: float
                 gender:
                   type: string
+                  enum: [male, female]
                 breed:
                   type: string
                 origin:
                   type: string
                 pond_id:
                   type: integer
+                user_id:
+                  type: integer
+              required:
+                - name
+                - image
+                - body_shape
+                - age
+                - size
+                - weight
+                - gender
+                - breed
+                - origin
+                - pond_id
+                - user_id  
       responses:
         "201":
           description: Koi created successfully

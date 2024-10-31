@@ -4,52 +4,28 @@ const db = require("../config/db");
 const getKoiById = (id, callback) => {
   // Input validation
   if (isNaN(id) || id <= 0) {
-    return callback(new Error("Invalid koi ID"), null);
-  }
-  if (id === "") {
-    return callback(new Error("Invalid koi ID"), null);
-  }
-  if (id === null) {
-    return callback(new Error("Invalid koi ID"), null);
-  }
-  if (id === undefined) {
-    return callback(new Error("Invalid koi ID"), null);
-  }
-  if (id === 0) {
-    return callback(new Error("Invalid koi ID"), null);
-  }
-  if (id === "0") {
-    return callback(new Error("Invalid koi ID"), null);
-  }
-  if (id === " ") {
-    return callback(new Error("Invalid koi ID"), null);
-  }
-  if (id === "null") {
-    return callback(new Error("Invalid koi ID"), null);
-  }
-  if (id === "undefined") {
-    return callback(new Error("Invalid koi ID"), null);
+    return callback(new Error("Invalid Koi ID"), null);
   }
 
   const query = `
-        SELECT k.*, u.name AS owner_name
-        FROM Koi k
-        JOIN User u ON k.user_id = u.id
-        WHERE k.id = ?;
-    `;
+      SELECT k.*, u.name AS owner_name
+      FROM Koi k
+      JOIN User u ON k.user_id = u.id
+      WHERE k.id = ?;
+  `;
+
   db.query(query, [id], (error, results) => {
     if (error) {
-      return callback(error, null);
+      return callback(error, null); 
     }
     if (results.length > 0) {
-      return callback(null, results[0]);
+      return callback(null, results[0]); 
     } else {
-      return callback(null, null);
+      return callback(null, null); 
     }
   });
 };
-
-// Create koi
+// Create Koi
 const createKoi = (
   name,
   image,
@@ -61,6 +37,7 @@ const createKoi = (
   breed,
   origin,
   pond_id,
+  user_id,
   callback
 ) => {
   // Input validation
@@ -74,7 +51,8 @@ const createKoi = (
     !gender ||
     !breed ||
     !origin ||
-    pond_id <= 0
+    pond_id <= 0 ||
+    !user_id
   ) {
     return callback(
       new Error("Invalid input data. Please check all fields."),
@@ -129,8 +107,8 @@ const createKoi = (
   const food_required_kg_per_day = Math.round(weight * 0.02);
 
   const query = `
-      INSERT INTO Koi (name, image, body_shape, age, size, weight, gender, breed, origin, pond_id, food_required_kg_per_day)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);`;
+      INSERT INTO Koi (name, image, body_shape, age, size, weight, gender, breed, origin, pond_id, user_id, food_required_kg_per_day)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);`;
   db.query(
     query,
     [
@@ -144,6 +122,7 @@ const createKoi = (
       breed,
       origin,
       pond_id,
+      user_id,
       food_required_kg_per_day,
     ],
     (error, results) => {
@@ -245,7 +224,7 @@ const updateKoiById = (
     return callback(new Error("Invalid pond ID"), null);
   }
 
-  const food_required_kg_per_day = Math.round(weight * 0.02); 
+  const food_required_kg_per_day = Math.round(weight * 0.02);
 
   const query = `UPDATE Koi
     SET image = ?, body_shape = ?, age = ?, size = ?, weight = ?, pond_id = ?, food_required_kg_per_day = ?
