@@ -3,12 +3,12 @@ const router = express.Router();
 const Koi = require('../models/koi');
 const { verifyTokens, verifyMemberAndShopAndAdminRole } = require('../middleware/authMiddleware');
 
-// Get koi by id
+// Get koi by ID
 router.get('/:id', (req, res) => {
     const koiId = req.params.id;
     // Input validation
     if (isNaN(koiId) || koiId <= 0) {
-        return res.status(400).json({ message: 'InvalidID' });
+        return res.status(400).json({ message: 'Invalid ID' });
     }
 
     Koi.getKoiById(koiId, (error, koi) => {
@@ -26,6 +26,7 @@ router.get('/:id', (req, res) => {
 // Create koi
 router.post('/', verifyTokens, verifyMemberAndShopAndAdminRole, (req, res) => {
     const { name, image, body_shape, age, size, weight, gender, breed, origin, pond_id } = req.body;
+
     // Input validation
     if (!name || !image || !body_shape || !age || !size || !weight || !gender || !breed || !origin || !pond_id) {
         return res.status(400).json({ message: 'Missing required fields' });
@@ -49,6 +50,9 @@ router.post('/', verifyTokens, verifyMemberAndShopAndAdminRole, (req, res) => {
     if (isNaN(weight) || weight < 0) {
         return res.status(400).json({ message: 'Invalid weight. Weight must be a non-negative number.' });
     }
+    if (isNaN(pond_id) || pond_id <= 0) {
+        return res.status(400).json({ message: 'Invalid pond ID' });
+    }
 
     Koi.createKoi(name, image, body_shape, age, size, weight, gender, breed, origin, pond_id, (error, result) => {
         if (error) {
@@ -64,30 +68,31 @@ router.post('/', verifyTokens, verifyMemberAndShopAndAdminRole, (req, res) => {
 router.put('/:id', verifyTokens, verifyMemberAndShopAndAdminRole, (req, res) => {
     const koiId = req.params.id;
     const { image, body_shape, age, size, weight, pond_id } = req.body;
+
     // Input validation
-    if (!koiId || !image || !body_shape || !age || !size || !weight || !pond_id) {
-        return res.status(400).json({ message: 'Missing required fields' });
-    }
-    // Additional validation
     if (isNaN(koiId) || koiId <= 0) {
         return res.status(400).json({ message: 'Invalid koi ID' });
     }
-    if (typeof image !== 'string' || image.length === 0) {
+    if (!image && !body_shape && !age && !size && !weight && !pond_id) {
+        return res.status(400).json({ message: 'No fields to update.' });
+    }
+    // Additional validation
+    if (image && (typeof image !== 'string' || image.length === 0)) {
         return res.status(400).json({ message: 'Invalid image. Image URL must be a non-empty string.' });
     }
-    if (typeof body_shape !== 'string' || body_shape.length === 0) {
+    if (body_shape && (typeof body_shape !== 'string' || body_shape.length === 0)) {
         return res.status(400).json({ message: 'Invalid body_shape. Body shape must be a non-empty string.' });
     }
-    if (isNaN(age) || age < 0) {
+    if (age && (isNaN(age) || age < 0)) {
         return res.status(400).json({ message: 'Invalid age. Age must be a non-negative number.' });
     }
-    if (isNaN(size) || size < 0) {
+    if (size && (isNaN(size) || size < 0)) {
         return res.status(400).json({ message: 'Invalid size. Size must be a non-negative number.' });
     }
-    if (isNaN(weight) || weight < 0) {
+    if (weight && (isNaN(weight) || weight < 0)) {
         return res.status(400).json({ message: 'Invalid weight. Weight must be a non-negative number.' });
     }
-    if (isNaN(pond_id) || pond_id <= 0) {
+    if (pond_id && (isNaN(pond_id) || pond_id <= 0)) {
         return res.status(400).json({ message: 'Invalid pond ID' });
     }
 
@@ -110,6 +115,7 @@ router.delete('/:id', verifyTokens, verifyMemberAndShopAndAdminRole, (req, res) 
     if (isNaN(koiId) || koiId <= 0) {
         return res.status(400).json({ message: 'Invalid koi ID' });
     }
+
     Koi.deleteKoiById(koiId, (error, result) => {
         if (error) {
             console.error('Error deleting koi:', error);
@@ -137,6 +143,7 @@ router.get('/', (req, res) => {
 // Calculate Koi Food
 router.get('/:id/food', verifyTokens, verifyMemberAndShopAndAdminRole, (req, res) => {
     const koiId = req.params.id;
+    
     Koi.getKoiWithFoodById(koiId, (error, koi) => {
         if (error) {
             console.error('Error fetching koi with food:', error);

@@ -111,7 +111,13 @@ router.put('/:id', verifyTokens, verifyMemberAndShopAndAdminRole, (req, res) => 
                         return res.status(500).json({ message: 'Internal server error' });
                     }
                 } else if (result === 1) {
-                    res.json({ message: 'Pond updated' });
+                    Pond.getPondById(pondId, (error, updatedPond) => {
+                        if (error) {
+                            console.error('Error fetching updated pond:', error);
+                            return res.status(500).json({ message: 'Internal server error' });
+                        }
+                        res.json({ message: 'Pond updated', pond: updatedPond });
+                    });
                 } else {
                     res.status(404).json({ message: 'Pond not found' });
                 }
@@ -174,3 +180,11 @@ router.get('/:id/details', verifyTokens, verifyMemberAndShopAndAdminRole, (req, 
 });
 
 module.exports = router;
+
+
+
+
+
+
+
+
