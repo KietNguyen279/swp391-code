@@ -45,9 +45,6 @@ router.post('/', verifyTokens, verifyShopRole, (req, res) => {
   if (isNaN(Date.parse(date_published))) {
     return res.status(400).json({ message: 'Invalid date published' }); 
   }
-  if (new Date(date_published) > new Date()) {
-    return res.status(400).json({ message: 'Date published cannot be in the future' });
-  }
 
   NewsBlog.createNewsBlog(image, title, content, date_published, (error, result) => {
     if (error) {

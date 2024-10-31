@@ -49,10 +49,6 @@ router.post('/', verifyShopRole, (req, res) => {
     return res.status(400).json({ message: 'Invalid pond_id.' });
   }
 
-  if (new Date(measurement_time) > new Date()) {
-    return res.status(400).json({ message: 'Measurement time cannot be in the future' });
-  }
-
   WaterParam.createWaterParameter(measurement_time, pond_id, (error, result) => {
     if (error) {
       console.error('Error creating water parameter:', error);
@@ -75,9 +71,6 @@ router.put('/:id', verifyShopRole, (req, res) => {
   // Additional validation 
   if (isNaN(waterParamId) || waterParamId <= 0) {
     return res.status(400).json({ message: 'Invalid water parameter ID' });
-  }
-  if (new Date(measurement_time) > new Date()) {
-    return res.status(400).json({ message: 'Measurement time cannot be in the future' });
   }
 
   WaterParam.updateWaterParameterById(waterParamId, measurement_time, (error, result) => {

@@ -55,9 +55,6 @@ const getKoiGrowthById = (id, callback) => {
   if (id === 'null' || id === 'undefined') {
     return callback(new Error('Invalid koi growth record ID'), null);
   }
-  if (typeof id !== 'number') {
-    return callback(new Error('ID must be a number'), null);
-  }
   if (id === 'NaN') {
     return callback(new Error('Invalid koi growth record ID'), null);
   }

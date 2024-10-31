@@ -75,9 +75,6 @@ router.post('/', verifyShopRole, (req, res) => {
     if (water_parameters_id <= 0) {
         return res.status(400).json({ message: 'Water parameters ID must be greater than 0' });
     }
-    if (new Date(measurement_time) > new Date()) {
-        return res.status(400).json({ message: 'Measurement time cannot be in the future' });
-    }
     if (pond_id <= 0) {
         return res.status(400).json({ message: 'Invalid pond_id.' });
     }
