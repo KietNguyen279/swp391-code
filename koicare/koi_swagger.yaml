@@ -1526,6 +1526,40 @@ paths:
         "500":
           description: Internal server error
 
+  /admin/shopmanager/create:
+    post:
+      summary: Create Role SHOP
+      tags:
+        - Authentication
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                email:
+                  type: string
+                password:
+                  type: string
+              required:
+                - name
+                - email
+                - password
+      responses:
+        201:
+          description: SHOP registered successfully
+        400:
+          description: Validation error
+        409:
+          description: Email already exists
+        500:
+          description: Server error
+
 components:
   securitySchemes:
     bearerAuth:

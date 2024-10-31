@@ -2,8 +2,7 @@ const db = require('../config/db');
 
 // Create user 
 const createUser = (userData, callback) => {
-    const { name, email, password } = userData;
-    const role = "MEMBER";  // Default role
+    const { name, email, password, role } = userData;
 
     // Input validation
     if (!name || !email || !password) {
