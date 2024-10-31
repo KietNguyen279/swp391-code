@@ -34,9 +34,6 @@ router.post('/', verifyMemberAndShopRole, (req, res) => {
   if (orderItems.some(item => item.price <= 0)) {
     return res.status(400).json({ message: 'Price of a product must be greater than 0' });
   }
-  if (orderItems.some(item => item.product_id <= 0)) {
-    return res.status(400).json({ message: 'Invalid product ID in order items' });
-  }
 
   Order.createOrder(userId, orderItems, (error, orderId) => {
     if (error) {

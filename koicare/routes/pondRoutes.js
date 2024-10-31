@@ -31,12 +31,6 @@ router.post('/', verifyTokens, verifyMemberAndShopAndAdminRole, (req, res) => {
         return res.status(400).json({ message: 'Missing required fields' });
     }
     // Additional validation
-    if (typeof name !== 'string' || name.length === 0) {
-        return res.status(400).json({ message: 'Invalid name' });
-    }
-    if (typeof image !== 'string' || image.length === 0) {
-        return res.status(400).json({ message: 'Invalid image URL' });
-    }
     if (isNaN(size) || size <= 0) {
         return res.status(400).json({ message: 'Invalid size' });
     }
@@ -55,17 +49,11 @@ router.post('/', verifyTokens, verifyMemberAndShopAndAdminRole, (req, res) => {
     if (isNaN(user_id) || user_id <= 0) {
         return res.status(400).json({ message: 'Invalid user ID' });
     }
-    if (typeof user_id !== 'number') {
-        return res.status(400).json({ message: 'User ID must be a number' });
-    }
-    if (typeof size !== 'number' || typeof depth !== 'number' || typeof volume !== 'number' || typeof num_of_drains !== 'number' || typeof pump_capacity !== 'number') {
-        return res.status(400).json({ message: 'Must be a number' });
-    }
 
     Pond.createPond(name, image, size, depth, volume, num_of_drains, pump_capacity, user_id, (error, result) => {
         if (error) {
             console.error('Error creating pond:', error);
-            return res.status(500).json({ message: 'Internal server error' });
+            return res.status(500).json({ error: error.toString() });
         } else {
             res.status(201).json({ message: 'Pond created' });
         }
@@ -106,9 +94,6 @@ router.put('/:id', verifyTokens, verifyMemberAndShopAndAdminRole, (req, res) => 
     if (pump_capacity && (isNaN(pump_capacity) || pump_capacity <= 0)) {
         return res.status(400).json({ message: 'Invalid pump capacity' });
     }
-    if (typeof size !== 'number' || typeof depth !== 'number' || typeof volume !== 'number' || typeof num_of_drains !== 'number' || typeof pump_capacity !== 'number') {
-        return res.status(400).json({ message: 'Must be a number' });
-    }
 
     Pond.getPondById(pondId, (error, pond) => {
         if (error) {
@@ -126,7 +111,13 @@ router.put('/:id', verifyTokens, verifyMemberAndShopAndAdminRole, (req, res) => 
                         return res.status(500).json({ message: 'Internal server error' });
                     }
                 } else if (result === 1) {
-                    res.json({ message: 'Pond updated' });
+                    Pond.getPondById(pondId, (error, updatedPond) => {
+                        if (error) {
+                            console.error('Error fetching updated pond:', error);
+                            return res.status(500).json({ message: 'Internal server error' });
+                        }
+                        res.json({ message: 'Pond updated', pond: updatedPond });
+                    });
                 } else {
                     res.status(404).json({ message: 'Pond not found' });
                 }
@@ -189,3 +180,11 @@ router.get('/:id/details', verifyTokens, verifyMemberAndShopAndAdminRole, (req, 
 });
 
 module.exports = router;
+
+
+
+
+
+
+
+

@@ -60,9 +60,6 @@ router.post('/', verifyTokens, verifyShopRole, (req, res) => {
     if (isNaN(quantity) || quantity < 0) {
         return res.status(400).json({ message: 'Invalid quantity' });
     }
-    if (typeof price !== 'number' || typeof quantity !== 'number') {
-        return res.status(400).json({ message: 'Price and quantity must be numbers' });
-    }
     if (price % 1 !== 0 || quantity % 1 !== 0) {
         return res.status(400).json({ message: 'Price and quantity must be integers' });
     }
@@ -98,18 +95,6 @@ router.put('/:id', verifyTokens, verifyShopRole, (req, res) => {
     }
     if (isNaN(productId) || productId <= 0) {
         return res.status(400).json({ message: 'Invalid product ID' });
-    }
-    if (typeof name !== 'string' || name.length === 0) {
-        return res.status(400).json({ message: 'Invalid name' });
-    }
-    if (typeof image !== 'string' || image.length === 0) {
-        return res.status(400).json({ message: 'Invalid image URL' });
-    }
-    if (typeof description !== 'string' || description.length === 0) {
-        return res.status(400).json({ message: 'Invalid description' });
-    }
-    if (typeof price !== 'number' || typeof quantity !== 'number') {
-        return res.status(400).json({ message: 'Price and quantity must be numbers' });
     }
     if (price % 1 !== 0 || quantity % 1 !== 0) {
         return res.status(400).json({ message: 'Price and quantity must be integers' });

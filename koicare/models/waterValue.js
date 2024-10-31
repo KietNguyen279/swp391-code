@@ -127,7 +127,7 @@ const updateWaterParamByIdAndName = (id, name, updateValue, callback) => {
     if (typeof name !== 'string' || name.length === 0) {
         return callback(new Error('Invalid water parameter name'), null);
     }
-    if (updateValue === undefined || updateValue === null || isNaN(updateValue)) { // More specific check for updateValue
+    if (updateValue === undefined || updateValue === null || isNaN(updateValue)) { 
         return callback(new Error('Invalid input data. Param value is required and must be a number.'), null);
     }
     if (!Number.isInteger(id)) {
