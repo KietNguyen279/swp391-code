@@ -15,13 +15,15 @@ const verifyTokenMiddleware = (req, res, next) => {
     return res.status(401).json({ message: 'You do not have permission here' });
   }
   try {
-    const token = bearerToken.split(' ')[1]
+    const token = bearerToken.split(' ')[1];
     const decoded = jwt.verify(token, jwtSecretKey);
+    
+    console.log("Decoded Token:", decoded); // Log the decoded token for debugging
     req.userId = decoded.id;
     req.userRole = decoded.role;
     next();
   } catch (err) {
-    console.log(err)
+    console.log(err);
     return res.status(401).json({ message: 'Failed to authenticate token' });
   }
 };

@@ -1,19 +1,13 @@
 const db = require("../config/db");
 
-const validatePositiveNumber = (value, fieldName) => {
-    if (typeof value !== "number" || value <= 0) {
-        throw new Error(`${fieldName} must be a positive number.`);
-    }
-};
-
 // Get pond by ID
 const getPondById = (id, callback) => {
     const query = `SELECT p.id, p.name, p.image, p.size, p.depth, p.volume, 
                   p.num_of_drains, p.pump_capacity, p.salt_kg_required, 
                   k.id as koi_id
-                 FROM Pond p
-                 LEFT JOIN Koi k ON p.id = k.pond_id 
-                 WHERE p.id = ?;`;
+                  FROM Pond p
+                  LEFT JOIN Koi k ON p.id = k.pond_id 
+                  WHERE p.id = ?;`;
     db.query(query, [id], (error, results) => {
         if (error) return callback(error, null);
         const pondInfo =
@@ -49,18 +43,6 @@ const createPond = (
     user_id,
     callback
 ) => {
-    try {
-        if (!name || !image) throw new Error("Name and image are required.");
-        validatePositiveNumber(size, "size");
-        validatePositiveNumber(depth, "depth");
-        validatePositiveNumber(volume, "volume");
-        validatePositiveNumber(num_of_drains, "number of drains");
-        validatePositiveNumber(pump_capacity, "pump capacity");
-        validatePositiveNumber(user_id, "user ID");
-    } catch (error) {
-        return callback(error, null);
-    }
-
     const salt_kg_required = Math.round(volume * 0.003);
     const query = `
     INSERT INTO Pond (name, image, size, depth, volume, num_of_drains, pump_capacity, user_id, salt_kg_required)
@@ -201,8 +183,8 @@ const deletePondById = (id, callback) => {
 // Get all ponds
 const getAllPonds = (callback) => {
     const query = `
-    SELECT p.id, p.name, p.image, 
-           (SELECT COUNT(*) FROM Koi WHERE Koi.pond_id = p.id) AS totalFish
+    SELECT p.*, 
+    (SELECT COUNT(*) FROM Koi WHERE Koi.pond_id = p.id) AS totalFish
     FROM Pond p;
   `;
     db.query(query, (error, results) => {
@@ -217,7 +199,7 @@ const getAllPonds = (callback) => {
             totalFish: row.totalFish,
         }));
 
-        callback(null, formattedResults);
+        callback(null, results);
     });
 };
 
@@ -239,10 +221,16 @@ const getPondDetails = (pondId, callback) => {
         p.id, p.name;
     `;
     db.query(query, [pondId], (error, results) => {
-        if (error) return callback(error, null);
-        return results.length > 0
-            ? callback(null, results[0])
-            : callback(null, null);
+        if (error) {
+            console.error("Error executing query:", error);
+            return callback(error, null);
+        }
+        // Check if results are found
+        if (results.length > 0) {
+            return callback(null, results[0]); // Return the first result
+        } else {
+            return callback(null, null); // No results found
+        }
     });
 };
 

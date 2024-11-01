@@ -3,6 +3,7 @@ const router = express.Router();
 const Pond = require("../models/pond");
 const WaterParam = require("../models/waterParam");
 const {
+    verifyTokens,
     verifyMemberAndShopAndAdminRole,
     verifyAdminAndShopRole,
 } = require("../middleware/authMiddleware");
@@ -203,34 +204,31 @@ router.get("/:id", (req, res) => {
 });
 
 // Create pond
-router.post("/", (req, res) => { //todo thêm verifyAdminAndShopRole
-    console.log("User object:", req.user); 
-    const { name, image, size, depth, volume, num_of_drains, pump_capacity } =req.body;
+router.post("/", (req, res) => {
+  console.log("User ID:", req.userId); // Check user ID
 
-    if (!req.user || !req.user.id) {
-        return res.status(401).json({ message: "User not authenticated." });
-    }
+  const { name, image, size, depth, volume, num_of_drains, pump_capacity } = req.body;
 
-    Pond.createPond(
-        name,
-        image,
-        size,
-        depth,
-        volume,
-        num_of_drains,
-        pump_capacity,
-        req.user.id,
-        (error, affectedRows) => {
-            if (error) {
-                console.error("Error creating pond:", error);
-                return res.status(400).json({ message: error.message });
-            }
-            return res.status(201).json({
-                message: "Pond created successfully",
-                affectedRows,
-            });
-        }
-    );
+  Pond.createPond(
+      name,
+      image,
+      size,
+      depth,
+      volume,
+      num_of_drains,
+      pump_capacity,
+      req.userId,
+      (error, affectedRows) => {
+          if (error) {
+              console.error("Error creating pond:", error);
+              return res.status(400).json({ message: error.message });
+          }
+          return res.status(201).json({
+              message: "Pond created successfully",
+              affectedRows,
+          });
+      }
+  );
 });
 
 // Update pond by ID
@@ -278,20 +276,22 @@ router.get("/", (req, res) => {
 
 // Get pond details
 router.get("/details/:id", (req, res) => {
-    const pondId = req.params.id;
-    if (isNaN(pondId) || pondId <= 0) {
-        return res.status(400).json({ message: "Invalid ID" });
-    }
+  const pondId = parseInt(req.params.id, 10); // Ensure pondId is a number
+  if (isNaN(pondId) || pondId <= 0) {
+      return res.status(400).json({ message: "Invalid ID" });
+  }
 
-    Pond.getPondDetails(pondId, (error, pondDetails) => {
-        if (error) {
-            console.error("Error fetching pond details:", error);
-            return res.status(500).json({ message: "Internal server error" });
-        }
-        return pondDetails
-            ? res.json(pondDetails)
-            : res.status(404).json({ message: "Pond not found" });
-    });
+  Pond.getPondDetails(pondId, (error, pondDetails) => {
+      if (error) {
+          console.error("Error fetching pond details:", error);
+          return res.status(500).json({ message: "Internal server error" });
+      }
+      if (pondDetails) {
+          return res.json(pondDetails); // Successfully found pond details
+      } else {
+          return res.status(404).json({ message: "Pond not found" }); // No pond found
+      }
+  });
 });
 
 module.exports = router;
