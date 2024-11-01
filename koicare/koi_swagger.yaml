@@ -822,151 +822,7 @@ paths:
         "500":
           description: Internal server error
 
-  /waterValue:
-    get:
-      summary: Get all water parameter values
-      tags:
-        - Water Value
-      security:
-        - bearerAuth: []
-      responses:
-        "200":
-          description: A list of all water parameter values
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/WaterValue"
-        "500":
-          description: Internal server error
-    post:
-      summary: Create a new water parameter value
-      tags:
-        - Water Value
-      security:
-        - bearerAuth: []
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                name:
-                  type: string
-                param_value:
-                  type: number
-                  format: float
-                water_parameters_id:
-                  type: integer
-      responses:
-        "201":
-          description: Water parameter value created successfully
-        "400":
-          description: Bad Request
-        "500":
-          description: Internal server error
 
-  /waterValue/{id}/{name}:
-    get:
-      summary: Get water parameter value by ID and name
-      tags:
-        - Water Value
-      security:
-        - bearerAuth: []
-      parameters:
-        - in: path
-          name: id
-          schema:
-            type: integer
-          required: true
-          description: ID of the water parameter
-        - in: path
-          name: name
-          schema:
-            type: string
-          required: true
-          description: Name of the water parameter value
-      responses:
-        "200":
-          description: Water parameter value retrieved successfully
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  param_value:
-                    type: number
-                    format: float
-        "404":
-          description: Water parameter value not found
-        "500":
-          description: Internal server error
-
-    put:
-      summary: Update water parameter value by ID and name
-      tags:
-        - Water Value
-      security:
-        - bearerAuth: []
-      parameters:
-        - in: path
-          name: id
-          schema:
-            type: integer
-          required: true
-          description: ID of the water parameter
-        - in: path
-          name: name
-          schema:
-            type: string
-          required: true
-          description: Name of the water parameter value
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                param_value:
-                  type: number
-                  format: float
-      responses:
-        "200":
-          description: Water parameter value updated successfully
-        "404":
-          description: Water parameter value not found
-        "500":
-          description: Internal server error
-
-    delete:
-      summary: Delete water parameter value by ID and name
-      tags:
-        - Water Value
-      security:
-        - bearerAuth: []
-      parameters:
-        - in: path
-          name: id
-          schema:
-            type: integer
-          required: true
-          description: ID of the water parameter
-        - in: path
-          name: name
-          schema:
-            type: string
-          required: true
-          description: Name of the water parameter value
-      responses:
-        "200":
-          description: Water parameter value deleted successfully
-        "404":
-          description: Water parameter value not found
-        "500":
-          description: Internal server error
 
   /order:
     get:
@@ -1560,6 +1416,114 @@ paths:
         500:
           description: Server error
 
+  /pond/{id}/water-info:
+    get:
+      tags:
+        - Pond
+      security:
+        - bearerAuth: []
+      summary: Retrieve water parameters for a specific pond
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID of the pond
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: A list of water parameters for the specified pond
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/WaterParameter'
+        '404':
+          description: Pond not found
+
+    post:
+      tags:
+        - Water Parameters
+      security:
+        - bearerAuth: []
+      summary: Create new water parameters for a specific pond
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID of the pond
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/WaterParameterInput'
+      responses:
+        '201':
+          description: Water parameters created successfully
+        '400':
+          description: Invalid input
+
+  /pond/{id}/water-info/{paramId}:
+    put:
+      tags:
+        - Pond
+      security:
+        - bearerAuth: []
+      summary: Update water parameters for a specific pond
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID of the pond
+          schema:
+            type: integer
+        - name: paramId
+          in: path
+          required: true
+          description: ID of the water parameter
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WaterParameterInput'
+      responses:
+        '200':
+          description: Water parameter updated successfully
+        '404':
+          description: Water parameter or pond not found
+
+    delete:
+      tags:
+        - Pond
+      summary: Delete water parameters for a specific pond
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID of the pond
+          schema:
+            type: integer
+        - name: paramId
+          in: path
+          required: true
+          description: ID of the water parameter
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Water parameter deleted successfully
+        '404':
+          description: Water parameter or pond not found       
+
 components:
   securitySchemes:
     bearerAuth:
@@ -1645,18 +1609,6 @@ components:
         quantity:
           type: integer
 
-    WaterValue:
-      type: object
-      properties:
-        id:
-          type: integer
-        name:
-          type: string
-        param_value:
-          type: number
-          format: float
-        water_parameters_id:
-          type: integer
 
     NewsBlog:
       type: object
@@ -1680,8 +1632,38 @@ components:
       properties:
         id:
           type: integer
-        measurement_time:
+        temt:
+          type: number
+        ph:
+          type: number
+        salinity:
+          type: number
+        o2:
+          type: number
+        no2:
+          type: number
+        no3:
+          type: number
+        no4:
+          type: number
+
+    WaterParameterInput:
+      type: object
+      properties:
+        date:
           type: string
-          format: date-time
-        pond_id:
-          type: integer
+          format: date
+        temt:
+          type: number
+        ph:
+          type: number
+        salinity:
+          type: number
+        o2:
+          type: number
+        no2:
+          type: number
+        no3:
+          type: number
+        no4:
+          type: number

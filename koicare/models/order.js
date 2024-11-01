@@ -1,325 +1,49 @@
-const db = require('../config/db');
+const db = require("../config/db");
 
-// create order
-const createOrder = (userId, orderItems, callback) => {
-
-    // Input validation
-    if (!orderItems || orderItems.length === 0) {
-        return callback(new Error('Order items cannot be empty'), null);
+// Create a new order
+const createOrder = (userId, callback) => {
+  const query = `
+    INSERT INTO \`Order\` (order_date, user_id) 
+    VALUES (NOW(), ?);
+  `;
+  db.query(query, [userId], (error, results) => {
+    if (error) {
+      return callback(error, null);
     }
-    // Validation for each order item
-    for (const item of orderItems) {
-        if (!item.product_id || item.quantity <= 0 || item.price <= 0) {
-            return callback(new Error('Invalid order item data. Please check product_id, quantity, and price.'), null);
-        }
-        // Additional validation for each item 
-        if (isNaN(item.product_id) || item.product_id <= 0) {
-            return callback(new Error('Invalid product_id. It must be a positive integer.'), null);
-        }
-        if (isNaN(item.quantity) || item.quantity <= 0) {
-            return callback(new Error('Invalid quantity. It must be a positive integer.'), null);
-        }
-        if (isNaN(item.price) || item.price <= 0) {
-            return callback(new Error('Invalid price. It must be a positive number.'), null);
-        }
-    }
-
-    db.beginTransaction((err) => {
-        if (err) {
-            return callback(err, null);
-        }
-        try {
-            const orderQuery = `INSERT INTO \`Order\` (user_id) VALUES (?)`;
-            db.query(orderQuery, [userId], (error, orderResult) => {
-                if (error) {
-                    throw error;
-                }
-                const orderId = orderResult.insertId;
-                const orderItemValues = orderItems.map(item => [
-                    orderId,
-                    item.product_id,
-                    item.quantity,
-                    item.price
-                ]);
-
-                const orderItemQuery = `
-            INSERT INTO Order_Product (order_id, product_id, quantity, price) 
-            VALUES ?
-          `;
-                db.query(orderItemQuery, [orderItemValues], (error, orderItemResult) => {
-                    if (error) {
-                        throw error;
-                    }
-
-                    db.commit((err) => {
-                        if (err) {
-                            throw err;
-                        }
-                        callback(null, orderId);
-                    });
-                });
-            });
-        } catch (error) {
-            db.rollback(() => {
-                console.error('Error creating order:', error);
-                callback(error, null);
-            });
-        }
-    });
+    return callback(null, results.insertId);
+  });
 };
 
-// Get order by ID 
-const getOrderById = (orderId, callback) => {
-    // Input validation
-    if (isNaN(orderId) || orderId <= 0) {
-        return callback(new Error('Invalid order ID'), null);
+// Get order by ID
+const getOrderById = (id, callback) => {
+  const query = `
+    SELECT * FROM \`Order\` WHERE id = ?;
+  `;
+  db.query(query, [id], (error, results) => {
+    if (error) {
+      return callback(error, null);
     }
-    if (orderId === '') {
-        return callback(new Error('Order ID cannot be empty'), null);
-    }
-    if (orderId === null) {
-        return callback(new Error('Order ID cannot be null'), null);
-    }
-    if (orderId === undefined) {
-        return callback(new Error('Order ID cannot be undefined'), null);
-    }
-    if (orderId === false) {
-        return callback(new Error('Order ID cannot be false'), null);
-    }
-    if (orderId === true) {
-        return callback(new Error('Order ID cannot be true'), null);
-    }
-    if (orderId === 0) {
-        return callback(new Error('Order ID cannot be 0'), null);
-    }
-    const query = `
-      SELECT o.id AS order_id, o.order_date, o.user_id, o.status, oi.product_id, oi.quantity, p.name, p.price 
-      FROM \`Order\` o
-      LEFT JOIN Order_Product oi ON o.id = oi.order_id  
-      LEFT JOIN Product p ON oi.product_id = p.id      
-      WHERE o.id = ?;  
-    `;
-    db.query(query, [orderId], (error, results) => {
-        if (error) {
-            return callback(error, null);
-        }
-        if (results.length === 0) {
-            return callback(null, null);
-        }
-        const order = processOrderItems(results);
-        return callback(null, order);
-    });
+    return callback(null, results[0]);
+  });
 };
 
-// Update order by ID
-const updateOrderById = (orderId, updatedOrderData, callback) => {
-
-    // Input validation
-    if (isNaN(orderId) || orderId <= 0) {
-        return callback(new Error('Invalid order ID'), null);
+// Update order status
+const updateOrderStatus = (id, status, callback) => {
+  const query = `
+    UPDATE \`Order\` 
+    SET status = ? 
+    WHERE id = ?;
+  `;
+  db.query(query, [status, id], (error, results) => {
+    if (error) {
+      return callback(error, null);
     }
-    if (orderId === '') {
-        return callback(new Error('Order ID cannot be empty'), null);
-    }
-    if (orderId === null) {
-        return callback(new Error('Order ID cannot be null'), null);
-    }
-    if (orderId === undefined) {
-        return callback(new Error('Order ID cannot be undefined'), null);
-    }
-    if (orderId === false) {
-        return callback(new Error('Order ID cannot be false'), null);
-    }
-    if (orderId === true) {
-        return callback(new Error('Order ID cannot be true'), null);
-    }
-    if (orderId === 0) {
-        return callback(new Error('Order ID cannot be 0'), null);
-    }
-
-    const { orderItems, status } = updatedOrderData;
-    if (status && !['pending', 'processing', 'shipped', 'delivered', 'cancelled'].includes(status)) {
-        return callback(new Error('Invalid order status'), null);
-    }
-    if (orderItems && Array.isArray(orderItems)) {
-        for (const item of orderItems) {
-            if (!item.product_id || item.quantity <= 0 || item.price <= 0) {
-                return callback(new Error('Invalid order item data. Please check product_id, quantity, and price.'), null);
-            }
-            // Additional validation for each item 
-            if (isNaN(item.product_id) || item.product_id <= 0) {
-                return callback(new Error('Invalid product_id. It must be a positive integer.'), null);
-            }
-            if (isNaN(item.quantity) || item.quantity <= 0) {
-                return callback(new Error('Invalid quantity. It must be a positive integer.'), null);
-            }
-            if (isNaN(item.price) || item.price <= 0) {
-                return callback(new Error('Invalid price. It must be a positive number.'), null);
-            }
-        }
-    }
-
-    db.beginTransaction((err) => {
-        if (err) {
-            return callback(err, null);
-        }
-        try {
-            const { orderItems, ...orderData } = updatedOrderData;
-            // Update the order in the Order table
-            const orderQuery = `UPDATE \`Order\` SET ? WHERE id = ?`;
-            db.query(orderQuery, [orderData, orderId], (error, orderResult) => {
-                if (error) {
-                    throw error;
-                }
-                // Delete existing order items
-                const deleteOrderItemQuery = `DELETE FROM Order_Product WHERE order_id = ?`;
-                db.query(deleteOrderItemQuery, [orderId], (error, deleteResult) => {
-                    if (error) {
-                        throw error;
-                    }
-                    // Insert updated order items
-                    if (orderItems && orderItems.length > 0) {
-                        const orderItemValues = orderItems.map(item => [
-                            orderId,
-                            item.product_id,
-                            item.quantity,
-                            item.price
-                        ]);
-                        const orderItemQuery = `
-                                                INSERT INTO Order_Product (order_id, product_id, quantity, price) 
-                                                VALUES ?
-                                               `;
-                        db.query(orderItemQuery, [orderItemValues], (error, orderItemResult) => {
-                            if (error) {
-                                throw error;
-                            }
-                            db.commit((err) => {
-                                if (err) {
-                                    throw err;
-                                }
-                                callback(null, orderResult.affectedRows);
-                            });
-                        });
-                    } else {
-                        db.commit((err) => {
-                            if (err) {
-                                throw err;
-                            }
-                            callback(null, orderResult.affectedRows);
-                        });
-                    }
-                });
-            });
-        } catch (error) {
-            db.rollback(() => {
-                console.error('Error updating order:', error);
-                callback(error, null);
-            });
-        }
-    });
-};
-
-// Delete order by ID
-const deleteOrderById = (orderId, callback) => {
-    // Input validation
-    if (isNaN(orderId) || orderId <= 0) {
-        return callback(new Error('Invalid order ID'), null);
-    }
-    if (orderId === '') {
-        return callback(new Error('Order ID cannot be empty'), null);
-    }
-    if (orderId === null) {
-        return callback(new Error('Order ID cannot be null'), null);
-    }
-    if (orderId === undefined) {
-        return callback(new Error('Order ID cannot be undefined'), null);
-    }
-    if (orderId === false) {
-        return callback(new Error('Order ID cannot be false'), null);
-    }
-    if (orderId === true) {
-        return callback(new Error('Order ID cannot be true'), null);
-    }
-    if (orderId === 0) {
-        return callback(new Error('Order ID cannot be 0'), null);
-    }
-    
-    db.beginTransaction((err) => {
-        if (err) {
-            return callback(err, null);
-        }
-        try {
-            // Delete order items 
-            const deleteOrderItemQuery = `DELETE FROM Order_Product WHERE order_id = ?`;
-            db.query(deleteOrderItemQuery, [orderId], (error, deleteResult) => {
-                if (error) {
-                    throw error;
-                }
-                // Delete the order from the Order table
-                const orderQuery = `DELETE FROM \`Order\` WHERE id = ?`;
-                db.query(orderQuery, [orderId], (error, orderResult) => {
-                    if (error) {
-                        throw error;
-                    }
-                    db.commit((err) => {
-                        if (err) {
-                            throw err;
-                        }
-                        callback(null, orderResult.affectedRows);
-                    });
-                });
-            });
-        } catch (error) {
-            db.rollback(() => {
-                console.error('Error deleting order:', error);
-                callback(error, null);
-            });
-        }
-    });
-};
-
-// Helper function to process order items
-const processOrderItems = (items) => {
-    const order = {
-        order_id: null,
-        user_id: null,
-        order_date: null,
-        status: null,
-        items: []
-    };
-    if (items.length > 0) {
-        order.order_id = items[0].order_id;
-        order.user_id = items[0].user_id;
-        order.order_date = items[0].order_date;
-        order.total_amount = items[0].total_amount;
-        order.status = items[0].status;
-        for (const item of items) {
-            order.items.push({
-                product_id: item.product_id,
-                name: item.name,
-                price: item.price,
-                quantity: item.quantity
-            });
-        }
-    }
-    return order;
-};
-
-// Get all orders
-const getAllOrders = (callback) => {
-    const query = `SELECT * FROM \`Order\``;
-    db.query(query, (error, results) => {
-        if (error) {
-            return callback(error, null);
-        }
-        return callback(null, results);
-    });
+    return callback(null, results.affectedRows);
+  });
 };
 
 module.exports = {
-    createOrder,
-    getOrderById,
-    updateOrderById,
-    deleteOrderById,
-    getAllOrders
+  createOrder,
+  getOrderById,
+  updateOrderStatus,
 };

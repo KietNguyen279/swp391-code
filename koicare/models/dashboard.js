@@ -1,37 +1,85 @@
-const db = require('../config/db');
-const { formatDate } = require('../utils/dateHelper');
+const db = require("../config/db");
 
-const getDashboardData = (userId, callback) => {
-  // Input validation
-  if (isNaN(userId) || userId <= 0) {
-    return callback(new Error('Invalid user ID'), null);
-  }
-
-  const query = `
-    SELECT 
-      (SELECT COUNT(*) FROM Koi WHERE pond_id IN (SELECT id FROM Pond WHERE user_id = ?)) AS total_koi,
-      (SELECT COUNT(*) FROM Pond WHERE user_id = ?) AS total_ponds,
-      (SELECT COUNT(*) FROM \`Order\` WHERE user_id = ?) AS total_orders,
-      (SELECT MAX(order_date) FROM \`Order\` WHERE user_id = ?) AS lastOrderDate  -- Added this line
-  `;
-
-  db.query(query, [userId, userId, userId, userId], (error, results) => {
+// Get water parameters for a specific pond
+const getWaterParametersByPondId = (pondId, callback) => {
+  const query = "SELECT wp.id, wp.measurement_time, wp.pond_id, wpv.param_value AS temperature, wpv.param_value AS ph, wpv.param_value AS salinity, wpv.param_value AS o2, wpv.param_value AS no2, wpv.param_value AS no3, wpv.param_value AS no4 FROM Water_parameters wp JOIN Water_parameter_value wpv ON wp.id = wpv.water_parameters_id WHERE wp.pond_id = ?;";
+  db.query(query, [pondId], (error, results) => {
     if (error) {
-      console.error('Error fetching dashboard data:', error);
-      return callback(new Error('Failed to fetch dashboard data'), null);
+      return callback(error, null);
     }
-    if (results.length > 0) {
-      const data = results[0];
-      if (data.lastOrderDate) {
-        data.lastOrderDate = formatDate(data.lastOrderDate);
+    return callback(null, results);
+  });
+};
+
+// Create water parameters for a specific pond
+const createWaterParametersForPond = (pondId, waterInfo, callback) => {
+  const query = `
+        INSERT INTO Water_parameters (pond_id, measurement_time) 
+        VALUES (?, ?);
+    `;
+  const values = [pondId, waterInfo.date];
+
+  db.query(query, values, (error, results) => {
+    if (error) {
+      return callback(error, null);
+    }
+
+    const waterParamId = results.insertId; // Get the newly created water parameters ID
+
+    const insertValues = waterInfo.map((data) => [
+      data.param_name,
+      data.param_value,
+      waterParamId,
+    ]);
+
+    const insertQuery = `
+        INSERT INTO Water_parameter_value (name, param_value, water_parameters_id) 
+        VALUES ?;
+    `;
+
+    db.query(insertQuery, [insertValues], (error) => {
+      if (error) {
+        return callback(error, null);
       }
-      return callback(null, data);
-    } else {
-      return callback(null, {});
+      return callback(null, { message: "Water parameters created", id: waterParamId });
+    });
+  });
+};
+
+// Update water parameters by ID
+const updateWaterParameterById = (id, pondId, waterInfo, callback) => {
+  const query = `
+        UPDATE Water_parameter_value 
+        SET param_value = ? 
+        WHERE id = ? AND water_parameters_id IN (SELECT id FROM Water_parameters WHERE pond_id = ?);
+    `;
+  const values = [waterInfo.param_value, id, pondId];
+
+  db.query(query, values, (error, results) => {
+    if (error) {
+      return callback(error, null);
     }
+    return callback(null, results.affectedRows);
+  });
+};
+
+// Delete water parameter by ID
+const deleteWaterParameterById = (id, pondId, callback) => {
+  const query = `
+        DELETE FROM Water_parameter_value 
+        WHERE id = ? AND water_parameters_id IN (SELECT id FROM Water_parameters WHERE pond_id = ?);
+    `;
+  db.query(query, [id, pondId], (error, results) => {
+    if (error) {
+      return callback(error, null);
+    }
+    return callback(null, results.affectedRows);
   });
 };
 
 module.exports = {
-  getDashboardData
+  getWaterParametersByPondId,
+  createWaterParametersForPond,
+  updateWaterParameterById,
+  deleteWaterParameterById,
 };
