@@ -49,18 +49,17 @@ CREATE TABLE `Koi_growth_record` (
 );
 
 CREATE TABLE `Water_parameters` (
-  `id` BIGINT PRIMARY KEY auto_increment,
-  `measurement_time` DATETIME,
+  `id` BIGINT PRIMARY KEY auto_increment, 
   `pond_id` BIGINT,
+  `date` DATETIME,
+  `temt` FLOAT,
+  `ph` FLOAT,
+  `salinity` FLOAT,
+  `o2` FLOAT,
+  `no2` FLOAT,
+  `no3` FLOAT,
+  `po4` FLOAT,
   FOREIGN KEY (`pond_id`) REFERENCES `Pond` (`id`)
-);
-
-CREATE TABLE `Water_parameter_value` (
-  `id` BIGINT PRIMARY KEY auto_increment,
-  `name` VARCHAR(255),
-  `param_value` FLOAT,
-  `water_parameters_id` BIGINT,
-  FOREIGN KEY (`water_parameters_id`) REFERENCES `Water_parameters` (`id`)
 );
 
 CREATE TABLE `Product` (
