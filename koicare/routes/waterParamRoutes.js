@@ -54,7 +54,7 @@ router.post("/pond/:id/water-info", verifyAdminAndShopRole, (req, res) => {
         }
         break;
 
-      case "temperature":
+      case "tempt":
         if (param_value > 30) {
           status = "BAD";
           message = "nhiệt độ khá cao, khuyến nghị từ 25 đến 28 độ C";

@@ -14,15 +14,11 @@ const WaterParam = {
 
   // Create water parameters 
   createWaterParametersForPond: (pondId, waterParams, callback) => {
+    const values = [pondId, waterParams.date, waterParams.temt, waterParams.ph, waterParams.salinity, waterParams.o2, waterParams.no2, waterParams.no3, waterParams.po4];
     const query =
-      "INSERT INTO Water_parameters (pond_id, param_name, param_value) VALUES ?";
-    const values = waterParams.map((param) => [
-      pondId,
-      param.param_name,
-      param.param_value,
-    ]);
+      "INSERT INTO Water_parameters (pond_id, date, temt, ph, salinity, o2, no2, no3, po4) VALUES (?,?,?,?,?,?,?,?,?)";
 
-    db.query(query, [values], (error, results) => {
+    db.query(query, values, (error, results) => {
       if (error) {
         return callback(error, null);
       }
