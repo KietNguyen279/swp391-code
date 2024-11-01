@@ -2,12 +2,6 @@ const db = require("../config/db");
 
 // Get pond by ID
 const getPondById = (id, callback) => {
-  try {
-    validatePositiveNumber(id, "pond ID");
-  } catch (error) {
-    return callback(error, null);
-  }
-
   const query = `SELECT p.id, p.name, p.image, p.size, p.depth, p.volume, 
                   p.num_of_drains, p.pump_capacity, p.salt_kg_required, 
                   k.id as koi_id
