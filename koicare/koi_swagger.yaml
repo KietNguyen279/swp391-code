@@ -208,8 +208,6 @@ paths:
                   type: string
                 pond_id:
                   type: integer
-                user_id:
-                  type: integer
               required:
                 - name
                 - image
@@ -221,7 +219,6 @@ paths:
                 - breed
                 - origin
                 - pond_id
-                - user_id  
       responses:
         "201":
           description: Koi created successfully

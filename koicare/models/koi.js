@@ -1,13 +1,7 @@
 const db = require("../config/db");
 
-const isPositiveNumber = (value) => typeof value === "number" && value > 0;
-
 // Get koi by ID
 const getKoiById = (id, callback) => {
-  if (!isPositiveNumber(id)) {
-    return callback(new Error("Invalid Koi ID"), null);
-  }
-
   const query = `
       SELECT k.*, u.name AS owner_name
       FROM Koi k
@@ -33,7 +27,6 @@ const createKoi = (
   breed,
   origin,
   pond_id,
-  user_id,
   callback
 ) => {
   if (
@@ -42,12 +35,7 @@ const createKoi = (
     !body_shape ||
     !gender ||
     !breed ||
-    !origin ||
-    !user_id ||
-    !isPositiveNumber(age) ||
-    !isPositiveNumber(size) ||
-    !isPositiveNumber(weight) ||
-    !isPositiveNumber(pond_id)
+    !origin
   ) {
     return callback(
       new Error("Invalid input data. Please check all fields."),
@@ -65,8 +53,8 @@ const createKoi = (
   const food_required_kg_per_day = Math.round(weight * 0.02);
 
   const query = `
-      INSERT INTO Koi (name, image, body_shape, age, size, weight, gender, breed, origin, pond_id, user_id, food_required_kg_per_day)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+      INSERT INTO Koi (name, image, body_shape, age, size, weight, gender, breed, origin, pond_id, food_required_kg_per_day)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
   `;
 
   db.query(
@@ -82,7 +70,6 @@ const createKoi = (
       breed,
       origin,
       pond_id,
-      user_id,
       food_required_kg_per_day,
     ],
     (error, results) => {
@@ -104,13 +91,13 @@ const updateKoiById = (
   callback
 ) => {
   if (
-    !isPositiveNumber(id) ||
+    !id ||
     !image ||
     !body_shape ||
-    !isPositiveNumber(age) ||
-    !isPositiveNumber(size) ||
-    !isPositiveNumber(weight) ||
-    !isPositiveNumber(pond_id)
+    !age ||
+    !size ||
+    !weight ||
+    !pond_id
   ) {
     return callback(
       new Error("Invalid input data. Please check all fields."),
@@ -145,10 +132,6 @@ const updateKoiById = (
 
 // Delete Koi by ID
 const deleteKoiById = (id, callback) => {
-  if (!isPositiveNumber(id)) {
-    return callback(new Error("Invalid koi ID"), null);
-  }
-
   const deleteGrowthRecordsQuery = `DELETE FROM Koi_growth_record WHERE koi_id = ?`;
   db.query(deleteGrowthRecordsQuery, [id], (error) => {
     if (error) return callback(error);
@@ -172,10 +155,6 @@ const getAllKoi = (callback) => {
 
 // Get Koi With Food
 const getKoiWithFoodById = (id, callback) => {
-  if (!isPositiveNumber(id)) {
-    return callback(new Error("Invalid koi ID"), null);
-  }
-
   const query = `
         SELECT 
             k.*, ROUND(k.weight * 0.02, 2) AS food_required_kg_per_day 

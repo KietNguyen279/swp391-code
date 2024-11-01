@@ -24,7 +24,7 @@ const createWaterParametersForPond = (pondId, waterInfo, callback) => {
       return callback(error, null);
     }
 
-    const waterParamId = results.insertId; // Get the newly created water parameters ID
+    const waterParamId = results.insertId; 
 
     const insertValues = waterInfo.map((data) => [
       data.param_name,

@@ -37,13 +37,13 @@ app.use('/auth', authRoutes);
 app.use('/', homeRoutes); 
 app.use('/koi', verifyTokens, koiRoutes); 
 app.use('/koiGrowth', verifyTokens, koiGrowthRoutes); 
-app.use('/pond', pondRoutes); 
+app.use('/pond', verifyTokens, pondRoutes); 
 app.use('/product', productRoutes); 
 app.use('/cart', verifyTokens, cartRoutes); 
 app.use('/order', verifyTokens, orderRoutes); 
 app.use('/newsBlog', newsBlogRoutes); 
 app.use('/dashboard', verifyTokens, dashboardRoutes); 
-app.use('/waterParam', verifyTokens, waterParamRoutes);
+app.use('/waterParam', verifyTokens,  waterParamRoutes);
 app.use('/admin', verifyTokens, adminRoutes)
 app.use('/swagger-ui', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 

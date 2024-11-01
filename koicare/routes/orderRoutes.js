@@ -35,7 +35,7 @@ router.get("/:id", verifyAdminRole, (req, res) => {
 });
 
 // Update order status
-router.put("/:id", verifyAdminRole, (req, res) => {
+router.put("/:id", verifyAdminRole,  (req, res) => {
     const orderId = req.params.id;
     const { status } = req.body;
 

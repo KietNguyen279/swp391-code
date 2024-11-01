@@ -4,7 +4,7 @@ const Koi = require("../models/koi");
 const { verifyMemberAndShopAndAdminRole } = require("../middleware/authMiddleware");
 
 // Get koi by ID
-router.get("/koi/:id", (req, res) => {
+router.get("/koi/:id", verifyMemberAndShopAndAdminRole, (req, res) => {
   const koiId = req.params.id;
 
   if (isNaN(koiId) || koiId <= 0) {
@@ -33,12 +33,10 @@ router.post("/", verifyMemberAndShopAndAdminRole, (req, res) => {
     pond_id,
   } = req.body;
 
-  const user_id = req.user.id;
-
   // Input validation
   if (!name || !image || !body_shape || !gender || !breed || !origin ||
       !isPositiveNumber(age) || !isPositiveNumber(size) || !isPositiveNumber(weight) || 
-      !isPositiveNumber(pond_id) || !user_id) {
+      !isPositiveNumber(pond_id)) {
     return res.status(400).json({ message: "Missing or invalid required fields" });
   }
 
@@ -53,7 +51,6 @@ router.post("/", verifyMemberAndShopAndAdminRole, (req, res) => {
     breed,
     origin,
     pond_id,
-    user_id,
     (error, result) => {
       if (error) {
         console.error("Error creating koi:", error);
@@ -117,7 +114,7 @@ router.get("/", (req, res) => {
 });
 
 // Get koi with food by ID
-router.get("/food/:id", (req, res) => {
+router.get("/:id/food", (req, res) => {
   const koiId = req.params.id;
 
   if (isNaN(koiId) || koiId <= 0) {
