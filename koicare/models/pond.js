@@ -76,7 +76,6 @@ const createPond = (
 // Update pond by ID
 const updatePondById = (id, updates, callback) => {
     try {
-        validatePositiveNumber(id, "pond ID");
         const {
             name,
             image,
@@ -110,31 +109,6 @@ const updatePondById = (id, updates, callback) => {
             updateFields.push("image = ?");
             updateValues.push(image);
         }
-        if (size !== undefined) {
-            validatePositiveNumber(size, "size");
-            updateFields.push("size = ?");
-            updateValues.push(size);
-        }
-        if (depth !== undefined) {
-            validatePositiveNumber(depth, "depth");
-            updateFields.push("depth = ?");
-            updateValues.push(depth);
-        }
-        if (volume !== undefined) {
-            validatePositiveNumber(volume, "volume");
-            updateFields.push("volume = ?");
-            updateValues.push(volume);
-        }
-        if (num_of_drains !== undefined) {
-            validatePositiveNumber(num_of_drains, "number of drains");
-            updateFields.push("num_of_drains = ?");
-            updateValues.push(num_of_drains);
-        }
-        if (pump_capacity !== undefined) {
-            validatePositiveNumber(pump_capacity, "pump capacity");
-            updateFields.push("pump_capacity = ?");
-            updateValues.push(pump_capacity);
-        }
 
         const salt_kg_required =
             volume !== undefined ? Math.round(volume * 0.003) : undefined;
@@ -155,11 +129,6 @@ const updatePondById = (id, updates, callback) => {
 
 // Delete pond by ID
 const deletePondById = (id, callback) => {
-    try {
-        validatePositiveNumber(id, "pond ID");
-    } catch (error) {
-        return callback(error, null);
-    }
 
     const query = `DELETE FROM Pond WHERE id = ?`;
     db.query(query, [id], (error, results) => {
