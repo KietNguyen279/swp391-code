@@ -98,27 +98,18 @@ const updatePondById = (id, updates, callback) => {
             throw new Error("No fields to update.");
         }
 
-        const updateFields = [];
-        const updateValues = [];
+        const query = `UPDATE Pond
+        SET 
+        name = ?,
+        image = ?,
+        size = ?,
+        depth = ?,
+        volume = ?,
+        num_of_drains = ?,
+        pump_capacity = ?,
+        WHERE id = ?;`;
 
-        if (name !== undefined) {
-            updateFields.push("name = ?");
-            updateValues.push(name);
-        }
-        if (image !== undefined) {
-            updateFields.push("image = ?");
-            updateValues.push(image);
-        }
-
-        const salt_kg_required =
-            volume !== undefined ? Math.round(volume * 0.003) : undefined;
-        if (salt_kg_required !== undefined) {
-            updateFields.push("salt_kg_required = ?");
-            updateValues.push(salt_kg_required);
-        }
-
-        const query = `UPDATE Pond SET ${updateFields.join(", ")} WHERE id = ?`;
-        db.query(query, [...updateValues, id], (error, results) => {
+        db.query(query, [name, image, size, depth, volume, num_of_drains, pump_capacity, id], (error, results) => {
             if (error) return callback(error, null);
             return callback(null, results.affectedRows);
         });
@@ -129,7 +120,6 @@ const updatePondById = (id, updates, callback) => {
 
 // Delete pond by ID
 const deletePondById = (id, callback) => {
-
     const query = `DELETE FROM Pond WHERE id = ?`;
     db.query(query, [id], (error, results) => {
         if (error) {
