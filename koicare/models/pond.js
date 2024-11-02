@@ -109,7 +109,7 @@ const updatePondById = (id, updates, callback) => {
         pump_capacity = ?,
         WHERE id = ?;`;
 
-        db.query(query, [name, image, size, depth, volume, num_of_drains, pump_capacity, id], (error, results) => {
+        db.query(query, [name, image, size, depth, volume, num_of_drains, pump_capacity, parseInt(id)], (error, results) => {
             if (error) return callback(error, null);
             return callback(null, results.affectedRows);
         });
