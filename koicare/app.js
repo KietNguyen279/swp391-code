@@ -37,7 +37,7 @@ app.use('/auth', authRoutes);
 app.use('/', homeRoutes); 
 app.use('/koi', verifyTokens, koiRoutes); 
 app.use('/koiGrowth', verifyTokens, koiGrowthRoutes); 
-app.use('/pond', verifyTokens, pondRoutes); 
+app.use('/pond', pondRoutes); 
 app.use('/product', productRoutes); 
 app.use('/cart', verifyTokens, cartRoutes); 
 app.use('/order', verifyTokens, orderRoutes); 

@@ -231,7 +231,7 @@ router.post("/", verifyMemberAndShopAndAdminRole, (req, res) => {
 });
 
 // Update pond by ID
-router.put("/:id", verifyMemberAndShopAndAdminRole, (req, res) => {
+router.put("/:id",(req, res) => {
     const pondId = req.params.id;
     if (isNaN(pondId) || pondId <= 0) {
         return res.status(400).json({ message: "Invalid ID" });

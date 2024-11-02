@@ -98,15 +98,9 @@ const updatePondById = (id, updates, callback) => {
             throw new Error("No fields to update.");
         }
 
-        const query = `UPDATE Pond
-        SET 
-        name = ?,
-        image = ?,
-        size = ?,
-        depth = ?,
-        volume = ?,
-        num_of_drains = ?,
-        pump_capacity = ?,
+        const query = `
+        UPDATE Pond
+        SET name = ?, image = ?, size = ?, depth = ?, volume = ?, num_of_drains = ?, pump_capacity = ?
         WHERE id = ?;`;
 
         db.query(query, [name, image, size, depth, volume, num_of_drains, pump_capacity, parseInt(id)], (error, results) => {
@@ -114,6 +108,7 @@ const updatePondById = (id, updates, callback) => {
             return callback(null, results.affectedRows);
         });
     } catch (error) {
+        console.error(error);
         return callback(error, null);
     }
 };
